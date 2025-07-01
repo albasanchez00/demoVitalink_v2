@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio Sesión</title>
+  <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica}" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/style}">
+  <script th:src="@{/static/js/sccript}" defer></script>
+</head>
+<body>
+<!-- Define el fragmento de cabecera -->
+<header th:fragment="header">
+  <section class="section_header">
+    <picture>
+      <img src="./media/logo_IA_Medica-blanco.svg" alt="logotipo VitaLink">
+    </picture>
+
+    <!-- Botón de menú hamburguesa -->
+    <section class="section_nav">
+      <div class="menu-toggle" id="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav class="nav-cabecera">
+        <ul class="nav-links" id="nav-links">
+          <li><a th:href="@{/index.html}" class="menu">Inicio</a></li>
+          <li><a th:href="@{/serviciosCliente.html}" class="menu">Servicios Cliente</a></li>
+          <li><a th:href="@{/serviciosEmpresa.html}" class="menu">Servicios Empresa</a></li>
+          <li><a href="#" class="menu">Documentación</a></li>
+          <li><a th:href="@{/contacto.html}" class="menu">Contacto</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <section class="section_user">
+      <picture><img src="./media/icons/user-rounded-icon.svg" alt="icon user"></picture>
+      <a th:href="@{/inicioSesion}">Inicio Sesión</a>
+    </section>
+  </section>
+</header>
+</body>
+</html>

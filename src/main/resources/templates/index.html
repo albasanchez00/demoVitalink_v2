@@ -1,0 +1,90 @@
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Metaetiquetas recomendadas -->
+    <meta name="description" content="VitaLink: Plataforma para la gestión de tratamientos médicos, citas, síntomas y reportes de salud.">
+    <meta name="keywords" content="salud, tratamientos, citas médicas, síntomas, historial clínico, plataforma médica, VitaLink">
+    <meta name="author" content="VitaLink Team">
+    <meta name="robots" content="index, follow">
+    <!-- Meta para redes sociales (Open Graph para Facebook y LinkedIn) -->
+    <meta property="og:title" content="VitaLink - Gestión de Tratamientos Médicos">
+    <meta property="og:description" content="Gestiona tus tratamientos, controla síntomas y recibe recordatorios inteligentes con VitaLink.">
+    <meta property="og:image" content="https://vitalink.com/media/logo_IA_Medica-blanco.svg">
+    <meta property="og:type" content="website">
+    <title>VitaLink</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="../static/js/sccript.js"></script>
+</head>
+<body>
+<section>
+    <!-- Incluye el fragmento de cabecera aquí -->
+    <div th:replace="fragments/header :: header"></div>
+    <main>
+        <section class="section_main">
+            <section class="section_form">
+                <form action="formContacto.js" method="get" id="formulario">
+                    <p>
+                        <label for="nombre">Nombre:*</label>
+                        <input type="text" name="nombre" id="nombre" required>
+                    </p>
+                    <p>
+                        <label for="correo">Correo Electrónico:*</label>
+                        <input type="email" name="correo" id="correo" required>
+                    </p>
+                    <p>
+                        <label for="telefono">Teléfono:</label>
+                        <input type="tel" name="movil" id="telefono">
+                    </p>
+                    <p>
+                        <button type="submit" id="btn-submit">Enviar</button>
+                    </p>
+                </form>
+                <picture><img src="./media/img/form_isometric-design-of-a-customer-service-center.svg" alt="customer service center"></picture>
+            </section>
+
+            <section class="features-container">
+                <div class="feature">
+                    <picture><img src="./media/icons/calendar-days-icon.svg" alt="calendar icon" class="icon"></picture>
+                    <h3>Gestión de Citas</h3>
+                    <p>Descripción de la característica 1.</p>
+                </div>
+                <div class="feature">
+                    <picture><img src="./media/icons/jar-of-pills-icon.svg" alt="medical records icon" class="icon"></picture>
+                    <h3>Administración de tratamientos</h3>
+                    <p>Descripción de la característica 2.</p>
+                </div>
+                <div class="feature">
+                    <picture><img src="./media/icons/notes-medical-solid-icon.svg" alt="notes icon" class="icon"></picture>
+                    <h3>Informes Sintomáticos</h3>
+                    <p>Descripción de la característica 3.</p>
+                </div>
+                <div class="feature">
+                    <picture><img src="./media/icons/graphic-files-icon.svg" alt="stadistic icon" class="icon"></picture>
+                    <h3>Resportes de Salud</h3>
+                    <p>Descripción de la característica 4.</p>
+                </div>
+                <div class="feature">
+                    <picture><img src="./media/icons/clinic-history-icon.svg" alt="clinic history" class="icon"></picture>
+                    <h3>Historial Médico</h3>
+                    <p>Descripción de la característica 5.</p>
+                </div>
+                <div class="feature">
+                    <picture><img src="./media/icons/assistant-icon.svg" alt="assistant-icon" class="icon"></picture>
+                    <h3>Asistente 24h</h3>
+                    <p>Descripción de la característica 6.</p>
+                </div>
+            </section>
+
+            <section id="section_main_2">
+                <!-- El resto del contenido permanece igual -->
+                <!-- ... -->
+            </section>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+</body>
+</html>

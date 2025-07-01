@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro Exitoso</title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- Ajusta si usas otra ruta -->
+</head>
+<body>
+
+<section>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main style="text-align:center; padding: 2rem;">
+    <h2>✅ Registro completado con éxito</h2>
+    <p>Tu cuenta ha sido creada correctamente.</p>
+
+    <a href="/inicioSesion">
+      <button style="padding: 10px 20px; margin-top: 20px;">Ir a Iniciar Sesión</button>
+    </a>
+    <br><br>
+    <a href="/listaClientes">
+      <button style="padding: 10px 20px;">Ver Clientes Registrados</button>
+    </a>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+
+</body>
+</html>

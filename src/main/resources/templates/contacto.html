@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="../static/js/formContacto.js"></script>
+</head>
+<body>
+    <section>
+        <div th:replace="fragments/header :: header"></div>
+     
+    
+        <main>
+            <section class="section_main">
+                <section class="section_form_2">
+                    <form action="formContacto.js" method="get" id="formulario">
+                        <p>
+                            <label for="nombre">Nombre:*</label>
+                            <input type="text" name="nombre" id="nombre" required>
+                        </p>
+                        <p>
+                            <label for="correo">Correo Electrónico:*</label>
+                            <input type="email" name="correo" id="correo" required>
+                        </p>
+                        <p>
+                            <label for="telefono">Teléfono:</label>
+                            <input type="text" id="telefono" name="telefono">
+                        </p>
+                        <p>
+                            <button type="submit" id="btn-submit">Enviar</button>
+                        </p>
+                    </form>
+                    <picture><img src="./media/img/form_isometric-design-of-a-customer-service-center.svg" alt="customer service center"></picture>
+                </section>
+            </section>
+        </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorios Paciente</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <meta name="description" content="Panel de usuario con recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script src="../static/js/mensajesUsuario.js"></script>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="fragments/header :: header"></div>
+        
+        <main id="main_panelUser">
+            <h1 class="text_center">📩 Bandeja de Mensajes</h1>
+        
+            <section class="config-usuario-panel">
+              <div class="config-usuario-menu">
+                <button class="btn-config activo">Todos</button>
+                <button class="btn-config">No leídos</button>
+                <button class="btn-config">Importantes</button>
+              </div>
+        
+              <div class="config-usuario-formulario">
+                <article class="mensaje">
+                  <h3>Resultado de análisis disponible</h3>
+                  <p><strong>De:</strong> Centro Médico</p>
+                  <p><strong>Fecha:</strong> 2024-04-14</p>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </article>
+        
+                <article class="mensaje">
+                  <h3>Recordatorio: cita mañana a las 10:00</h3>
+                  <p><strong>De:</strong> Sistema</p>
+                  <p><strong>Fecha:</strong> 2024-04-13</p>
+                  <p>Recuerda tu cita médica programada para mañana.</p>
+                </article>
+              </div>
+            </section>
+        </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>

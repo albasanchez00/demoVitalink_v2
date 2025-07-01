@@ -1,0 +1,1025 @@
+/* INICIO AJUSTES GENERALES */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+a{
+    list-style: none;
+    color: var(--color_blanco);
+}
+a:hover{
+    color: var(--fondo-body);
+}
+
+strong{
+    color: rgb(233, 22, 22);
+}
+
+.chat-box strong{
+    color: var(--color_primario);
+}
+
+ul{
+    list-style: none;
+}
+
+.icon{
+    color:var(--color-primary-button);
+}
+
+.text_center{
+    text-align: center;
+}
+
+:root{
+    --altura_header:10vh;
+    --color_fondo: #1B3A57;
+    --color_primario: #008d95;
+    --color_secundario: #006380;
+    --color_blanco: white;
+    --fondo-body: #f9f9f9;
+    --altura_footer:10vh;
+    --color-primary-button:#006380;
+    --color-secundary-button:#008d95;
+}
+
+/* Asegura que `html` y `body` ocupen toda la altura */
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* Oculta la barra de scroll en Chrome, Safari y Edge */
+#main_panelUser::-webkit-scrollbar, #main-panelEvolucion::-webkit-scrollbar {
+    display: none;
+}
+#panel-historialMedico::-webkit-scrollbar,#main-asistente::-webkit-scrollbar, #main_Sintomas::-webkit-scrollbar , #main-tratamientos::-webkit-scrollbar{
+    display: none;
+}
+
+/* `main` crece para ocupar todo el espacio restante */
+#main_panelUser, #main-calendar, #main-asistente, #main-tratamientos, #main_configuracionUsuario, #panel-historialMedico {
+    flex: 1;
+    padding: 20px;
+    overflow: auto; /* Evita el desbordamiento */
+}
+#main-panelEvolucion{
+    flex: 1;
+    padding: 20px;
+    overflow: auto; /* Evita el desbordamiento */
+}
+
+/* Contenedor principal usando `flexbox` */
+.contenedor {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Mínimo 100% del alto de la pantalla */
+}
+
+/* FIN AJUSTES GENERALES */
+
+
+/* INICIO HEADER */
+@media screen and (min-width:1023px) {
+    header{
+        min-height: var(--altura_header);
+        max-width: 100vw;
+        background-color: var(--color_fondo);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        .section_header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100vw;
+            padding: 0 40px;
+            picture{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 25%;
+                img{
+                    width: 55px;
+                    height: auto;
+                }
+            }
+        }
+        .section_nav{
+            width: 45%;
+            ul{
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                li{
+                    padding: 0 20px;
+                }
+            }
+        }
+        .section_user{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 25%;
+            padding: 0;
+            a{
+                width: max-content;
+            }
+            picture {
+                width: 10%;
+                img{
+                    width: 20px;
+                    height: auto;
+                }
+            }
+        }
+    }
+}
+
+/* Inicio Menu Responsive */
+/* Botón de menú hamburguesa */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+}
+.menu-toggle span {
+    background: var(--color_blanco);
+    height: 4px;
+    width: 100%;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Menú en Desktop */
+@media screen and (max-width: 1023px) {
+    .menu-toggle {
+        display: flex;
+    }
+    header{
+        min-height: var(--altura_header);
+        background-color: var(--color_fondo);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        color: white;
+        .section_header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            width: 100vw;
+            padding: 0 40px;
+            picture img{
+                width: 35px;
+                height: auto;
+            }
+        }
+        .section_user{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 25%;
+            padding: 0 10px;
+            font-size: 15px;
+        }
+    }
+    .menu-toggle{
+        width: 20px;
+        height: 18px;
+    }
+    .nav-links {
+        position: absolute;
+        top: var(--altura_header);
+        left: 0;
+        width: 100%;
+        height: 0;
+        background: var(--color_fondo);
+        opacity: 0.8;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        transition: height 0.3s ease-in-out;
+    }
+    .nav-links.show {
+        height: 200px;
+    }
+    .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+}
+/* Fin Menu en Desktop */
+/* FIN HEADER */
+
+/* INICIO PAGINAS USUARIO */
+/* ESTILO BASE (MÓVIL) */
+/* Contenedor principal */
+#main_panelUser {
+    width: 100%;
+    min-height: 80vh;
+    background-color: var(--fondo-body);
+    padding: 20px 0;
+}
+/* NAV: wrap en varias filas, fondo y texto legible */
+.section_panelUser .nav_panelUser {
+    width: 100%;
+    margin: 10px 0;
+}
+.section_panelUser .nav_panelUser ul {
+    display: flex;
+    flex-wrap: wrap;               /* wrap automática */
+    justify-content: center;       /* centra los items */
+    gap: 10px;                     /* separación items */
+    width: 100%;
+    margin: 0;
+    padding: 8px 0;                /* espacio arriba/abajo */
+    list-style: none;
+    background-color: var(--color-primary-button);
+}
+.section_panelUser .nav_panelUser ul li {
+    margin: 0;
+    padding: 0;
+}
+.section_panelUser .nav_panelUser ul li a {
+    display: inline-block;
+    padding: 8px 12px;
+    color: var(--color_blanco);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.section_panelUser .nav_panelUser ul li a:hover {
+    border-bottom: 2px solid #fff;
+}
+/* DASHBOARD: 1 columna en móvil */
+.dashboard-overview {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    width: 100%;
+    max-width: 480px;
+    margin: 20px auto;
+    padding: 0 10px;
+}
+.card {
+    background: #fff;
+    color: var(--color-primary-button);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* las “wide-card” en móvil siguen full-width */
+.wide-card {
+    grid-column: span 1;
+}
+/* Botón “Ver más” */
+.btn-ver-mas {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: var(--color-secundary-button);
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color .2s;
+}
+.btn-ver-mas:hover {
+    background-color: var(--color-primary-button);
+}
+/* CHAT FLOTANTE (sin cambios) */
+#chat-toggle {
+    position: fixed;
+    bottom: 130px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-primary-button);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+#chat-box {
+    position: fixed;
+    bottom: 185px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+}
+#chat-box.open {
+    display: flex;
+}
+#chat-header {
+    background-color: var(--color-primary-button);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+#chat-header span {
+    cursor: pointer;
+}
+#chat-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow: hidden;
+}
+#chat-body strong {
+    color: var(--color_secundario);
+}
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+#chat-messages p {
+    margin: 10px 0;
+}
+#chat-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.thinking {
+    opacity: 0.6;
+    font-style: italic;
+}
+/* BREAKPOINT ≥768px (ESCRITORIO) */
+@media (min-width: 768px) {
+    /* NAV: una sola fila, repartido equitativamente */
+    .section_panelUser .nav_panelUser ul {
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        width: 80%;
+        margin: 20px auto;
+    }
+    /* DASHBOARD: grid fluido de tantas columnas como entren */
+    .dashboard-overview {
+        padding: 30px;
+        max-width: 80%;
+        margin: 20px auto;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    /* wide-card ocupa 2 columnas */
+    .wide-card {
+        grid-column: span 2;
+    }
+}
+/* FIN POOP UP ASISTENTE VIRTUAL */
+/* FIN MAIN INDEX*/
+
+
+/* INICIO PÁGINA GESTION DE CITAS */
+#main-calendar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background: var(--fondo-body);
+}
+#formulario {
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 60%;
+    margin: 20px;
+}
+#formulario h2 {
+    text-align: center;
+    color: var(--color_primario);
+}
+#formulario label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+#formulario input, #formulario select, #formulario button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--color_secundario);
+    border-radius: 5px;
+}
+#formulario button {
+    background: var(--color-primary-button);
+    color: var(--color_blanco);
+    font-weight: bold;
+    cursor: pointer;
+}
+#formulario button:hover {
+    background: var(--color-secundary-button);
+}
+#calendario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 60%;
+    h2{
+        color: #006380;
+    }
+}
+#calendar {
+    color: var(--color_secundario);
+    width: 100%;
+    max-width: 100%;
+    .fc-view-container {
+        width: 100%;
+    }
+    .fc-dayGridMonth-view {
+        width: 100%;
+    }
+}
+.fc *{
+    color: var(--color_secundario);
+    a{
+        color: #1B3A57;
+    }
+}
+/* FIN PÁGINA GESTION DE CITAS */
+
+
+/* INICIO PAGINA REGISTRO SINTOMAS */¡
+                                     .main_panelUser{
+                                         display: flex;
+                                         flex-direction: column;
+                                         justify-content: center;
+                                         align-items: center;
+                                         min-width: 100%;
+                                         min-height: 100%;
+                                     }
+.section_Sintomas{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    h1{
+        margin: 15px;
+        font-size: 24px;
+    }
+}
+#form-sintomas {
+    width:  70%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+
+
+    textarea {
+        resize: vertical;
+        width: 100%;
+        font-size: 0.95rem;
+    }
+}
+#form-sintomas input, #form-sintomas select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--color_secundario);
+    border-radius: 5px;
+}
+#form-sintomas button {
+    grid-column: span 2;
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#form-sintomas button:hover {
+    background-color: var(--color-secundary-button);
+}
+.filtro-Registro{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    gap: 100px;
+}
+/* Contenedor de filtros */
+#filtros {
+    width:  20%;
+    margin-top: 20px;
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+#filtros label {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Historial de síntomas */
+#registros {
+    width:  40%;
+    margin-top: 20px;
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+}
+.tabla_Registros {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabla_Registros th, .tabla_Registros td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+/* Gráfico de evolución */
+#graficos {
+    width:  70%;
+    margin-top: 30px;
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+}
+/* FIN PAGINA REGISTRO SINTOMAS */
+
+
+/* INICIO PÁGINA REGISTRO DE TRATAMIENTOS */
+#formulario-tratamientos {
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+    h2 {
+        text-align: center;
+        color: var(--color_primario);
+    }
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+    input, select, textarea, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid var(--color_secundario);
+        border-radius: 5px;
+        font-size: 0.95rem;
+    }
+    textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    button {
+        background: var(--color-primary-button);
+        color: var(--color_blanco);
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 15px;
+    }
+    button:hover {
+        background: var(--color-secundary-button);
+    }
+    .lb-checkbox{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        margin: 30px 0px;
+        input{
+            width: 50px;
+            height: 100%;
+        }
+    }
+
+}
+#tratamientos-activos {
+    list-style: none;
+    margin-top: 20px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#tratamientos-activos li {
+    background: var(--color_blanco);
+    border-left: 6px solid var(--color_primario);
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.05);
+}
+#tratamientos-activos li button {
+    background: transparent;
+    border: none;
+    color: var(--color_primario);
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+#tratamientos-activos li button:hover {
+    color: var(--color_secundario);
+    text-decoration: underline;
+}
+#tratamientos-activos .card {
+    margin-bottom: 20px;
+}
+/* Botón de eliminar estilo sistema */
+.btn-eliminar {
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.btn-eliminar:hover {
+    background-color: var(--color-secundary-button);
+}
+/* FIN PÁGINA REGISTRO DE TRATAMIENTOS */
+
+
+/* INICIO PAGINA ESTADISTICAS USUARIO */
+.dashboard-overview-estadisctics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    margin: auto;
+}
+.card-evolucion {
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+canvas {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+}
+/* FIN PAGINA ESTADISTICAS USUARIO */
+
+
+/* INICIO PAGINA CONFIGURACIÓN USUARIO */
+/* CONTENEDOR PRINCIPAL */
+.config-usuario-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+.config-usuario-titulo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--color_primario);
+}
+/* PANEL DE CONFIGURACIÓN */
+.config-usuario-panel {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+}
+/* MENÚ LATERAL */
+.config-usuario-menu {
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 180px;
+}
+.btn-config {
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-config:hover, .btn-config.activo {
+    background-color: var(--color-secundary-button);
+}
+/* FORMULARIO */
+.config-usuario-formulario {
+    background: var(--color_blanco);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ddd;
+    flex: 1;
+    min-width: 280px;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.config-seccion {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+}
+.config-seccion.activa {
+    display: flex;
+}
+.config-usuario-formulario label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    color: #333;
+}
+.config-usuario-formulario input, .config-usuario-formulario select {
+    padding: 10px;
+    border: 1px solid var(--color_secundario);
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+/* BOTÓN GUARDAR */
+.btn-guardar-config {
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-guardar-config:hover {
+    background-color: var(--color-secundary-button);
+}
+/* MENSAJE CONFIRMACIÓN */
+.config-mensaje {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+/* RESPONSIVE */
+@media screen and (max-width: 768px) {
+    .config-usuario-panel {
+        flex-direction: column;
+        align-items: center;
+    }
+    .config-usuario-menu {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+    .btn-config {
+        width: 45%;
+        margin-bottom: 10px;
+    }
+    .config-usuario-formulario {
+        width: 100%;
+    }
+}
+/* FIN PAGINA CONFIGURACIÓN USUARIO */
+
+
+/* INICIO PAGINA HISTORIAL MEDICO */
+.historial-container {
+    padding: 2em;
+    background-color: var(--color_blanco);
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 95%;
+    margin: 0 auto;
+}
+.historial-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5em;
+    font-size: 0.95rem;
+    th {
+        background-color: var(--color-primary-button);
+        color: var(--color_blanco);
+        padding: 12px;
+        text-align: left;
+    }
+    td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    tr:hover {
+        background-color: #f0faff;
+    }
+}
+.filtro {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 1em;
+    flex-wrap: wrap;
+    label {
+        font-weight: bold;
+        color: var(--color_primario);
+    }
+    input[type="date"] {
+        padding: 8px 12px;
+        border: 1px solid var(--color_secundario);
+        border-radius: 5px;
+    }
+    button {
+        background-color: var(--color-primary-button);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: var(--color-secundary-button);
+    }
+}
+/* Estilo tarjetas para móviles */
+.historial-movil {
+    display: none;
+}
+@media screen and (max-width: 768px) {
+    .historial-tabla {
+        display: none; /* Oculta la tabla en móviles */
+    }
+    .historial-movil {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        margin-top: 1em;
+    }
+    .registro {
+        background-color: var(--color_blanco);
+        padding: 1em;
+        border-radius: 10px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        strong {
+            color: var(--color_primario);
+        }
+        p {
+            margin: 0.4em 0;
+            font-size: 0.95em;
+        }
+    }
+    .filtro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filtro input,.filtro button {
+        width: 100%;
+    }
+}
+/* FIN PAGINA HISTORIAL MEDICO */
+
+/* INICIO PAGINA RECORDATORIOS */
+#form-recordatorio #descripcion{
+    width: 100%;
+}
+/* FIN PAGINA RECORDATORIOS */
+/* FIN PAGINAS USUARIO */
+
+
+/* INICIO FOOTER */
+footer{
+    min-height: var(--altura_footer);
+    background-color: var(--color_fondo);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    max-width: 100vw;
+    background-color: #1B3A57;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    picture img{
+        width: 60px;
+        height: auto;
+    }
+    .section_footer{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        height: auto;
+        flex-wrap: nowrap;
+    }
+}
+.section_nav_footer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+/*Footer Responsive*/
+@media screen and (max-width:768px) {
+    footer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 100vw;
+
+        .section_footer{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 15px;
+            img{
+                width: 40px;
+            }
+        }
+    }
+
+}
+/* FIN FOOTER */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #cccccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+thead {
+    background-color: #f5f5f5;
+}

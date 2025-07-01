@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <script th:src="@{/js/script.js}" defer></script>
+    <script th:src="@{/js/register.js}" defer></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <section>
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main>
+            <section class="section_main_registro">
+                <section class="section_form_registro">
+                    <h2 th:text="${usuario?.id_usuario == 0 ? 'Nuevo Usuario' : 'Editar Usuario'}"></h2>
+                    <form id="form-registro" th:action="@{/guardarUsuario}" method="POST" th:object="${usuario}">
+
+                        <p>
+                            <label for="username">Usuario:</label>
+                            <input type="text" th:field="*{username}" name="username" id="username">
+                        </p>
+
+                        <p>
+                            <label for="password">Contraseña:</label>
+                            <input type="password" th:field="*{password}" name="password" id="password">
+                        </p>
+
+                        <p>
+                            <label for="rol">Rol:</label>
+                            <select th:field="*{rol}" name="rol" id="rol">
+                                <option value="">Seleccionar rol</option>
+                                <option value="User">Usuario</option>
+                                <option value="Admin">Administrador</option>
+                            </select>
+                        </p>
+
+                        <p class="politicsUse">
+                            <input type="checkbox" name="terminoCondiciones" id="terminoCondiciones">
+                            <label for="terminoCondiciones">Acepto los <a href="#"><strong>Términos y Condiciones</strong></a></label>
+                        </p>
+
+                        <p>
+                            <button type="submit" id="btn-submit">Enviar</button>
+                        </p>
+
+                    </form>
+
+                    <!-- Mensajes de error -->
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        El usuario o contraseña no es válido
+                    </div>
+
+                    <div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert"></div>
+                </section>
+            </section>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución Paciente</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script src="../static/js/evolucionUsuario.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="fragments/header :: header"></div>
+     
+        <main id="main-panelEvolucion">
+            <section class="section_main">
+              <h1 class="text_center">Estadísticas del Paciente</h1>
+        
+              <div class="dashboard-overview-estadisctics">
+                <!-- Gráfico de evolución (línea) -->
+                <div class="card-evolucion wide-card">
+                  <h3>Evolución de Síntomas</h3>
+                  <canvas id="lineChart"></canvas>
+                </div>
+        
+                <!-- Gráfico de frecuencia de síntomas (barras) -->
+                <div class="card-evolucion">
+                  <h3>Síntomas Más Comunes</h3>
+                  <canvas id="barChart"></canvas>
+                </div>
+        
+                <!-- Gráfico de adherencia (pastel) -->
+                <div class="card-evolucion">
+                  <h3>Adherencia al Tratamiento</h3>
+                  <canvas id="pieChart"></canvas>
+                </div>
+              </div>
+            </section>
+          </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>

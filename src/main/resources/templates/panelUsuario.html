@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Usuario</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <meta name="description" content="Panel de usuario con estadísticas, recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script type="text/javascript" defer src="../static/js/panelUsuario.js"></script>
+    <script type="text/javascript" defer src="../static/js/asistente.js"></script>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="fragments/header :: header"></div>
+
+        <main id="main_panelUser">
+            <section class="section_main">
+                <section class="section_panelUser">
+                    <nav class="nav_panelUser">
+                        <ul>
+                            <li><a href="./pedirCita.html">Citas Médicas</a></li>
+                            <li><a href="./estadisticasUsuario.html">Estadísticas</a></li>
+                            <li><a href="./recordatorios.html">Recordatorios</a></li>
+                            <li><a href="./historialMedico.html">Historial Médico</a></li>
+                            <li><a href="./registroTratamiento.html">Tratamientos</a></li>
+                            <li><a href="./configUsuario.html">Configuración</a></li>
+                        </ul>
+                    </nav>
+                </section>
+                <section class="dashboard-overview">
+                    <div class="card">⏰ Recordatorios de Medicación</div>
+                    <div class="card">📉 Evolución de Síntomas</div>
+                    <div class="card">📊 Progreso del Tratamiento</div>
+                    <div class="card wide-card">📣 Notificaciones y Mensajes</div>
+                    <div class="card">✅ Adherencia al Tratamiento</div>
+                    <div class="card">⚠️ Alertas de Dosis Olvidadas</div>
+                    <div class="card">💬 Conversaciones Asistente</div>
+                </section>
+            
+                <!-- Botón flotante -->
+                <div id="chat-toggle" onclick="toggleChat()">💬</div>
+
+                <!-- Ventana de chat -->
+                <div id="chat-box">
+                <div id="chat-header">Asistente Virtual <span onclick="toggleChat()">X</span></div>
+                <div id="chat-body">
+                    <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
+                    <div id="chat-messages"></div>
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeypress="handleKey(event)">
+                </div>
+                </div>
+
+                <script>
+                function toggleChat() {
+                const chatBox = document.getElementById("chat-box");
+                chatBox.classList.toggle("open");
+                }
+                </script>
+            </section>
+        </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Paciente</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script src="../static/js/evolucionUsuario.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="fragments/header :: header"></div>
+
+
+        <main id="main_configuracionUsuario">
+            <section class="config-usuario-container">
+              <h1 class="config-usuario-titulo">Configuración de Usuario</h1>
+          
+              <div class="config-usuario-panel">
+                <aside class="config-usuario-menu">
+                    <button onclick="mostrarSeccion('seccion-datos', this)" class="btn-config activo">Datos</button>
+                    <button onclick="mostrarSeccion('seccion-contrasena', this)" class="btn-config">Contraseña</button>
+                    <button onclick="mostrarSeccion('seccion-preferencias', this)" class="btn-config">Preferencias</button>
+                </aside>
+                <section class="config-usuario-formulario">
+                  <div id="seccion-datos" class="config-seccion activa">
+                    <label>Nombre:
+                      <input type="text" placeholder="Nombre...">
+                    </label>
+                    <label>Apellido:
+                      <input type="text" placeholder="Apellido...">
+                    </label>
+                    <label>Correo electrónico:
+                      <input type="email" placeholder="correo@ejemplo.com">
+                    </label>
+                    <label>Teléfono:
+                      <input type="tel" placeholder="123456789">
+                    </label>
+                  </div>
+          
+                  <div id="seccion-contrasena" class="config-seccion">
+                    <label>Contraseña actual:
+                      <input type="password">
+                    </label>
+                    <label>Nueva contraseña:
+                      <input type="password">
+                    </label>
+                    <label>Confirmar nueva:
+                      <input type="password">
+                    </label>
+                  </div>
+          
+                  <div id="seccion-preferencias" class="config-seccion">
+                    <label><input type="checkbox"> Recibir notificaciones</label>
+                    <label>Tema:
+                      <select>
+                        <option value="claro">Claro</option>
+                        <option value="oscuro">Oscuro</option>
+                      </select>
+                    </label>
+                  </div>
+          
+                  <button class="btn-guardar-config">Guardar Cambios</button>
+                  <p id="mensaje-confirmacion" class="config-mensaje" style="display:none;">
+                    ¡Cambios guardados correctamente!
+                  </p>
+                </section>
+              </div>
+            </section>
+        </main>
+
+
+        <div th:replace="fragments/footer :: footer"></div>
+
+    </section>
+    <script src="../static/js/configUsuario.js"></script>
+</body>
+</html>

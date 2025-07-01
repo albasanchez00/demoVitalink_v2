@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Clientes</title>
+  <link rel="stylesheet" th:href="@{/css/style2.css}">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<section>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main class="main_lista_clientes">
+    <h2>Listado de Clientes</h2>
+
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellidos</th>
+        <th>DNI</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Ciudad</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="cliente : ${clientes}">
+        <td th:text="${cliente.idCliente}">1</td>
+        <td th:text="${cliente.nombre}">Nombre</td>
+        <td th:text="${cliente.apellidos}">Apellidos</td>
+        <td th:text="${cliente.numeroIdentificacion}">DNI</td>
+        <td th:text="${cliente.correoElectronico}">correo@ejemplo.com</td>
+        <td th:text="${cliente.telefono}">600123123</td>
+        <td th:text="${cliente.ciudadId}">Ciudad</td>
+        <td>
+          <a th:href="@{'/clientes/editar/' + ${cliente.idCliente}}">Editar</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+
+</body>
+</html>

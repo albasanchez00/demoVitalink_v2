@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios VitaLink</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <section>
+        <div th:replace="fragments/header :: header"></div>
+
+        <main class="main_Servicios">
+            <section class="section_servicioCliente">
+                <section class="video-section">
+                    <h1>Descubre VitaLink - Tu Plataforma Médica Digital</h1>
+                    <p>Gestiona tus citas, historiales médicos y tratamientos de manera sencilla e intuitiva.</p>
+                    <div class="video-container">
+                        <div class="video-card">
+                            <video autoplay loop muted>
+                                <source src="./media/video/20250311_1308_AI Assistant in Action_simple_compose_01jp2hpt61esr985yajmp4r57j.mp4" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                        </div>
+                
+                        <div class="video-card">
+                            <video autoplay loop muted>
+                                <source src="./media/video/video-showcasing-a-old-age-person.mp4" type="video/mp4">
+                                Tu navegador no soporta el video.
+                            </video>
+                        </div>
+                    </div>
+                </section>
+
+                <!--  Section Registro Sintomas  -->
+                <section class="resumen_Servicio_Iz">
+                    <div class="content_Servicio_Iz">
+                        <h2>Registro y Seguimiento de Síntomas</h2>
+                        <p>Anota cómo te sientes diariamente.</p>
+                        <p>Genera reportes visuales para compartir con tu doctor.</p>
+                        <button>Descubre más</button>
+                    </div>
+                    <div class="img_servicio_Iz">
+                        <img src="./media/img/registro-analisis-sintomas-pacientes.jpeg" alt="registro y analisis sintomas">
+                    </div>
+                </section>
+
+                <!--  Section Gestor de Medicamentos  -->
+                <section class="resumen_Servicio_De">
+                    <div class="img_servicio_De">
+                        <img src="./media/img/gesttion-de-medicamentos-pacientes.jpeg" alt="gestor de medicamentos">
+                    </div>
+                    <div class="content_Servicio_De">
+                        <h2>Gestor de Medicamentos y Tratamientos</h2>
+                        <p>Anota cómo te sientes diariamente.</p>
+                        <p>Registra tus tratamientos y consulta cómo han evolucionado con el tiempo.</p>
+                        <button>Descubre más</button>
+                    </div>
+                </section>
+
+                <!--  Section  Accesibilidad y Comodidad  -->
+                <section class="resumen_Servicio_Iz">
+                    <div class="content_Servicio_Iz">
+                        <h2> Accesibilidad y Comodidad</h2>
+                        <p>Disponible en versión web y móvil.</p>
+                        <p>Diseñada para ser intuitiva y fácil de usar.</p>
+                        <button>Descubre más</button>
+                    </div>
+                    <div class="img_servicio_Iz">
+                        <img src="./media/img/interfaz-amigable-intuituva.jpeg" alt="accesibilidad y comodidad">
+                    </div>
+                </section>
+                
+                <!--  Section Seguridad y Privacidad  -->
+                <section class="resumen_Servicio_De">
+                    <div class="img_servicio_De">
+                        <img src="./media/img/seguridad-informacion-pacientes.jpeg" alt="seguridad y privacidad">
+                    </div>
+                    <div class="content_Servicio_De">
+                        <h2>Seguridad y Privacidad</h2>
+                        <p>Protegemos tu información con altos estándares de seguridad (cumplimos con normativas como HIPAA y GDPR).</p>
+                        <button>Descubre más</button>
+                    </div>
+                </section>
+                
+                <!--  Section Asistente Virtual  -->
+                <section class="resumen_Servicio_Iz">
+                    <div class="content_Servicio_Iz">
+                        <h2>Asistente Virtual con Inteligencia Artificial (Próximamente)</h2>
+                        <p>Obtén respuestas rápidas a dudas comunes sobre tu tratamiento.</p>
+                        <p>Accede a información confiable sin necesidad de esperar una consulta.</p>
+                        <button>Descubre más</button>
+                    </div>
+                    <div class="img_servicio_Iz">
+                        <img src="./media/img/modelo-asistente-inteligencia-artificial-pacientes.jpeg" alt="asistente inteligencia artificial">
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>

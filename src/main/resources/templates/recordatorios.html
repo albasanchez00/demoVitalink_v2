@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorios Paciente</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <meta name="description" content="Panel de usuario con recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script src="../static/js/recordatoriosUsuario.js"></script>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="fragments/header :: header"></div>
+        
+        <main id="main_panelUser">
+            <h1 class="text_center">Gestión de Recordatorios</h1>
+        
+            <section id="formulario">
+              <form id="form-recordatorio">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" required>
+        
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" required>
+        
+                <label for="hora">Hora:</label>
+                <input type="time" id="hora" name="hora" required>
+        
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" rows="3"></textarea>
+        
+                <button type="submit">Guardar Recordatorio</button>
+              </form>
+            </section>
+        
+            <section id="calendario">
+              <h2>Recordatorios Activos</h2>
+              <ul id="lista-recordatorios">
+                <li>No hay recordatorios aún.</li>
+              </ul>
+            </section>
+        </main>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </section>
+</body>
+</html>
