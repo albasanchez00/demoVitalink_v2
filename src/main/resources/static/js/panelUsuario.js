@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
         { title: "⚙️ Configuración", items: ["👤 Editar perfil", "🔧 Ajustes de notificaciones"] },
         { title: "🤖 Asistente", items: ["🗣️ Consultar", "🔧 Configuración"] }
     ];
-    
     const dashboard = document.querySelector(".dashboard-overview");
     dashboard.innerHTML = cardData.map(card => `
         <div class="card">
