@@ -16,8 +16,8 @@
         <main>
             <section class="section_main_registro">
                 <section class="section_form_registro">
-                    <h2 th:text="${usuario?.id == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
-                    <form id="form-registro" th:action="@{/guardarCliente}" method="POST" th:object="${registroCliente}">
+                    <h2 th:text="${cliente?.idCliente == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
+                    <form id="form-registro" th:action="@{/guardarCliente}" method="POST" th:object="${cliente}">
                         <p>
                             <label for="nombre">Nombre:</label>
                             <input type="text" th:field="*{nombre}" name="nombre" id="nombre">
@@ -36,7 +36,7 @@
 
                         <p>
                             <label for="correoElectronico">Correo Electrónico:</label>
-                            <input type="email" th:field="*{correoElectronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correoElectronico" id="correoElectronico">
+                            <input type="email" th:field="*{correo_electronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correoElectronico" id="correoElectronico">
                         </p>
 
                         <p>
@@ -53,7 +53,7 @@
 
                         <p>
                             <label for="tipoDocumento">Tipo de documento:</label>
-                            <select th:field="*{tipoDocumento}" name="tipoDocumento" id="tipoDocumento">
+                            <select th:field="*{tipo_documento}" name="tipoDocumento" id="tipoDocumento">
                                 <option value="dni">DNI</option>
                                 <option value="nif">NIF</option>
                             </select>
@@ -62,7 +62,7 @@
                         <p>
                             <label for="numeroIdentificacion">Número de documento:</label>
                             <input type="text"
-                                   th:field="*{numeroIdentificacion}"
+                                   th:field="*{numero_identificacion}"
                                    maxlength="9"
                                    pattern="[0-9A-Za-z]{9}"
                                    placeholder="Número de documento"
@@ -72,7 +72,7 @@
 
                         <p>
                             <label for="numeroTarjetaSanitaria">Nº Tarjeta Sanitaria:</label>
-                            <input type="text" th:field="*{numeroTarjetaSanitaria}" id="numeroTarjetaSanitaria" name="numeroTarjetaSanitaria">
+                            <input type="text" th:field="*{numero_tarjeta_sanitaria}" id="numeroTarjetaSanitaria" name="numeroTarjetaSanitaria">
                         </p>
 
                         <p>
@@ -92,18 +92,18 @@
 
                         <p>
                             <label for="ciudadId">Ciudad:</label>
-                            <select th:field="*{ciudadId}" name="ciudadId" id="ciudadId">
+                            <select th:field="*{ciudad_id}" name="ciudadId" id="ciudadId">
                                 <option value="">Seleccione una ciudad</option>
                             </select>
                         </p>
 
                         <p>
                             <label for="cpId">Código Postal:</label>
-                            <input type="text" th:field="*{cpId}" pattern="[0-9]{5}" maxlength="5" name="cpId" id="cpId">
+                            <input type="text" th:field="*{cp_id}" pattern="[0-9]{5}" maxlength="5" name="cpId" id="cpId">
                         </p>
 
                         <p class="politicsUse">
-                            <input type="checkbox" th:field="*{terminoCondiciones}" name="terminoCondiciones" id="terminoCondiciones">
+                            <input type="checkbox" name="terminoCondiciones" id="terminoCondiciones">
                             <label for="terminoCondiciones">Acepto los <a href="#"><strong>Términos y Condiciones</strong></a></label>
                         </p>
 

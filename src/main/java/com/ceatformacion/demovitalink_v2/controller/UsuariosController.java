@@ -38,7 +38,7 @@ public class UsuariosController {
             return "redirect:/";
         }else{
             model.addAttribute("error", "El usuario ya existe, indique uno nuevo");
-            return "altaUsuario";
+            return "registroUsuario";
         }
     }
 
