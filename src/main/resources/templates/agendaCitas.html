@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <meta name="description" content="Panel de administrador con agenda, recordatorios y gestión médica para mejorar el seguimiento de pacientes.">
+    <link rel="stylesheet" href="./css/style2.css">
+    <script type="text/javascript" defer src="../static/js/panelAdmin.js"></script>
+    <script type="text/javascript" defer src="../static/js/asistente.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<main>
+    <section class="section_main">
+        <header class="titulo_seccion">
+            <h2>📅 Gestión de Citas Médicas</h2>
+        </header>
+
+        <!-- Filtros de búsqueda -->
+        <section class="filtros_citas">
+            <label for="filtro-fecha">📆 Fecha:</label>
+            <input type="date" id="filtro-fecha" />
+
+            <label for="filtro-paciente">👤 Paciente:</label>
+            <input type="text" id="filtro-paciente" placeholder="Nombre o DNI" />
+
+            <button class="btn-filtrar">🔍 Filtrar</button>
+        </section>
+
+        <!-- Tabla de citas -->
+        <section class="tabla_citas">
+            <table>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Paciente</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>2025-07-10</td>
+                    <td>10:30</td>
+                    <td>Ana Pérez</td>
+                    <td>Control de tratamiento</td>
+                    <td><span class="estado pendiente">Pendiente</span></td>
+                    <td>
+                        <button class="btn-editar">✏️</button>
+                        <button class="btn-cancelar">❌</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2025-07-10</td>
+                    <td>12:00</td>
+                    <td>Juan Ruiz</td>
+                    <td>Consulta inicial</td>
+                    <td><span class="estado completada">Completada</span></td>
+                    <td>
+                        <button class="btn-editar">✏️</button>
+                        <button class="btn-cancelar">❌</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </section>
+</main>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -35,8 +35,8 @@
                         </p>
 
                         <p>
-                            <label for="correoElectronico">Correo Electrónico:</label>
-                            <input type="email" th:field="*{correo_electronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correoElectronico" id="correoElectronico">
+                            <label for="correo_electronico">Correo Electrónico:</label>
+                            <input type="email" th:field="*{correo_electronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correo_electronico" id="correo_electronico">
                         </p>
 
                         <p>
@@ -52,27 +52,27 @@
                         </p>
 
                         <p>
-                            <label for="tipoDocumento">Tipo de documento:</label>
-                            <select th:field="*{tipo_documento}" name="tipoDocumento" id="tipoDocumento">
+                            <label for="tipo_documento">Tipo de documento:</label>
+                            <select th:field="*{tipo_documento}" name="tipo_documento" id="tipo_documento">
                                 <option value="dni">DNI</option>
                                 <option value="nif">NIF</option>
                             </select>
                         </p>
 
                         <p>
-                            <label for="numeroIdentificacion">Número de documento:</label>
+                            <label for="numero_identificacion">Número de documento:</label>
                             <input type="text"
                                    th:field="*{numero_identificacion}"
                                    maxlength="9"
                                    pattern="[0-9A-Za-z]{9}"
                                    placeholder="Número de documento"
-                                   name="numeroIdentificacion"
-                                   id="numeroIdentificacion" required>
+                                   name="numero_identificacion"
+                                   id="numero_identificacion" required>
                         </p>
 
                         <p>
-                            <label for="numeroTarjetaSanitaria">Nº Tarjeta Sanitaria:</label>
-                            <input type="text" th:field="*{numero_tarjeta_sanitaria}" id="numeroTarjetaSanitaria" name="numeroTarjetaSanitaria">
+                            <label for="numero_tarjeta_sanitaria">Nº Tarjeta Sanitaria:</label>
+                            <input type="text" th:field="*{numero_tarjeta_sanitaria}" id="numero_tarjeta_sanitaria" name="numero_tarjeta_sanitaria">
                         </p>
 
                         <p>
@@ -91,15 +91,16 @@
                         </p>
 
                         <p>
-                            <label for="ciudadId">Ciudad:</label>
-                            <select th:field="*{ciudad_id}" name="ciudadId" id="ciudadId">
+                            <label for="ciudad_id">Ciudad:</label>
+                            <select th:field="*{ciudad_id}" name="ciudad_id" id="ciudad_id">
                                 <option value="">Seleccione una ciudad</option>
+                                <option value="Tomelloso">Tomelloso</option>
                             </select>
                         </p>
 
                         <p>
-                            <label for="cpId">Código Postal:</label>
-                            <input type="text" th:field="*{cp_id}" pattern="[0-9]{5}" maxlength="5" name="cpId" id="cpId">
+                            <label for="cp_id">Código Postal:</label>
+                            <input type="text" th:field="*{cp_id}" pattern="[0-9]{5}" maxlength="5" name="cp_id" id="cp_id">
                         </p>
 
                         <p class="politicsUse">

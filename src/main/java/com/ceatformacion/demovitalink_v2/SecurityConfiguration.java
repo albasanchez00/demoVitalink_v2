@@ -18,22 +18,24 @@ public class SecurityConfiguration {
         //Configurar las páginas que según el rol mostrará o negará
         http.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,"/","/index","/registroUsuario","/media/**","/css/**","/js/**").permitAll()
                 //Acceso al crud
-                .requestMatchers(HttpMethod.GET,"/listaUsuario").permitAll()
-                .requestMatchers(HttpMethod.POST,"/listaUsuario").permitAll()
+                .requestMatchers(HttpMethod.GET,"/panelUsuario").hasAnyRole("Admin","User")
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'
                 .requestMatchers(HttpMethod.GET,"/registroUsuario").permitAll()
                 .requestMatchers(HttpMethod.POST,"/guardarUsuario").permitAll()
-                .requestMatchers(HttpMethod.GET,"/listaUsuario/{id}").permitAll()
-                .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").permitAll()
-                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET,"/listaUsuario/{id}").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasRole("Admin")
 
+                //Formulario de Gestión de Clientes: solo rol 'admin'
+                .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST,"/guardarCliente").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET,"/listaCliente/{id}").hasRole("Admin")
                 //Cualquier otra ruta necesita autentificación.
                 .anyRequest().authenticated()
         ).formLogin(form->form.loginPage("/inicioSesion")
                 .loginProcessingUrl("/inicioSesion")
-                .defaultSuccessUrl("/panelUsuario",true)
-                .permitAll()
+                .defaultSuccessUrl("/panelUsuario",true).permitAll()
         ).logout(LogoutConfigurer::permitAll);
 
         return http.build();

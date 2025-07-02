@@ -946,7 +946,21 @@ canvas {
 }
 /* FIN PAGINA RECORDATORIOS */
 /* FIN PAGINAS USUARIO */
+.btn-logout {
+    background-color: #c62828; /* rojo oscuro */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
+.btn-logout:hover {
+    background-color: #a31616;
+}
 
 /* INICIO FOOTER */
 footer{
@@ -960,7 +974,6 @@ footer{
     background-color: #1B3A57;
     color: white;
     text-align: center;
-    padding: 20px;
     font-size: 14px;
     picture img{
         width: 60px;

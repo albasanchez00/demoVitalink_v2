@@ -27,6 +27,7 @@ public class UsuariosController {
         return "registroUsuario";
     }
 
+
     @PostMapping("/guardarUsuario")
     public String guardarUsuario(@ModelAttribute Usuarios usuario,Model model) {
         if (usuariosRepository.findByUsername(usuario.getUsername()).isEmpty()) {
@@ -42,10 +43,30 @@ public class UsuariosController {
         }
     }
 
-    @PostMapping("/listaUsuario")
-    public String leerCliente(@ModelAttribute Usuarios usuariosForm, Model model){
-        usuariosRepository.save(usuariosForm); //Lo guarda en la BBDD
-        return "redirect:/listaUsuario";
+    //mostrar panelUsuario.html
+    @GetMapping("/panelUsuario")
+    public String mostrarPanelAdmin(){
+        return "panelUsuario";
+    }
+    @PostMapping("/panelUsuario")
+    public String listadoAdmin(@ModelAttribute Usuarios usuariosForm, Model model){
+        usuariosRepository.save(usuariosForm);//Se guarda en la BBDD.
+        return "redirect:/panelUsuario";
     }
 
+    //mostrar listaUsuarios.html
+    @GetMapping("/listaUsuarios")
+    public String mostrarListaUsuarios(Model model){
+        model.addAttribute("usuarios", usuariosRepository.findAll());
+        return "listaUsuarios";
+    }
+    @PostMapping("/listaUsuarios")
+    public String leerCliente(@ModelAttribute Usuarios usuariosCrud, Model model){
+        usuariosRepository.save(usuariosCrud); //Lo guarda en la BBDD
+        return "redirect:/listaUsuarios";
+    }
+    @GetMapping("/logout")
+    public String logout(){
+        return "redirect:/inicioSesion";
+    }
 }

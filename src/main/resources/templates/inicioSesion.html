@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Inicio Sesión</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -12,10 +12,10 @@
 
 <main class="main-iSesion">
     <section class="section_iSesion">
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/inicioSesion}" method="post">
             <p>
                 <label for="username">Usuario:</label>
-                <input type="text" name="username" id="username" required>
+                <input type="text" name="username" id="username" required autofocus>
             </p>
             <p>
                 <label for="password">Contraseña:</label>

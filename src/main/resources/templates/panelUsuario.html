@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +7,23 @@
     <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
     <meta name="description" content="Panel de usuario con estadísticas, recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
     <link rel="stylesheet" href="./css/style2.css">
-    <script type="text/javascript" defer src="../static/js/panelUsuario.js"></script>
-    <script type="text/javascript" defer src="../static/js/asistente.js"></script>
+    <script type="text/javascript" defer th:src="@{/static/js/panelUsuario.js}"></script>
+    <script type="text/javascript" defer th:src="@{/static/js/asistente.js}"></script>
 </head>
 <body>
     <section class="contenedor">
         <div th:replace="fragments/header :: header"></div>
 
         <main id="main_panelUser">
-            <section class="section_main">
+
+            <section class="section_main" sec:authorize="hasRole('User')">
                 <section class="section_panelUser">
+                    <div>
+                        <a th:href="@{/logout}" aria-label="Cerrar sesión" class="btn-logout" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg></a>
+                    </div>
                     <nav class="nav_panelUser">
                         <ul>
-                            <li><a href="./pedirCita.html">Citas Médicas</a></li>
+                            <li><a th:href="@{/pedirCita}">Citas Médicas</a></li>
                             <li><a href="./estadisticasUsuario.html">Estadísticas</a></li>
                             <li><a href="./recordatorios.html">Recordatorios</a></li>
                             <li><a href="./historialMedico.html">Historial Médico</a></li>
@@ -37,18 +41,18 @@
                     <div class="card">⚠️ Alertas de Dosis Olvidadas</div>
                     <div class="card">💬 Conversaciones Asistente</div>
                 </section>
-            
+
                 <!-- Botón flotante -->
                 <div id="chat-toggle" onclick="toggleChat()">💬</div>
 
                 <!-- Ventana de chat -->
                 <div id="chat-box">
-                <div id="chat-header">Asistente Virtual <span onclick="toggleChat()">X</span></div>
-                <div id="chat-body">
-                    <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
-                    <div id="chat-messages"></div>
-                    <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeypress="handleKey(event)">
-                </div>
+                    <div id="chat-header">Asistente Virtual <span onclick="toggleChat()">X</span></div>
+                    <div id="chat-body">
+                        <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
+                        <div id="chat-messages"></div>
+                        <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeypress="handleKey(event)">
+                    </div>
                 </div>
 
                 <script>
@@ -57,6 +61,33 @@
                 chatBox.classList.toggle("open");
                 }
                 </script>
+            </section>
+            <section class="section_main" sec:authorize="hasRole('Admin')">
+                <div>
+                    <a th:href="@{/logout}" aria-label="Cerrar sesión" class="btn-logout" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg></a>
+                </div>
+                <section class="section_panelUser">
+                    <nav class="nav_panelUser">
+                        <ul>
+                            <li><a th:href="@{/registroCliente}">Usuarios</a></li>
+                            <li><a th:href="@{/agendaCitas}">Citas</a></li>
+                            <li><a href="./adminTratamientos.html">Tratamientos</a></li>
+                            <li><a href="./adminReportes.html">Reportes</a></li>
+                            <li><a href="./adminMensajes.html">Mensajes</a></li>
+                            <li><a href="./configAdmin.html">Configuración</a></li>
+                        </ul>
+                    </nav>
+                </section>
+
+                <section class="dashboard-overview">
+                    <div class="card">👥 Total de Usuarios Registrados</div>
+                    <div class="card">📅 Citas Programadas Hoy</div>
+                    <div class="card">📈 Estadísticas del Sistema</div>
+                    <div class="card wide-card">🛠️ Configuraciones Generales</div>
+                    <div class="card">🧾 Reportes Recientes</div>
+                    <div class="card">🔔 Notificaciones Importantes</div>
+                    <div class="card">📬 Mensajes Pendientes</div>
+                </section>
             </section>
         </main>
 

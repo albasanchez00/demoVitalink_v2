@@ -14,44 +14,24 @@
             <a th:href="@{registroUsuario}" class="btn btn-primary">Nuevo Usuario</a>
         </div>
     </div>
-<!--    <table class="table table-striped">-->
-<!--        <tr>-->
-<!--            <th>Nombre</th>-->
-<!--            <th>Apellidos</th>-->
-<!--            <th>F. Nacimiento</th>-->
-<!--            <th>Teléfono</th>-->
-<!--            <th>Email</th>-->
-<!--            <th>Teléfono</th>-->
-<!--            <th>Tipo Documento</th>-->
-<!--            <th>Nº Documento</th>-->
-<!--            <th>Nº Tarjeta Sanitaria</th>-->
-<!--            <th>Género</th>-->
-<!--            <th>Dirección</th>-->
-<!--            <th>Ciudad</th>-->
-<!--            <th>C. Postal</th>-->
-<!--            <th>Contraseña</th>-->
-<!--        </tr>-->
+    <table class="table table-striped">
+        <tr>
+            <th>Id Usuario</th>
+            <th>Usuario</th>
+            <th>Contraseña</th>
+            <th>Rol</th>
+        </tr>
 
-<!--        <tr th:each="usuario : ${usuariosCrud}">-->
-<!--            <td th:text="${usuario.nombre}"></td>-->
-<!--            <td th:text="${usuario.apellidos}"></td>-->
-<!--            <td th:text="${usuario.nacimiento}"></td>-->
-<!--            <td th:text="${usuario.correoElectronico}"></td>-->
-<!--            <td th:text="${usuario.telefono}"></td>-->
-<!--            <td th:text="${usuario.tipoDocumento}"></td>-->
-<!--            <td th:text="${usuario.numeroIdentificacion}"></td>-->
-<!--            <td th:text="${usuario.numeroTarjetaSanitaria}"></td>-->
-<!--            <td th:text="${usuario.genero}"></td>-->
-<!--            <td th:text="${usuario.direccion}"></td>-->
-<!--            <td th:text="${usuario.ciudadId}"></td>-->
-<!--            <td th:text="${usuario.cpId}"></td>-->
-<!--            <td th:text="${usuario.contrasenia}"></td>-->
-<!--            <td>-->
-<!--                <a th:href="@{'editar/'+ ${usuario.getId()}}" class="btn btn-warning">✏️ Editar</a>-->
-<!--                <a th:href="@{'eliminar/'+ ${usuario.getId()}}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?')">️🗑️ Eliminar</a>-->
-<!--            </td>-->
-<!--        </tr>-->
-<!--    </table>-->
+        <tr th:each="usuario : ${usuariosCrud}">
+            <td th:text="${usuario.username}"></td>
+            <td th:text="${usuario.nombre}"></td>
+            <td th:text="${usuario.contrasenia}"></td>
+            <td>
+                <a th:href="@{'editar/'+ ${usuario.getId()}}" class="btn btn-warning">✏️ Editar</a>
+                <a th:href="@{'eliminar/'+ ${usuario.getId()}}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de querer eliminar este cliente?')">️🗑️ Eliminar</a>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
