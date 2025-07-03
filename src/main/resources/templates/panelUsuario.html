@@ -81,6 +81,16 @@
                     <div class="card">🔔 Notificaciones Importantes</div>
                     <div class="card">📬 Mensajes Pendientes</div>
                 </section>
+                <div id="chat-toggle2" onclick="toggleChat()">💬</div>
+                <!-- Ventana de chat -->
+                <div id="chat-box2">
+                    <div id="chat-header2">Asistente Virtual <span onclick="toggleChat()">X</span></div>
+                    <div id="chat-body2">
+                        <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
+                        <div id="chat-messages2"></div>
+                        <input type="text" id="chat-input2" placeholder="Escribe tu mensaje aquí..." />
+                    </div>
+                </div>
             </section>
         </main>
         <div th:replace="fragments/footer :: footer"></div>
@@ -91,6 +101,7 @@
             chatBox.classList.toggle("open");
         }
     </script>
+    <script src="/js/panelUsuario.js" defer></script>
     <script src="/js/panelUsuario.js" defer></script>
 </body>
 </html>
