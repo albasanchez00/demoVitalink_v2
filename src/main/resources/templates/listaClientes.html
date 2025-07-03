@@ -20,24 +20,37 @@
         <th>ID</th>
         <th>Nombre</th>
         <th>Apellidos</th>
-        <th>DNI</th>
+        <th>Nacimiento</th>
         <th>Email</th>
         <th>Teléfono</th>
+        <th>Tipo Documento</th>
+        <th>Número Identificación</th>
+        <th>Tarjeta Sanitaria</th>
+        <th>Género</th>
+        <th>Dirección</th>
         <th>Ciudad</th>
+        <th>Código Postal</th>
         <th>Acciones</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="cliente : ${clientes}">
-        <td th:text="${cliente.idCliente}">1</td>
-        <td th:text="${cliente.nombre}">Nombre</td>
-        <td th:text="${cliente.apellidos}">Apellidos</td>
-        <td th:text="${cliente.numeroIdentificacion}">DNI</td>
-        <td th:text="${cliente.correoElectronico}">correo@ejemplo.com</td>
-        <td th:text="${cliente.telefono}">600123123</td>
-        <td th:text="${cliente.ciudadId}">Ciudad</td>
+        <td th:text="${cliente.idCliente}"></td>
+        <td th:text="${cliente.nombre}"></td>
+        <td th:text="${cliente.apellidos}"></td>
+        <td th:text="${cliente.nacimiento}"></td>
+        <td th:text="${cliente.correo_electronico}"></td>
+        <td th:text="${cliente.telefono}"></td>
+        <td th:text="${cliente.tipo_documento}"></td>
+        <td th:text="${cliente.numero_identificacion}"></td>
+        <td th:text="${cliente.numero_tarjeta_sanitaria}"></td>
+        <td th:text="${cliente.genero}"></td>
+        <td th:text="${cliente.direccion}"></td>
+        <td th:text="${cliente.ciudad_id}"></td>
+        <td th:text="${cliente.cp_id}"></td>
         <td>
           <a th:href="@{'/clientes/editar/' + ${cliente.idCliente}}">Editar</a>
+          <a th:href="@{'/clientes/eliminar/' + ${cliente.idCliente}}">Editar</a>
         </td>
       </tr>
       </tbody>

@@ -15,47 +15,70 @@ public class ClientesController {
     @Autowired
     private ClientesRepository clientesRepository;
 
+    // Mostrar formulario de registro de cliente
     @GetMapping("/registroCliente")
-    public String mostrarFormulario(Model model){
-        //Le enviamos un objeto tipo Cliente para que lo reciba el formulario, y a partir de alli asi
+    public String mostrarFormularioCliente(Model model) {
         model.addAttribute("cliente", new Clientes());
         return "registroCliente";
     }
 
-
+    // Guardar cliente en base de datos
     @PostMapping("/guardarCliente")
-    public String guardarCliente(@ModelAttribute Clientes cliente, Model model) {
+    public String guardarCliente(@ModelAttribute("cliente") Clientes cliente, Model model) {
+
+        // Solo guardar si no existe ya un cliente con ese ID
         if (clientesRepository.findClientesByIdCliente(cliente.getIdCliente()).isEmpty()) {
-            Clientes client = new Clientes();
-            client.setNombre(client.getNombre());
-            client.setApellidos(client.getApellidos ());
-            client.setNacimiento(client.getNacimiento());
-            client.setCorreo_electronico(client.getCorreo_electronico());
-            client.setTelefono(client.getTelefono());
-            client.setTipo_documento(client.getTipo_documento());
-            client.setNumero_identificacion(client.getNumero_identificacion());
-            client.setNumero_tarjeta_sanitaria(client.getNumero_tarjeta_sanitaria ());
-            client.setGenero(client.getGenero());
-            client.setDireccion(client.getDireccion());
-            client.setCiudad_id(client.getCiudad_id());
-            client.setCp_id(client.getCp_id());
-            clientesRepository.save(client);
-            return "redirect:/panelUsuario";
-        }else{
+
+            // Debug opcional: imprimir en consola los datos recibidos
+            System.out.println("Nombre recibido: " + cliente.getNombre());
+            System.out.println("Correo recibido: " + cliente.getCorreo_electronico());
+
+            clientesRepository.save(cliente);
+            return "redirect:/listaClientes";
+
+        } else {
             model.addAttribute("error", "El usuario ya existe, indique uno nuevo");
             return "registroCliente";
         }
     }
 
-    //mostrar listaClientes.html
+    // Mostrar lista de clientes
     @GetMapping("/listaClientes")
-    public String mostrarListaClientes(Model model){
+    public String mostrarListaClientes(Model model) {
         model.addAttribute("clientes", clientesRepository.findAll());
         return "listaClientes";
     }
+
+    // Guardar cliente desde lista (edición rápida)
     @PostMapping("/listaClientes")
-    public String leerCliente(@ModelAttribute Clientes clientesForm, Model model){
-        clientesRepository.save(clientesForm); //Lo guarda en la BBDD
+    public String leerCliente(@ModelAttribute Clientes clientesForm, Model model) {
+        clientesRepository.save(clientesForm);
         return "redirect:/listaClientes";
+    }
+
+
+    @GetMapping("/estadisticasUsuario")
+    public String mostrarEstadisticas() {
+        return "estadisticasUsuario"; // <-- nombre del archivo HTML en /templates
+    }
+    @GetMapping("/pedirCita")
+    public String mostrarCitas() {
+        return "pedirCita"; // <-- nombre del archivo HTML en /templates
+    }
+    @GetMapping("/recordatorios")
+    public String mostrarRecordatorios() {
+        return "recordatorios"; // <-- nombre del archivo HTML en /templates
+    }
+    @GetMapping("/historialMedico")
+    public String mostrarHistorial() {
+        return "historialMedico"; // <-- nombre del archivo HTML en /templates
+    }
+    @GetMapping("/registroTratamiento")
+    public String mostrarTratamientos() {
+        return "registroTratamiento"; // <-- nombre del archivo HTML en /templates
+    }
+    @GetMapping("/configUsuario")
+    public String mostrarConfiguracion() {
+        return "configUsuario"; // <-- nombre del archivo HTML en /templates
     }
 }

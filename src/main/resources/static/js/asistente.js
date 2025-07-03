@@ -8,7 +8,6 @@ async function handleKey(event) {
     input.value = ""; // Limpiar el input
 
     try {
-      // Reemplaza esta URL con tu webhook real
       const response = await fetch("https://primary-production-8eee.up.railway.app/webhook/asistente", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,10 +28,10 @@ async function handleKey(event) {
   }
 }
 
+
 function appendMessage(sender, text) {
   const messagesContainer = document.getElementById("chat-messages");
-  const messageElement = document.createElement("p");
+  const messageElement = document.createElement("div");
   messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
   messagesContainer.appendChild(messageElement);
-  messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll automático
 }

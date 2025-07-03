@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,6 @@
     <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
     <meta name="description" content="Panel de usuario con estadísticas, recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
     <link rel="stylesheet" href="./css/style2.css">
-    <script type="text/javascript" defer th:src="@{/static/js/panelUsuario.js}"></script>
-    <script type="text/javascript" defer th:src="@{/static/js/asistente.js}"></script>
 </head>
 <body>
     <section class="contenedor">
@@ -23,12 +21,13 @@
                     </div>
                     <nav class="nav_panelUser">
                         <ul>
-                            <li><a th:href="@{/pedirCita}">Citas Médicas</a></li>
-                            <li><a href="./estadisticasUsuario.html">Estadísticas</a></li>
-                            <li><a href="./recordatorios.html">Recordatorios</a></li>
-                            <li><a href="./historialMedico.html">Historial Médico</a></li>
-                            <li><a href="./registroTratamiento.html">Tratamientos</a></li>
-                            <li><a href="./configUsuario.html">Configuración</a></li>
+                            <li><a href="/pedirCita" title="Ver estadísticas de usuario">Solicitar Cita</a></li>
+                            <li><a href="/estadisticasUsuario" title="Ver estadísticas de usuario">Estadísticas</a></li>
+                            <li><a href="/recordatorios" title="Ver recordatorios">Recordatorios</a></li>
+                            <li><a href="/historialMedico" title="Ver historial médico">Historial Médico</a></li>
+                            <li><a href="/registroTratamiento" title="Ver tratamientos">Tratamientos</a></li>
+                            <li><a href="/configUsuario" title="Configuración de usuario">Configuración</a></li>
+
                         </ul>
                     </nav>
                 </section>
@@ -50,16 +49,11 @@
                     <div id="chat-body">
                         <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
                         <div id="chat-messages"></div>
-                        <input type="text" id="chat-input" placeholder="Escribe un mensaje..." onkeypress="handleKey(event)">
+                        <input type="text" id="chat-input" placeholder="Escribe tu mensaje aquí..." />
                     </div>
                 </div>
 
-                <script>
-                function toggleChat() {
-                const chatBox = document.getElementById("chat-box");
-                chatBox.classList.toggle("open");
-                }
-                </script>
+                
             </section>
             <section class="section_main" sec:authorize="hasRole('Admin')">
                 <div>
@@ -89,8 +83,14 @@
                 </section>
             </section>
         </main>
-
         <div th:replace="fragments/footer :: footer"></div>
     </section>
+    <script>
+        function toggleChat() {
+            const chatBox = document.getElementById("chat-box");
+            chatBox.classList.toggle("open");
+        }
+    </script>
+    <script src="/js/panelUsuario.js" defer></script>
 </body>
 </html>
