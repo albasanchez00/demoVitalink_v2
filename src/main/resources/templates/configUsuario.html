@@ -1,16 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración Paciente</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/style2.css">
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
     <section class="contenedor">
         <div th:replace="fragments/header :: header"></div>
-
 
         <main id="main_configuracionUsuario">
             <section class="config-usuario-container">
@@ -69,12 +68,9 @@
             </section>
         </main>
 
-
         <div th:replace="fragments/footer :: footer"></div>
-
     </section>
     <script src="/js/configUsuario.js"></script>
     <script src="/js/evolucionUsuario.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
