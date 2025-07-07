@@ -18,15 +18,12 @@ public class UsuariosController {
     @Autowired
     private PasswordEncoder encoder;
 
-
-
     @GetMapping("/registroUsuario")
     public String mostrarFormulario(Model model){
         //Le enviamos un objeto tipo Cliente para que lo reciba ek formulafio, y a partir de alli asi
         model.addAttribute("usuario", new Usuarios());
         return "registroUsuario";
     }
-
 
     @PostMapping("/guardarUsuario")
     public String guardarUsuario(@ModelAttribute Usuarios usuario,Model model) {
@@ -54,6 +51,10 @@ public class UsuariosController {
         return "redirect:/panelUsuario";
     }
 
+    @GetMapping("/agendaCitas")
+    public String mostrarAgenda(){
+        return "agendaCitas";
+    }
     //mostrar listaUsuarios.html
     @GetMapping("/listaUsuarios")
     public String mostrarListaUsuarios(Model model){
@@ -69,8 +70,4 @@ public class UsuariosController {
     public String logout(){
         return "redirect:/inicioSesion";
     }
-
-
-
-
 }
