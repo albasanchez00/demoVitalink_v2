@@ -25,9 +25,9 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST,"/guardarUsuario").permitAll()
                 .requestMatchers(HttpMethod.GET,"/listaUsuario/{id}").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasAnyRole("Admin","User")
 
-                //Formulario de Gestión de Clientes: solo rol 'admin'
+                //Formulario de Gestión de Clientes: solo rol 'User'
                 .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/guardarCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/listaCliente/{id}").hasRole("Admin")

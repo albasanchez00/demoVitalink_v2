@@ -17,13 +17,13 @@
         <main id="main-calendar">
             <section id="formulario">
                 <h2>Reservar Nueva Cita</h2>
-                <form id="form-cita">
+                <form id="form-cita" th:action="@{/guardarCitas}" method="POST" th:object="${citas}">
                     <label for="paciente">Nombre del Paciente:</label>
                     <input type="text" id="paciente" required>
-    
+
                     <label for="fecha">Fecha y Hora:</label>
                     <input type="datetime-local" id="fecha" required>
-    
+
                     <label for="tipo">Tipo de Atención Médica:</label>
                     <select id="tipo" required>
                         <optgroup label="Citas Médicas">
@@ -38,11 +38,7 @@
                     <button type="submit" id="btn-citas">Reservar Cita</button>
                 </form>
             </section>
-    
-            <section id="calendario">
-                <h2>Calendario de Citas</h2>
-                <div id="calendar"></div>
-            </section>
+
         </main>
 
         <div th:replace="fragments/footer :: footer"></div>
