@@ -61,10 +61,6 @@ public class ClientesController {
     public String mostrarEstadisticas() {
         return "estadisticasUsuario"; // <-- nombre del archivo HTML en /templates
     }
-    @GetMapping("/pedirCita")
-    public String mostrarCitas() {
-        return "pedirCita"; // <-- nombre del archivo HTML en /templates
-    }
     @GetMapping("/recordatorios")
     public String mostrarRecordatorios() {
         return "recordatorios"; // <-- nombre del archivo HTML en /templates

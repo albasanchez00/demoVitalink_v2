@@ -28,7 +28,6 @@ public class UsuariosDetails implements UserDetails {
     //Metodo que devuelve el username del usuario
     @Override
     public String getUsername() {
-        System.out.println(usuario.toString());
         return usuario.getUsername();
     }
     //Metodos que indican si el usuario esta habilitado o no

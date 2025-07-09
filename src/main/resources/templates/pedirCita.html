@@ -6,9 +6,7 @@
     <title>Gestión de Citas</title>
     <link rel="stylesheet" href="./css/style2.css">
     <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="../static/js/calendario.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js'></script>
 </head>
 <body>
     <section class="contenedor">
@@ -19,29 +17,35 @@
                 <h2>Reservar Nueva Cita</h2>
                 <form id="form-cita" th:action="@{/guardarCitas}" method="POST" th:object="${citas}">
                     <label for="paciente">Nombre del Paciente:</label>
-                    <input type="text" id="paciente" required>
+                    <input type="text" id="paciente" name="paciente" th:field="*{paciente}" required>
 
-                    <label for="fecha">Fecha y Hora:</label>
-                    <input type="datetime-local" id="fecha" required>
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" id="fecha" name="fecha" th:field="*{fecha}" required>
+
+                    <label for="hora">Hora:</label>
+                    <input type="time" id="hora" name="hora" th:field="*{hora}" required>
 
                     <label for="tipo">Tipo de Atención Médica:</label>
-                    <select id="tipo" required>
+                    <select id="tipo" name="tipo" th:field="*{tipo}" required>
                         <optgroup label="Citas Médicas">
-                            <option value="medica_presencial">Cita Presencial</option>
-                            <option value="medica_teleconsulta">Teleconsulta</option>
+                            <option value="Cita Médica Presencial">Cita Presencial</option>
+                            <option value="Teleconsulta Médica">Teleconsulta</option>
                         </optgroup>
                         <optgroup label="Citas Enfermería">
-                            <option value="enfermeria_presencial">Cita Presencial</option>
-                            <option value="enfermeria_teleconsulta">Teleconsulta</option>
+                            <option value="Cita Enfermería Presencial">Cita Presencial</option>
+                            <option value="Teleconsulta Enfermería">Teleconsulta</option>
                         </optgroup>
                     </select>
                     <button type="submit" id="btn-citas">Reservar Cita</button>
                 </form>
             </section>
-
+            <section id="calendario">
+                <div id='calendar'></div>
+            </section>
         </main>
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>
+    <script src="/js/calendario.js" defer></script>
 </body>
 </html>

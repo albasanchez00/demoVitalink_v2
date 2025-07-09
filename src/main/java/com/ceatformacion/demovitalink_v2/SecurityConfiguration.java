@@ -31,6 +31,8 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/guardarCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/listaCliente/{id}").hasRole("Admin")
+                .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("User")
+                .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("User")
                 //Cualquier otra ruta necesita autentificación.
                 .anyRequest().authenticated()
         ).formLogin(form->form.loginPage("/inicioSesion")
