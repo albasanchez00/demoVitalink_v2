@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
             url: '/api/citas',
             method: 'GET',
             extraParams: {
-                username: username // <--- Cambia esto si vas a pasarlo dinámicamente
+                usuarioId: usuarioId // <--- Cambia esto si vas a pasarlo dinámicamente
             },
             failure: function () {
                 alert('Error al cargar las citas');

@@ -72,7 +72,7 @@ public class CitasController {
 
     private Map<String, Object> convertirCitaAMap(Citas cita) {
         Map<String, Object> citaMap = new HashMap<>();
-        citaMap.put("title", cita.getTipo() + " - " + cita.getPaciente());
+        citaMap.put("title", cita.getDescripcion() + " - " + cita.getTitulo());
         String start = cita.getFecha().toString() + "T" + cita.getHora().toString();
         citaMap.put("start", start);
         System.out.println(start);

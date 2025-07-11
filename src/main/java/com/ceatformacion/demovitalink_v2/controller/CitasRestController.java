@@ -27,7 +27,7 @@ public class CitasRestController {
 
         return citas.stream().map(c -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("title", c.getTipo() + " - " + c.getPaciente());
+            map.put("title", c.getDescripcion() + " - " + c.getTitulo());
             String start = c.getFecha().toString() + "T" + c.getHora().toString();
             map.put("start",start); // formato ISO 8601 para calendarios
             String end = c.getFecha().toString() + "T" + (c.getHora().plusHours(1)).toString();

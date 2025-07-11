@@ -9,10 +9,10 @@ public class Citas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id_cita;
-    private String paciente;
+    private String titulo;
     private LocalDate fecha; // Solo fecha
     private LocalTime hora;  // Solo hora
-    private String tipo;
+    private String descripcion;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
@@ -26,12 +26,12 @@ public class Citas {
         this.id_cita = id_cita;
     }
 
-    public String getPaciente() {
-        return paciente;
+    public String getTitulo() {
+        return titulo;
     }
 
-    public void setPaciente(String paciente) {
-        this.paciente = paciente;
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
     public LocalDate getFecha() {
@@ -50,13 +50,8 @@ public class Citas {
         this.hora = hora;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public String getDescripcion() {return descripcion;}
+    public void setDescripcion(String descripcion) {this.descripcion = descripcion;}
 
     public Usuarios getUsuario() {
         return usuario;
@@ -70,10 +65,10 @@ public class Citas {
     public String toString() {
         return "Citas{" +
                 "\nId Cita → " + id_cita +
-                "\nPaciente → " + paciente +
+                "\nPaciente → " + titulo +
                 "\nFecha → " + fecha +
                 "\nHora → " + hora +
-                "\nTipo → " + tipo +
+                "\nTipo → " + descripcion +
                 "\nUsuario → " + usuario +
                 "\n}";
     }

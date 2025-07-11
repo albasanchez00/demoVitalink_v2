@@ -17,7 +17,7 @@
                 <h2>Reservar Nueva Cita</h2>
                 <form id="form-cita" th:action="@{/guardarCitas}" method="POST" th:object="${citas}">
                     <label for="paciente">Nombre del Paciente:</label>
-                    <input type="text" id="paciente" name="paciente" th:field="*{paciente}" required>
+                    <input type="text" id="paciente" name="paciente" th:field="*{titulo}" required>
 
                     <label for="fecha">Fecha:</label>
                     <input type="date" id="fecha" name="fecha" th:field="*{fecha}" required>
@@ -26,7 +26,7 @@
                     <input type="time" id="hora" name="hora" th:field="*{hora}" required>
 
                     <label for="tipo">Tipo de Atención Médica:</label>
-                    <select id="tipo" name="tipo" th:field="*{tipo}" required>
+                    <select id="tipo" name="tipo" th:field="*{descripcion}" required>
                         <optgroup label="Citas Médicas">
                             <option value="Cita Médica Presencial">Cita Presencial</option>
                             <option value="Teleconsulta Médica">Teleconsulta</option>
@@ -38,6 +38,10 @@
                     </select>
                     <button type="submit" id="btn-citas">Reservar Cita</button>
                 </form>
+                <div id="acciones-cita" style="display: none; margin-top: 20px;">
+                    <h3>✅ ¡Cita registrada! Añádela a tu Google Calendar:</h3>
+                    <a id="btn-google" class="btn" target="_blank">🗓️ Añadir a Google Calendar</a>
+                </div>
             </section>
             <section id="calendario">
                 <div id='calendar'></div>
@@ -46,6 +50,9 @@
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>
+    <script th:inline="javascript">
+        const usuarioId = [[$,{id_usuario}]];
+    </script>
     <script src="/js/calendario.js" defer></script>
 </body>
 </html>
