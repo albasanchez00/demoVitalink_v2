@@ -12,69 +12,67 @@
     <section class="contenedor">
         <div th:replace="fragments/header :: header"></div>
 
-<!--        <main id="main-tratamientos">-->
-<!--            <section class="section-tratamientos">-->
-<!--              <h2>Nuevo Tratamiento</h2>-->
-<!--              <form id="formulario-tratamientos" th:action="@{'/tratamiento/'    + ${usuarios.getId()}}" method="get" th:object="${nuevaVisita}">-->
-<!--              <input type="hidden" th:field="*{id}" />-->
+        <main id="main-tratamientos">
+            <section class="section-tratamientos">
+              <h2>Nuevo Tratamiento</h2>
+              <form id="formulario-tratamientos" th:action="@{guardarTratamiento}" method="get" th:object="${nuevaVisita}">
+                <label for="nombre_tratamiento">Nombre del tratamiento:</label>
+                <input type="text" id="nombre_tratamiento" required>
 
-<!--                <label for="nombre_tratamiento">Nombre del tratamiento:</label>-->
-<!--                <input type="text" id="nombre_tratamiento" th:field="*{nombreTratamiento}" required>-->
+                <label for="nombre_tratamiento">Nombre del tratamiento:</label>
+                <input type="text" id="nombre_medicamento" required>
 
-<!--                <label for="nombre_tratamiento">Nombre del tratamiento:</label>-->
-<!--                <input type="text" id="nombre_medicamento" th:field="*{nombreMedicacion}" required>-->
+                <label for="forma_farmaceutica">Forma farmacéutica:</label>
+                <select id="forma_farmaceutica">
+                  <option value=""></option>
+                  <option value="tableta">Tableta</option>
+                  <option value="jarabe">Jarabe</option>
+                  <option value="inyectable">Inyectable</option>
+                </select>
 
-<!--                <label for="forma_farmaceutica">Forma farmacéutica:</label>-->
-<!--                <select id="forma_farmaceutica" th:field="*{formaToma}">-->
-<!--                  <option value=""></option>-->
-<!--                  <option value="tableta">Tableta</option>-->
-<!--                  <option value="jarabe">Jarabe</option>-->
-<!--                  <option value="inyectable">Inyectable</option>-->
-<!--                </select>-->
-<!--        -->
-<!--                <label for="dosis">Dosis (ej. 500mg):</label>-->
-<!--                <input type="text" id="dosis" th:field="*{dosis}" required>-->
-<!--        -->
-<!--                <label for="frecuencia">Frecuencia:</label>-->
-<!--                <input type="text" id="frecuencia" th:field="*{frecuencia}" placeholder="ej. Cada 8h, 1 vez al día">-->
-<!--        -->
-<!--                <label for="hora1">Horas de toma:</label>-->
-<!--                <input type="time" id="hora1" th:field="*{}">-->
-<!--                <input type="time" id="hora2" th:field="*{}">-->
-<!--                <input type="time" id="hora3" th:field="*{}">-->
-<!--        -->
-<!--                <label for="duracion">Duración (días):</label>-->
-<!--                <input type="number" id="duracion" th:field="*{duracionToma}" min="1" required>-->
-<!--        -->
-<!--                <label for="inicio">Fecha de inicio:</label>-->
-<!--                <input type="date" id="inicio" th:field="*{fechaInicio}" required>-->
+                <label for="dosis">Dosis (ej. 500mg):</label>
+                <input type="text" id="dosis" required>
 
-<!--                  <label for="fin">Fecha de fin:</label>-->
-<!--                <input type="date" id="fin" th:field="*{fechaFin}" required>-->
-<!--        -->
-<!--                <label class="lb-checkbox"><input type="checkbox" th:field="*{tomaAlimento}" id="con_alimentos"> Tomar con alimentos</label>-->
-<!--        -->
-<!--                <label for="observaciones">Observaciones:</label>-->
-<!--                <textarea id="observaciones" th:field="*{observaciones}"></textarea>-->
-<!--        -->
-<!--                <label for="estado">Estado:</label>-->
-<!--                <select id="estado" th:field="*{estadoTratamiento}">-->
-<!--                  <option value="activo">Activo</option>-->
-<!--                  <option value="finalizado">Finalizado</option>-->
-<!--                </select>-->
-<!--        -->
-<!--                <label for="relacion_sintomas">Síntomas o diagnóstico relacionado:</label>-->
-<!--                <input type="text" id="relacion_sintomas" th:field="*{relacionSintomas}" placeholder="ej. Presión alta, dolor de cabeza">-->
-<!--        -->
-<!--                <button type="submit">Guardar tratamiento</button>-->
-<!--              </form>-->
+                <label for="frecuencia">Frecuencia:</label>
+                <input type="text" id="frecuencia" placeholder="ej. Cada 8h, 1 vez al día">
 
-<!--              <section class="tratamiento-Registrado">-->
-<!--                <h2 class="text_center">Tratamientos Registrados</h2>-->
-<!--                <ul id="tratamientos-activos" th:field="*{registroTratamiento}"></ul>-->
-<!--              </section>-->
-<!--            </section>-->
-<!--          </main>-->
+                <label for="hora1">Horas de toma:</label>
+                <input type="time" id="hora1">
+                <input type="time" id="hora2">
+                <input type="time" id="hora3">
+
+                <label for="duracion">Duración (días):</label>
+                <input type="number" id="duracion" min="1" required>
+
+                <label for="inicio">Fecha de inicio:</label>
+                <input type="date" id="inicio" required>
+
+                  <label for="fin">Fecha de fin:</label>
+                <input type="date" id="fin"  required>
+
+                <label class="lb-checkbox"><input type="checkbox" id="con_alimentos"> Tomar con alimentos</label>
+
+                <label for="observaciones">Observaciones:</label>
+                <textarea id="observaciones"></textarea>
+
+                <label for="estado">Estado:</label>
+                <select id="estado">
+                  <option value="activo">Activo</option>
+                  <option value="finalizado">Finalizado</option>
+                </select>
+
+                <label for="relacion_sintomas">Síntomas o diagnóstico relacionado:</label>
+                <input type="text" id="relacion_sintomas" placeholder="ej. Presión alta, dolor de cabeza">
+
+                <button type="submit">Guardar tratamiento</button>
+              </form>
+
+              <section class="tratamiento-Registrado">
+                <h2 class="text_center">Tratamientos Registrados</h2>
+                <ul id="tratamientos-activos"></ul>
+              </section>
+            </section>
+          </main>
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>

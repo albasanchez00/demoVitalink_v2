@@ -6,7 +6,12 @@
     <title>Gestión de Citas</title>
     <link rel="stylesheet" href="./css/style2.css">
     <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js'></script>
+    <!-- CSS de FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+
+    <!-- JS de FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 </head>
 <body>
     <section class="contenedor">
@@ -38,10 +43,9 @@
                     </select>
                     <button type="submit" id="btn-citas">Reservar Cita</button>
                 </form>
-                <div id="acciones-cita" style="display: none; margin-top: 20px;">
-                    <h3>✅ ¡Cita registrada! Añádela a tu Google Calendar:</h3>
-                    <a id="btn-google" class="btn" target="_blank">🗓️ Añadir a Google Calendar</a>
-                </div>
+                <a href="https://calendar.google.com/calendar/render?..." target="_blank" class="btn-google-calendar gcal-btn">
+                    Agregar a Google Calendar
+                </a>
             </section>
             <section id="calendario">
                 <div id='calendar'></div>
@@ -50,9 +54,6 @@
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>
-    <script th:inline="javascript">
-        const usuarioId = [[$,{id_usuario}]];
-    </script>
     <script src="/js/calendario.js" defer></script>
 </body>
 </html>

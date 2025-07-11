@@ -1,24 +1,43 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
+    const calendarEl = document.getElementById('calendar');
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        locale: 'es', // opcional, para que se muestre en español
+        locale: 'es',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: {
-            url: '/api/citas',
-            method: 'GET',
-            extraParams: {
-                usuarioId: usuarioId // <--- Cambia esto si vas a pasarlo dinámicamente
-            },
-            failure: function () {
-                alert('Error al cargar las citas');
+        events: '/api/citas',
+        eventClick: function(info) {
+            const title = info.event.title;
+            const description = info.event.extendedProps.description || '';
+            const location = "Consultorio Médico"; // Cambia esto si tienes dirección real
+
+            const start = new Date(info.event.start);
+            const end = new Date(info.event.end);
+
+            // Formato requerido por Google Calendar: YYYYMMDDTHHmmssZ
+            const formatDate = (date) => {
+                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            };
+
+            const startFormatted = formatDate(start);
+            const endFormatted = formatDate(end);
+
+            const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+                `&text=${encodeURIComponent(title)}` +
+                `&dates=${startFormatted}/${endFormatted}` +
+                `&details=${encodeURIComponent(description)}` +
+                `&location=${encodeURIComponent(location)}`;
+
+            const confirmar = confirm(`📅 ${title}\n📝 ${description}\n\n¿Quieres agregar esta cita a tu Google Calendar?`);
+            if (confirmar) {
+                window.open(gcalUrl, '_blank');
             }
         }
     });
+
     calendar.render();
 });

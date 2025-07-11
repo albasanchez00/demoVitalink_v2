@@ -14,6 +14,9 @@ public class UsuariosDetails implements UserDetails {
     public UsuariosDetails(Usuarios usuario) {
         this.usuario = usuario;
     }
+    public Usuarios getUsuario() {
+        return this.usuario;
+    }
     //Metodo que devuelve los datos del usuario
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
