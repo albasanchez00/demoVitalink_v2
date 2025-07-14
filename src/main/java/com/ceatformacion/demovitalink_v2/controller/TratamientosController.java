@@ -41,7 +41,6 @@ public class TratamientosController {
             tratamiento.setUsuario(usuario.orElse(null));
             tratamientoService.guardar(tratamiento);
         }
-
         return "redirect:/tratamientos";
     }
 
