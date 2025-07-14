@@ -674,50 +674,60 @@ html, body {
     }
 
 }
-#tratamientos-activos {
-    list-style: none;
-    margin-top: 20px;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+.section_tabla_tratamientos {
+    max-width: 95%;
+    margin: auto;
+    padding: 2rem;
 }
-#tratamientos-activos li {
-    background: var(--color_blanco);
-    border-left: 6px solid var(--color_primario);
-    margin-bottom: 15px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.05);
+
+.section_tabla_tratamientos h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #222;
 }
-#tratamientos-activos li button {
-    background: transparent;
-    border: none;
-    color: var(--color_primario);
+
+.tabla-tratamientos {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.tabla-tratamientos th,
+.tabla-tratamientos td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabla-tratamientos th {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.tabla-tratamientos tr:hover {
+    background-color: #f2f2f2;
+}
+
+.btn-agregar {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
     font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
 }
-#tratamientos-activos li button:hover {
-    color: var(--color_secundario);
-    text-decoration: underline;
+
+.btn-agregar:hover {
+    background-color: #218838;
 }
-#tratamientos-activos .card {
-    margin-bottom: 20px;
-}
-/* Botón de eliminar estilo sistema */
-.btn-eliminar {
-    background-color: var(--color-primary-button);
-    color: var(--color_blanco);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
-}
-.btn-eliminar:hover {
-    background-color: var(--color-secundary-button);
-}
+
 /* FIN PÁGINA REGISTRO DE TRATAMIENTOS */
 
 

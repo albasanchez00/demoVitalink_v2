@@ -69,10 +69,6 @@ public class ClientesController {
     public String mostrarHistorial() {
         return "historialMedico"; // <-- nombre del archivo HTML en /templates
     }
-    @GetMapping("/registroTratamiento")
-    public String mostrarTratamientos() {
-        return "registroTratamiento"; // <-- nombre del archivo HTML en /templates
-    }
     @GetMapping("/configUsuario")
     public String mostrarConfiguracion() {
         return "configUsuario"; // <-- nombre del archivo HTML en /templates

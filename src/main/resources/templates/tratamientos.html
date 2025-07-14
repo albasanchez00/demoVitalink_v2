@@ -14,32 +14,24 @@
 
         <main id="main-tratamientos">
             <section class="section-tratamientos">
-              <h2>Nuevo Tratamiento</h2>
-              <form id="formulario-tratamientos" th:action="@{guardarTratamiento}" method="get" th:object="${nuevaVisita}">
+                <h2>Nuevo Tratamiento</h2>
+                <form id="formulario-tratamientos" th:action="@{/tratamientos/guardar}" method="post" th:object="${tratamiento}">
                 <label for="nombre_tratamiento">Nombre del tratamiento:</label>
-                <input type="text" id="nombre_tratamiento" required>
-
-                <label for="nombre_tratamiento">Nombre del tratamiento:</label>
-                <input type="text" id="nombre_medicamento" required>
+                <input type="text" id="nombre_tratamiento" th:field="*{nombre_tratamiento}" required>
 
                 <label for="forma_farmaceutica">Forma farmacéutica:</label>
-                <select id="forma_farmaceutica">
+                <select id="forma_farmaceutica" th:field="*{formula}">
                   <option value=""></option>
                   <option value="tableta">Tableta</option>
                   <option value="jarabe">Jarabe</option>
                   <option value="inyectable">Inyectable</option>
                 </select>
 
-                <label for="dosis">Dosis (ej. 500mg):</label>
-                <input type="text" id="dosis" required>
+                <label for="dosis">Dosis (ej. 500 mg):</label>
+                <input type="text" id="dosis" th:field="*{dosis}" required>
 
                 <label for="frecuencia">Frecuencia:</label>
-                <input type="text" id="frecuencia" placeholder="ej. Cada 8h, 1 vez al día">
-
-                <label for="hora1">Horas de toma:</label>
-                <input type="time" id="hora1">
-                <input type="time" id="hora2">
-                <input type="time" id="hora3">
+                <input type="text" id="frecuencia" th:field="*{frecuencia}" placeholder="ej. Cada 8h, 1 vez al día">
 
                 <label for="duracion">Duración (días):</label>
                 <input type="number" id="duracion" min="1" required>
@@ -66,11 +58,39 @@
 
                 <button type="submit">Guardar tratamiento</button>
               </form>
+            </section>
+            <section class="section_tabla_tratamientos">
+                <h2>💊 Tratamientos Registrados</h2>
 
-              <section class="tratamiento-Registrado">
-                <h2 class="text_center">Tratamientos Registrados</h2>
-                <ul id="tratamientos-activos"></ul>
-              </section>
+                <table class="tabla-tratamientos">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Formula</th>
+                        <th>Dosis</th>
+                        <th>Frecuencia</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Con alimentos</th>
+                        <th>Observaciones</th>
+                        <th>Estado</th>
+                        <th>Relacionados</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="tratamiento : ${tratamientos}">
+                        <td th:text="${tratamiento.id_tratamiento}"></td>
+                        <td th:text="${tratamiento.nombre_tratamiento}"></td>
+                        <td th:text="${tratamiento.formula}"></td>
+                        <td th:text="${tratamiento.fecha_inicio}"></td>
+                        <td th:text="${tratamiento.fecha_fin}"></td>
+                        <td th:text="${tratamiento.frecuencia}"></td>
+                        <td th:text="${tratamiento.observaciones}"></td>
+                        <td th:text="${tratamiento.dosis}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </section>
           </main>
 

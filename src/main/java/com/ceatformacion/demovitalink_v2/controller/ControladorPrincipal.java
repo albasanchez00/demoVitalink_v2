@@ -60,7 +60,7 @@ public class ControladorPrincipal {
 
     @GetMapping("/registroTratamiento")
     public String registroTratamientos() {
-        return "registroTratamiento";
+        return "tratamientos";
     }
 
 }
