@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface TratamientosRepository extends JpaRepository <Tratamientos, Integer>{
-    List<Tratamientos> findCitasByUsuario(Usuarios usuario);
+    List<Tratamientos> findTratamientosByUsuario(Usuarios usuario);
 }

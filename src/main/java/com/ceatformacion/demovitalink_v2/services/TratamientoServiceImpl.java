@@ -1,6 +1,7 @@
 package com.ceatformacion.demovitalink_v2.services;
 
 import com.ceatformacion.demovitalink_v2.model.Tratamientos;
+import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.TratamientosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,8 @@ public class TratamientoServiceImpl implements TratamientoService{
     private TratamientosRepository tratamientosRepository;
 
     @Override
-    public List<Tratamientos> listarTodos() {
-        return List.of();
+    public List<Tratamientos> obtenerTratamientosPorUsuario(Usuarios usuario) {
+        return tratamientosRepository.findTratamientosByUsuario(usuario);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class TratamientoServiceImpl implements TratamientoService{
 
     @Override
     public Tratamientos guardar(Tratamientos tratamientos) {
-        return null;
+        return tratamientosRepository.save(tratamientos);
     }
 
     @Override

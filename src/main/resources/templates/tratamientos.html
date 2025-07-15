@@ -15,7 +15,7 @@
         <main id="main-tratamientos">
             <section class="section-tratamientos">
                 <h2>Nuevo Tratamiento</h2>
-                <form id="formulario-tratamientos" th:action="@{/tratamientos/guardar}" method="post" th:object="${tratamiento}">
+                <form id="formulario-tratamientos" th:action="@{/guardarTratamiento}" method="post" th:object="${tratamiento}">
                 <label for="nombre_tratamiento">Nombre del medicamento:</label>
                 <input type="text" id="nombre_tratamiento" th:field="*{nombre_tratamiento}" required>
 
@@ -42,7 +42,7 @@
                   <label for="fin">Fecha de fin:</label>
                 <input type="date" id="fin" th:field="*{fecha_fin}" required>
 
-                <label class="lb-checkbox"><input type="checkbox" id="con_alimentos"> Tomar con alimentos</label>
+                <label class="lb-checkbox"><input type="checkbox" id="con_alimentos" th:field="*{toma_alimentos}"> Tomar con alimentos</label>
 
                 <label for="observaciones">Observaciones:</label>
                 <textarea id="observaciones" th:field="*{observaciones}"></textarea>
@@ -86,6 +86,7 @@
                         <td th:text="${tratamiento.fecha_inicio}"></td>
                         <td th:text="${tratamiento.fecha_fin}"></td>
                         <td th:text="${tratamiento.frecuencia}"></td>
+                        <td th:text="${tratamiento.toma_alimentos}"></td>
                         <td th:text="${tratamiento.observaciones}"></td>
                         <td th:text="${tratamiento.dosis}"></td>
                     </tr>

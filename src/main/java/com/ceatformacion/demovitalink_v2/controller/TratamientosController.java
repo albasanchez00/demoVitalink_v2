@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/tratamientos")
 public class TratamientosController {
     @Autowired
     private TratamientoService tratamientoService;
@@ -27,13 +27,23 @@ public class TratamientosController {
     @Autowired
     private UsuariosRepository usuariosRepository;
 
-    @GetMapping
+    @GetMapping("/tratamientos")
     public String mostrarFormularioTratamiento(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        Usuarios usuario = usuariosRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Tratamientos> tratamientos = tratamientoService.obtenerTratamientosPorUsuario(usuario);
+
         model.addAttribute("tratamiento", new Tratamientos());
-        return "tratamientos";
+        model.addAttribute("tratamientos", tratamientos);
+
+        return "tratamientos"; // este es el nombre del HTML
     }
 
-    @PostMapping("/guardar")
+    @PostMapping("/guardarTratamiento")
     public String guardarTratamiento(@ModelAttribute("tratamiento") Tratamientos tratamiento) {
         try {
             // Obtener usuario autenticado
@@ -53,5 +63,7 @@ public class TratamientosController {
             return "redirect:/tratamientos?error=" + e.getMessage();
         }
     }
+
+
 
 }
