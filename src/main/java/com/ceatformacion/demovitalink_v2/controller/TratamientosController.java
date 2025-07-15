@@ -5,7 +5,9 @@ import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.TratamientoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,29 +23,35 @@ import java.util.Optional;
 public class TratamientosController {
     @Autowired
     private TratamientoService tratamientoService;
+
     @Autowired
     private UsuariosRepository usuariosRepository;
 
     @GetMapping
-    public String mostrarFormularioConLista(Model model) {
+    public String mostrarFormularioTratamiento(Model model) {
         model.addAttribute("tratamiento", new Tratamientos());
-        model.addAttribute("tratamientos", tratamientoService.listarTodos());
-        return "tratamientos"; // Vista HTML unificada
+        return "tratamientos";
     }
 
     @PostMapping("/guardar")
-    public String guardarTratamiento(@ModelAttribute Tratamientos tratamiento,
-                                     @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        Optional<Usuarios> usuario = usuariosRepository.findByUsername(username);
+    public String guardarTratamiento(@ModelAttribute("tratamiento") Tratamientos tratamiento) {
+        try {
+            // Obtener usuario autenticado
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
 
-        if (usuario.isPresent()) {
-            tratamiento.setUsuario(usuario.orElse(null));
+            Usuarios usuario = usuariosRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Asignar usuario al tratamiento
+            tratamiento.setUsuario(usuario);
+
             tratamientoService.guardar(tratamiento);
-        }
-        return "redirect:/tratamientos";
-    }
 
-    //Mostrar tratamientos
+            return "redirect:/tratamientos?success=true";
+        } catch (Exception e) {
+            return "redirect:/tratamientos?error=" + e.getMessage();
+        }
+    }
 
 }

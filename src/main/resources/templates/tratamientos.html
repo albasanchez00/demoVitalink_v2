@@ -16,7 +16,7 @@
             <section class="section-tratamientos">
                 <h2>Nuevo Tratamiento</h2>
                 <form id="formulario-tratamientos" th:action="@{/tratamientos/guardar}" method="post" th:object="${tratamiento}">
-                <label for="nombre_tratamiento">Nombre del tratamiento:</label>
+                <label for="nombre_tratamiento">Nombre del medicamento:</label>
                 <input type="text" id="nombre_tratamiento" th:field="*{nombre_tratamiento}" required>
 
                 <label for="forma_farmaceutica">Forma farmacéutica:</label>
@@ -34,27 +34,27 @@
                 <input type="text" id="frecuencia" th:field="*{frecuencia}" placeholder="ej. Cada 8h, 1 vez al día">
 
                 <label for="duracion">Duración (días):</label>
-                <input type="number" id="duracion" min="1" required>
+                <input type="number" id="duracion" th:field="*{duracion}" min="1" required>
 
                 <label for="inicio">Fecha de inicio:</label>
-                <input type="date" id="inicio" required>
+                <input type="date" id="inicio" th:field="*{fecha_inicio}" required>
 
                   <label for="fin">Fecha de fin:</label>
-                <input type="date" id="fin"  required>
+                <input type="date" id="fin" th:field="*{fecha_fin}" required>
 
                 <label class="lb-checkbox"><input type="checkbox" id="con_alimentos"> Tomar con alimentos</label>
 
                 <label for="observaciones">Observaciones:</label>
-                <textarea id="observaciones"></textarea>
+                <textarea id="observaciones" th:field="*{observaciones}"></textarea>
 
                 <label for="estado">Estado:</label>
-                <select id="estado">
+                <select id="estado" th:field="*{estado_tratamiento}">
                   <option value="activo">Activo</option>
                   <option value="finalizado">Finalizado</option>
                 </select>
 
                 <label for="relacion_sintomas">Síntomas o diagnóstico relacionado:</label>
-                <input type="text" id="relacion_sintomas" placeholder="ej. Presión alta, dolor de cabeza">
+                <input type="text" id="relacion_sintomas" th:field="*{sintomas}" placeholder="ej. Presión alta, dolor de cabeza">
 
                 <button type="submit">Guardar tratamiento</button>
               </form>
