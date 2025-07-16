@@ -35,12 +35,12 @@ ul{
 }
 
 :root{
-    --altura_header:10vh;
     --color_fondo: #1B3A57;
     --color_primario: #008d95;
     --color_secundario: #006380;
-    --color_blanco: white;
     --fondo-body: #f9f9f9;
+    --altura_header:10vh;
+    --color_blanco: white;
     --altura_footer:10vh;
     --color-primary-button:#006380;
     --color-secundary-button:#008d95;
@@ -52,6 +52,118 @@ html, body {
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+    --color_fondo: #1B3A57;
+    --color_primario: #008d95;
+    --color_secundario: #006380;
+    --color_blanco: #ffffff;
+    --fondo-body: #f9f9f9;
+}
+
+body.dark-theme {
+    --color_fondo: #121212;
+    --color_primario: #90caf9;
+    --color_secundario: #42a5f5;
+    --color_blanco: #e0e0e0;
+    --fondo-body: #1e1e1e;
+    background-color: var(--fondo-body);
+    color: var(--color_blanco);
+}
+
+/* Ajusta fondo y texto en contenedores principales */
+body.dark-theme #main_panelUser,
+body.dark-theme #main-calendar,
+body.dark-theme #main-asistente,
+body.dark-theme #main-tratamientos,
+body.dark-theme #main_configuracionUsuario,
+body.dark-theme #main-panelEvolucion,
+body.dark-theme #panel-historialMedico {
+    background-color: var(--fondo-body);
+    color: var(--color_blanco);
+}
+
+/* Fondos oscuros para formularios, tarjetas y paneles */
+body.dark-theme .card,
+body.dark-theme .card-evolucion,
+body.dark-theme .config-usuario-formulario,
+body.dark-theme .config-usuario-menu,
+body.dark-theme .section_tabla_tratamientos,
+body.dark-theme .tarjeta-cita,
+body.dark-theme .tarjeta-resumen,
+body.dark-theme #formulario,
+body.dark-theme #formulario-tratamientos,
+body.dark-theme #form-sintomas,
+body.dark-theme #registros,
+body.dark-theme #graficos,
+body.dark-theme #filtros,
+body.dark-theme .modal-contenido,
+body.dark-theme .registro,
+body.dark-theme .historial-container,
+body.dark-theme #chat-box,
+body.dark-theme #chat-box2 {
+    background-color: #2c2c2c;
+    color: var(--color_blanco);
+}
+
+/* Tablas, bordes y celdas */
+body.dark-theme table,
+body.dark-theme th,
+body.dark-theme td,
+body.dark-theme .tabla-tratamientos,
+body.dark-theme .tabla-tratamientos th,
+body.dark-theme .tabla-tratamientos td {
+    background-color: #2c2c2c;
+    color: var(--color_blanco);
+    border-color: #444;
+}
+
+/* Hover en filas de tablas */
+body.dark-theme .tabla-tratamientos tbody tr:hover {
+    background-color: #3a3a3a;
+}
+
+/* Botones secundarios */
+body.dark-theme .btn-config,
+body.dark-theme .btn-ver-mas,
+body.dark-theme .btn-guardar-config,
+body.dark-theme .btn-cancelar,
+body.dark-theme .btn-detalles {
+    background-color: var(--color_secundario);
+    color: var(--color_blanco);
+}
+
+body.dark-theme .btn-config:hover,
+body.dark-theme .btn-ver-mas:hover,
+body.dark-theme .btn-guardar-config:hover {
+    background-color: var(--color_primario);
+}
+
+/* Colores en enlaces */
+body.dark-theme a {
+    color: var(--color_blanco);
+}
+
+body.dark-theme a:hover {
+    color: var(--color_secundario);
+}
+
+/* Footer oscuro */
+body.dark-theme footer {
+    background-color: #0d0d0d;
+    color: var(--color_blanco);
+}
+body.dark-theme label, body.dark-theme input::placeholder{
+    color: var(--color_blanco);
+}
+
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
 }
 
 
@@ -689,27 +801,72 @@ html, body {
 
 .tabla-tratamientos {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 0.95rem;
+    table-layout: fixed;
 }
 
 .tabla-tratamientos th,
 .tabla-tratamientos td {
-    padding: 0.75rem;
+    padding: 14px 10px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e6e6e6;
+    word-wrap: break-word;
 }
 
 .tabla-tratamientos th {
-    background-color: #007BFF;
-    color: #fff;
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.tabla-tratamientos tr:hover {
-    background-color: #f2f2f2;
+.tabla-tratamientos tbody tr:hover {
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.tabla-tratamientos td.estado-activo {
+    background-color: #e0f7e9;
+    color: #2e7d32;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.tabla-tratamientos td.estado-finalizado {
+    background-color: #fff3cd;
+    color: #856404;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.tabla-tratamientos td.estado-cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Responsive para móviles */
+@media screen and (max-width: 768px) {
+    .tabla-tratamientos {
+        font-size: 0.85rem;
+    }
+
+    .section_tabla_tratamientos {
+        padding: 1rem;
+    }
+
+    .tabla-tratamientos th,
+    .tabla-tratamientos td {
+        padding: 10px 6px;
+    }
 }
 
 .btn-agregar {
