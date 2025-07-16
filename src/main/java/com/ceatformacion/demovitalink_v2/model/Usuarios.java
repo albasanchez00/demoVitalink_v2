@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jdk.jfr.Enabled;
 
+import java.util.List;
+
 @Entity
 public class Usuarios {
     @Id
@@ -14,7 +16,6 @@ public class Usuarios {
     private String username;
     private String password;
     private String rol;
-
     public int getId_usuario() {return id_usuario;}
     public void setId_usuario(int id_usuario) {this.id_usuario = id_usuario;}
 

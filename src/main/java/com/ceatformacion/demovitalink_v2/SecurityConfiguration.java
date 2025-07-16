@@ -34,7 +34,6 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("User")
                 .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("User")
                 .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasRole("User")
-                .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasRole("User")
                 //Cualquier otra ruta necesita autentificación.
                 .anyRequest().authenticated()
         ).formLogin(form->form.loginPage("/inicioSesion")

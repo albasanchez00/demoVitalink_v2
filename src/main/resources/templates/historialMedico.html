@@ -1,66 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histoal de Usuario</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <meta name="description" content="Panel de usuario con estadísticas, recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
-    <link rel="stylesheet" href="./css/style2.css">
-    <script src="../static/js/panelUsuario.js"></script>
-    <script src="../static/js/asistente.js"></script>
-    <script src="/js/darkTheme.js" defer></script>
+    <title>Historial Médico</title>
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
 </head>
 <body>
-    <section class="contenedor">
-        <div th:replace="fragments/header :: header"></div>
-        
-        <main id="panel-historialMedico">
-            <div class="historial-movil">
-                <div class="registro">
-                  <p><strong>Fecha:</strong> 2025-03-15</p>
-                  <p><strong>Motivo:</strong> Dolor abdominal</p>
-                  <p><strong>Diagnóstico:</strong> Gastritis aguda</p>
-                  <p><strong>Tratamiento:</strong> Omeprazol 20mg/día</p>
-                  <p><strong>Notas:</strong> Revisar en 2 semanas</p>
-                </div>
-                <!-- Puedes repetir más registros aquí -->
-              </div>
-              
-            <article class="historial-container">
-    
-                <div class="filtro">
-                    <label for="fecha">Filtrar por fecha:</label>
-                    <input type="date" id="fecha" name="fecha">
-                    <button onclick="filtrarHistorial()">Filtrar</button>
-                </div>
-    
-                <table class="historial-tabla">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Motivo / Consulta</th>
-                            <th>Diagnóstico</th>
-                            <th>Tratamiento</th>
-                            <th>Notas del Profesional</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historial-body">
-                        <tr>
-                            <td>2025-03-15</td>
-                            <td>Dolor abdominal</td>
-                            <td>Gastritis aguda</td>
-                            <td>Omeprazol 20mg/día</td>
-                            <td>Revisar en 2 semanas</td>
-                        </tr>
-                        <!-- Más registros aquí -->
-                    </tbody>
-                </table>
-    
-            </article>
-        </main>
+<section class="contenedor">
+    <div th:replace="~{fragments/header :: header}"></div>
 
-        <div th:replace="fragments/footer :: footer"></div>
-    </section>
+    <main id="panel-historialMedico">
+        <h2>Historial Médico de <span th:text="${usuario.nombre} + ' ' + ${usuario.apellidos}"></span></h2>
+        <section>
+            <form th:action="@{/guardarHistorial}" method="post" th:object="${historial}">
+                <input type="date" name="fecha" required>
+
+                <select name="tipoEvento" required>
+                    <option value="CONSULTA">Consulta</option>
+                    <option value="TRATAMIENTO">Tratamiento</option>
+                    <option value="ANALISIS">Análisis</option>
+                    <option value="SEGUIMIENTO">Seguimiento</option>
+                    <option value="OTRO">Otro</option>
+                </select>
+
+                <input type="text" name="motivo" placeholder="Motivo">
+                <input type="text" name="diagnostico" placeholder="Diagnóstico">
+                <input type="text" name="tratamiento" placeholder="Tratamiento">
+                <textarea name="notas" placeholder="Notas del profesional"></textarea>
+
+                <button type="submit">Guardar</button>
+            </form>
+
+        </section>
+        <article class="historial-container">
+            <div class="filtro">
+                <label for="fecha">Filtrar por fecha:</label>
+                <input type="date" id="fecha">
+                <button onclick="filtrarHistorial()">Filtrar</button>
+                <button onclick="limpiarFiltro()">Quitar filtro</button>
+            </div>
+
+            <table class="historial-tabla">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Motivo</th>
+                    <th>Diagnóstico</th>
+                    <th>Tratamiento</th>
+                    <th>Notas</th>
+                    <th>Archivo</th>
+                </tr>
+                </thead>
+                <tbody id="historial-body">
+                <tr th:each="registro : ${historial}">
+                    <td th:text="${registro.fecha}"></td>
+                    <td th:text="${registro.tipoEvento}"></td>
+                    <td th:text="${registro.motivo}"></td>
+                    <td th:text="${registro.diagnostico}"></td>
+                    <td th:text="${registro.tratamiento}"></td>
+                    <td th:text="${registro.notas}"></td>
+                    <td>
+                        <a th:if="${registro.archivoUrl != null}"
+                           th:href="@{${registro.archivoUrl}}" target="_blank">📄 Ver</a>
+                        <span th:if="${registro.archivoUrl == null}">–</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+
+<script th:src="@{/js/asistente.js}"></script>
+<script th:src="@{/js/darkTheme.js}"></script>
+<script th:src="@{/js/panelUsuario.js}"></script>
+<script th:src="@{/js/filtroHistorial.js}"></script>
 </body>
 </html>
