@@ -1,9 +1,6 @@
 package com.ceatformacion.demovitalink_v2.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jdk.jfr.Enabled;
 
 import java.util.List;
@@ -16,6 +13,18 @@ public class Usuarios {
     private String username;
     private String password;
     private String rol;
+    @OneToOne
+    @JoinColumn(name = "cliente_id")
+    private Clientes cliente;
+
+    public Clientes getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Clientes cliente) {
+        this.cliente = cliente;
+    }
+
     public int getId_usuario() {return id_usuario;}
     public void setId_usuario(int id_usuario) {this.id_usuario = id_usuario;}
 

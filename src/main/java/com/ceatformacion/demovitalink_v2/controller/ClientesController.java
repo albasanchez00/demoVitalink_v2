@@ -3,17 +3,31 @@ package com.ceatformacion.demovitalink_v2.controller;
 import com.ceatformacion.demovitalink_v2.model.Clientes;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.ClientesRepository;
+import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
+import com.ceatformacion.demovitalink_v2.services.EmailService;
+import com.ceatformacion.demovitalink_v2.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Optional;
+
 @Controller
 public class ClientesController {
     @Autowired
     private ClientesRepository clientesRepository;
+    @Autowired
+    private UsuariosRepository usuariosRepository;
+    @Autowired
+    EmailService emailService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // Mostrar formulario de registro de cliente
     @GetMapping("/registroCliente")
@@ -26,18 +40,34 @@ public class ClientesController {
     @PostMapping("/guardarCliente")
     public String guardarCliente(@ModelAttribute("cliente") Clientes cliente, Model model) {
 
-        // Solo guardar si no existe ya un cliente con ese ID
         if (clientesRepository.findClientesByIdCliente(cliente.getIdCliente()).isEmpty()) {
 
-            // Debug opcional: imprimir en consola los datos recibidos
-            System.out.println("Nombre recibido: " + cliente.getNombre());
-            System.out.println("Correo recibido: " + cliente.getCorreo_electronico());
+            // Guardar el cliente
+            Clientes clienteGuardado = clientesRepository.save(cliente);
 
-            clientesRepository.save(cliente);
+            // Generar contraseña aleatoria
+            String passwordPlano = PasswordGenerator.generar(10);
+
+            // Crear usuario asociado
+            Usuarios nuevoUsuario = new Usuarios();
+            nuevoUsuario.setUsername(cliente.getCorreo_electronico());
+            nuevoUsuario.setPassword(passwordEncoder.encode(passwordPlano));
+            nuevoUsuario.setRol("USER");
+            nuevoUsuario.setCliente(clienteGuardado);
+
+            usuariosRepository.save(nuevoUsuario);
+
+            // Enviar credenciales por correo
+            emailService.enviarCredenciales(
+                    cliente.getCorreo_electronico(),
+                    cliente.getNombre(),
+                    passwordPlano
+            );
+
             return "redirect:/listaClientes";
 
         } else {
-            model.addAttribute("error", "El usuario ya existe, indique uno nuevo");
+            model.addAttribute("error", "El cliente ya existe, indique uno nuevo");
             return "registroCliente";
         }
     }

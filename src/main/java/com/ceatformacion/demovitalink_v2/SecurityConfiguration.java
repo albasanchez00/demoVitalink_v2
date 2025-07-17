@@ -18,6 +18,9 @@ public class SecurityConfiguration {
         //Configurar las páginas que según el rol mostrará o negará
         http.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,"/","/index","/registroUsuario","/media/**","/css/**","/js/**").permitAll()
                 //Acceso al crud
+                .requestMatchers(HttpMethod.GET,"/serviciosCliente").permitAll()
+                .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
+                .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
                 .requestMatchers(HttpMethod.GET,"/panelUsuario").hasAnyRole("Admin","User")
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'

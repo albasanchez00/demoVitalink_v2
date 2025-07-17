@@ -24,9 +24,9 @@ public class Clientes {
     private String ciudad_id;
     private String cp_id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @OneToOne(mappedBy = "cliente")
     private Usuarios usuario;
+
 
     public int getIdCliente() {
         return idCliente;
