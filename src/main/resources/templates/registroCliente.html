@@ -8,6 +8,7 @@
     <script th:src="@{/js/script.js}" defer></script>
     <script th:src="@{/js/register.js}" defer></script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
     <section>
@@ -36,7 +37,7 @@
 
                         <p>
                             <label for="correo_electronico">Correo Electrónico:</label>
-                            <input type="email" th:field="*{correo_electronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correo_electronico" id="correo_electronico">
+                            <input type="email" th:field="*{correoElectronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correo_electronico" id="correo_electronico">
                         </p>
 
                         <p>

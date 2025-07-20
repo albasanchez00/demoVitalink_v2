@@ -615,12 +615,12 @@ body.dark-theme textarea {
 
 /* INICIO PAGINA REGISTRO SINTOMAS */
 .main_panelUser{
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-     min-width: 100%;
-     min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 100%;
+    min-height: 100%;
 }
 .section_Sintomas{
     display: flex;

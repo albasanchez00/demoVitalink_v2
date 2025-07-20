@@ -14,7 +14,8 @@ public class Clientes {
     private String apellidos;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate nacimiento;
-    private String correo_electronico;
+    @Column(name = "correo_electronico")
+    private String correoElectronico;
     private String telefono;
     private String tipo_documento;
     private String numero_identificacion;
@@ -24,7 +25,8 @@ public class Clientes {
     private String ciudad_id;
     private String cp_id;
 
-    @OneToOne(mappedBy = "cliente")
+    @OneToOne
+    @JoinColumn(name = "id_usuario")
     private Usuarios usuario;
 
 
@@ -60,12 +62,12 @@ public class Clientes {
         this.nacimiento = nacimiento;
     }
 
-    public String getCorreo_electronico() {
-        return correo_electronico;
+    public String getCorreoElectronico() {
+        return correoElectronico;
     }
 
-    public void setCorreo_electronico(String correo_electronico) {
-        this.correo_electronico = correo_electronico;
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
     }
 
     public String getTelefono() {
@@ -147,7 +149,7 @@ public class Clientes {
                 "\nNombre → " + nombre +
                 "\nApellidos → " + apellidos +
                 "\nNacimiento → " + nacimiento +
-                "\nCorreo electrónico → " + correo_electronico +
+                "\nCorreo electrónico → " + correoElectronico +
                 "\nTeléfono → " + telefono +
                 "\nTipoDocumento → " + tipo_documento +
                 "\nNúmero Identificación → " + numero_identificacion +

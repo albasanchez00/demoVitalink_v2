@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -29,63 +30,73 @@ public class ClientesController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Mostrar formulario de registro de cliente
+    // 1. Mostrar el formulario de registro
     @GetMapping("/registroCliente")
-    public String mostrarFormularioCliente(Model model) {
+    public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("cliente", new Clientes());
-        return "registroCliente";
+        return "registroCliente"; // <-- tu plantilla HTML
     }
 
-    // Guardar cliente en base de datos
+    // 2. Guardar cliente y crear usuario
     @PostMapping("/guardarCliente")
     public String guardarCliente(@ModelAttribute("cliente") Clientes cliente, Model model) {
+        // Verifica si ya existe ese correo electrónico en algún usuario
+        Optional<Usuarios> usuarioExistente = usuariosRepository.findByCliente_CorreoElectronico(cliente.getCorreoElectronico());
 
-        if (clientesRepository.findClientesByIdCliente(cliente.getIdCliente()).isEmpty()) {
-
-            // Guardar el cliente
-            Clientes clienteGuardado = clientesRepository.save(cliente);
-
-            // Generar contraseña aleatoria
-            String passwordPlano = PasswordGenerator.generar(10);
-
-            // Crear usuario asociado
-            Usuarios nuevoUsuario = new Usuarios();
-            nuevoUsuario.setUsername(cliente.getCorreo_electronico());
-            nuevoUsuario.setPassword(passwordEncoder.encode(passwordPlano));
-            nuevoUsuario.setRol("USER");
-            nuevoUsuario.setCliente(clienteGuardado);
-
-            usuariosRepository.save(nuevoUsuario);
-
-            // Enviar credenciales por correo
-            emailService.enviarCredenciales(
-                    cliente.getCorreo_electronico(),
-                    cliente.getNombre(),
-                    passwordPlano
-            );
-
-            return "redirect:/listaClientes";
-
-        } else {
-            model.addAttribute("error", "El cliente ya existe, indique uno nuevo");
+        if (usuarioExistente.isPresent()) {
+            model.addAttribute("error", "Ya existe un usuario con ese correo.");
             return "registroCliente";
         }
+
+        // Guarda cliente
+        Clientes clienteGuardado = clientesRepository.save(cliente);
+
+        // Crea usuario
+        String passwordPlano = PasswordGenerator.generar(10);
+        Usuarios nuevoUsuario = new Usuarios();
+        nuevoUsuario.setUsername(cliente.getCorreoElectronico());
+        nuevoUsuario.setPassword(passwordEncoder.encode(passwordPlano));
+        nuevoUsuario.setRol("USER");
+        nuevoUsuario.setCliente(clienteGuardado);
+
+        usuariosRepository.save(nuevoUsuario);
+
+        // Envía correo con credenciales
+        emailService.enviarCredenciales(
+                cliente.getCorreoElectronico(),
+                cliente.getNombre(),
+                passwordPlano
+        );
+
+        return "redirect:/registroCliente?success=true";
     }
 
-    // Mostrar lista de clientes
-    @GetMapping("/listaClientes")
+    // 3. Lista de clientes
+    @GetMapping("/lista")
     public String mostrarListaClientes(Model model) {
         model.addAttribute("clientes", clientesRepository.findAll());
         return "listaClientes";
     }
 
-    // Guardar cliente desde lista (edición rápida)
-    @PostMapping("/listaClientes")
-    public String leerCliente(@ModelAttribute Clientes clientesForm, Model model) {
+    // 4. Edición desde la lista (opcional)
+    @PostMapping("/lista")
+    public String editarCliente(@ModelAttribute Clientes clientesForm) {
         clientesRepository.save(clientesForm);
-        return "redirect:/listaClientes";
+        return "redirect:/clientes/lista";
     }
 
+    // 5. Buscar usuario por correo de cliente
+    @GetMapping("/buscar-usuario")
+    public String buscarUsuarioPorEmail(@RequestParam("email") String correoElectronico, Model model) {
+        Optional<Usuarios> usuario = usuariosRepository.findByCliente_CorreoElectronico(correoElectronico);
+        if (usuario.isPresent()) {
+            model.addAttribute("usuario", usuario.get());
+            return "datosUsuario";
+        } else {
+            model.addAttribute("error", "No se encontró ningún usuario con ese correo.");
+            return "errorUsuario";
+        }
+    }
 
     @GetMapping("/estadisticasUsuario")
     public String mostrarEstadisticas() {
