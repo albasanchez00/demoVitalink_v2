@@ -1,6 +1,8 @@
 package com.ceatformacion.demovitalink_v2.controller;
 
+import com.ceatformacion.demovitalink_v2.model.Citas;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
+import com.ceatformacion.demovitalink_v2.repository.CitasRepository;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,13 +11,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 public class UsuariosController {
     @Autowired
     private UsuariosRepository usuariosRepository;
-
+    @Autowired
+    private CitasRepository citasRepository;
     @Autowired
     private PasswordEncoder encoder;
 
@@ -41,12 +47,6 @@ public class UsuariosController {
         usuariosRepository.save(usuariosCrud); //Lo guarda en la BBDD
         return "redirect:/listaUsuarios";
     }
-
-    @GetMapping("/agendaCitas")
-    public String mostrarAgenda(){
-        return "agendaCitas";
-    }
-    //mostrar listaUsuarios.html
 
     @GetMapping("/logout")
     public String logout(){

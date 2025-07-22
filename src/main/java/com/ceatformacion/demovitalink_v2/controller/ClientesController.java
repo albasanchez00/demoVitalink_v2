@@ -12,10 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -72,18 +69,16 @@ public class ClientesController {
     }
 
     // 3. Lista de clientes
-    @GetMapping("/lista")
+    @GetMapping("/listaClientes")
     public String mostrarListaClientes(Model model) {
-        model.addAttribute("clientes", clientesRepository.findAll());
+        model.addAttribute("clientes", clientesRepository.findAll()); // <- debe devolver una lista no nula
         return "listaClientes";
     }
 
-    // 4. Edición desde la lista (opcional)
-    @PostMapping("/lista")
-    public String editarCliente(@ModelAttribute Clientes clientesForm) {
-        clientesRepository.save(clientesForm);
-        return "redirect:/clientes/lista";
-    }
+
+
+
+
 
     // 5. Buscar usuario por correo de cliente
     @GetMapping("/buscar-usuario")
@@ -97,6 +92,29 @@ public class ClientesController {
             return "errorUsuario";
         }
     }
+
+    @GetMapping("/clientes/editar/{id}")
+    public String mostrarFormularioEdicion(@PathVariable int id, Model model) {
+        Optional<Clientes> cliente = clientesRepository.findById(id);
+        if (cliente.isPresent()) {
+            model.addAttribute("cliente", cliente.get()); // <--- Esto es lo importante
+            return "editarClientes"; // <--- Debe coincidir con tu archivo HTML
+        } else {
+            return "redirect:/listaClientes?error=notfound";
+        }
+    }
+
+    @PostMapping("/clientes/actualizar")
+    public String actualizarCliente(@ModelAttribute Clientes cliente) {
+        clientesRepository.save(cliente);
+        return "redirect:/listaClientes?success=editado";
+    }
+    @GetMapping("/clientes/eliminar/{id}")
+    public String eliminarCliente(@PathVariable int id) {
+        clientesRepository.deleteById(id);
+        return "redirect:/listaClientes?success=eliminado";
+    }
+
 
     @GetMapping("/estadisticasUsuario")
     public String mostrarEstadisticas() {

@@ -18,6 +18,9 @@
             <section class="section_main_registro">
                 <section class="section_form_registro">
                     <h2 th:text="${cliente?.idCliente == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
+                    <div>
+                        <a th:href="@{/listaClientes}" class="btn-listUser">Lista Usuarios</a>
+                    </div>
                     <form id="form-registro" th:action="@{/guardarCliente}" method="POST" th:object="${cliente}">
                         <p>
                             <label for="nombre">Nombre:</label>

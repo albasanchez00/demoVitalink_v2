@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Cliente</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <script src="/js/darkTheme.js" defer></script>
+</head>
+<body>
+<section class="contenedor">
+
+  <div th:replace="fragments/header :: header"></div>
+  <main  id="main_panelUser">
+    <section class="main_panelUser">
+      <h2 th:text="${cliente?.idCliente == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
+      <section class="section_form_registro">
+        <form id="form-registro" th:action="@{/clientes/editar}" method="POST" th:object="${cliente}">
+          <input type="hidden" th:field="*{idCliente}" />
+          <p>
+            <label for="nombre">Nombre:</label>
+            <input type="text" th:field="*{nombre}" name="nombre" id="nombre">
+          </p>
+
+          <p>
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" th:field="*{apellidos}" name="apellidos" id="apellidos">
+          </p>
+
+          <p>
+            <label for="nacimiento">Fecha de Nacimiento:</label>
+            <input type="date" th:field="*{nacimiento}" name="nacimiento" id="nacimiento"
+                   min="1900-01-01" max="2021-12-31">
+          </p>
+
+          <p>
+            <label for="correo_electronico">Correo Electrónico:</label>
+            <input type="email" th:field="*{correoElectronico}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="correo_electronico" id="correo_electronico">
+          </p>
+
+          <p>
+            <label for="telefono">Teléfono:</label>
+            <input type="tel"
+                   th:field="*{telefono}"
+                   pattern="[0-9]{9}"
+                   maxlength="9"
+                   placeholder="Ejemplo: 123456789"
+                   autocomplete="tel"
+                   name="telefono"
+                   id="telefono">
+          </p>
+
+          <p>
+            <label for="tipo_documento">Tipo de documento:</label>
+            <select th:field="*{tipo_documento}" name="tipo_documento" id="tipo_documento">
+              <option value="dni">DNI</option>
+              <option value="nif">NIF</option>
+            </select>
+          </p>
+
+          <p>
+            <label for="numero_identificacion">Número de documento:</label>
+            <input type="text"
+                   th:field="*{numero_identificacion}"
+                   maxlength="9"
+                   pattern="[0-9A-Za-z]{9}"
+                   placeholder="Número de documento"
+                   name="numero_identificacion"
+                   id="numero_identificacion" required>
+          </p>
+
+          <p>
+            <label for="numero_tarjeta_sanitaria">Nº Tarjeta Sanitaria:</label>
+            <input type="text" th:field="*{numero_tarjeta_sanitaria}" id="numero_tarjeta_sanitaria" name="numero_tarjeta_sanitaria">
+          </p>
+
+          <p>
+            <label for="genero">Género:</label>
+            <select th:field="*{genero}" name="genero" id="genero">
+              <option value="">Seleccione</option>
+              <option value="femenino">Femenino</option>
+              <option value="masculino">Masculino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </p>
+
+          <p>
+            <label for="direccion">Dirección:</label>
+            <input type="text" th:field="*{direccion}" id="direccion" name="direccion">
+          </p>
+
+          <p>
+            <label for="ciudad_id">Ciudad:</label>
+            <select th:field="*{ciudad_id}" name="ciudad_id" id="ciudad_id">
+              <option value="">Seleccione una ciudad</option>
+              <option value="Tomelloso">Tomelloso</option>
+            </select>
+          </p>
+
+          <p>
+            <label for="cp_id">Código Postal:</label>
+            <input type="text" th:field="*{cp_id}" pattern="[0-9]{5}" maxlength="5" name="cp_id" id="cp_id">
+          </p>
+
+          <p>
+            <button type="submit" id="btn-submit">Guardar cambios</button>
+          </p>
+        </form>
+      </section>
+    </section>
+  </main>
+  <div th:replace="fragments/footer :: footer"></div>
+</section>
+</body>
+</html>

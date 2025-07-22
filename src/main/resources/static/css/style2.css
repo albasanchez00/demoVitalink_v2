@@ -66,6 +66,7 @@ body.dark-theme {
 
 /* Ajusta fondo y texto en contenedores principales */
 body.dark-theme #main_panelUser,
+body.dark-theme #main_listaUser,
 body.dark-theme #main-calendar,
 body.dark-theme #main-asistente,
 body.dark-theme #main-tratamientos,
@@ -160,7 +161,7 @@ body.dark-theme textarea {
 
 
 /* Oculta la barra de scroll en Chrome, Safari y Edge */
-#main_panelUser::-webkit-scrollbar, #main-panelEvolucion::-webkit-scrollbar {
+#main_panelUser::-webkit-scrollbar, #main-panelEvolucion::-webkit-scrollbar, #main_listaUser::-webkit-scrollbar {
     display: none;
 }
 #panel-historialMedico::-webkit-scrollbar,#main-asistente::-webkit-scrollbar, #main_Sintomas::-webkit-scrollbar , #main-tratamientos::-webkit-scrollbar{
@@ -168,7 +169,7 @@ body.dark-theme textarea {
 }
 
 /* `main` crece para ocupar todo el espacio restante */
-#main_panelUser, #main-calendar, #main-asistente, #main-tratamientos, #main_configuracionUsuario, #panel-historialMedico {
+#main_panelUser, #main-calendar, #main-asistente, #main-tratamientos, #main_configuracionUsuario, #panel-historialMedico, #main_listaUser {
     flex: 1;
     padding: 20px;
     overflow: auto; /* Evita el desbordamiento */
@@ -1142,6 +1143,104 @@ canvas {
 .btn-logout:hover {
     background-color: #a31616;
 }
+
+/* INICIO PAGINAS ADMIN */
+/* Inicio Lista Usuario */
+#main_listaUser{
+    width: 100%;
+    min-height: 80vh;
+    background-color: var(--fondo-body);
+    padding: 20px 0;
+}
+/* === Estilo para la tabla de clientes (admin) === */
+.tabla-clientes {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: var(--color_blanco);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 0.95rem;
+    table-layout: fixed;
+}
+
+.tabla-clientes th,
+.tabla-clientes td {
+    padding: 14px 10px;
+    text-align: center;
+    border-bottom: 1px solid #e6e6e6;
+    word-wrap: break-word;
+}
+
+.tabla-clientes th {
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tabla-clientes tbody tr:hover {
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease-in-out;
+}
+
+@media screen and (max-width: 768px) {
+    .tabla-clientes {
+        font-size: 0.85rem;
+    }
+
+    .tabla-clientes th,
+    .tabla-clientes td {
+        padding: 10px 6px;
+    }
+}
+
+.btn-accion {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    padding: 6px;
+    background-color: transparent;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-accion img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+/* Escalado al hacer hover */
+.btn-accion:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos de fondo para cada tipo */
+.btn-accion.historial {
+    background-color: #6c757d;
+}
+.btn-accion.editar {
+    background-color: #007bff;
+}
+.btn-accion.eliminar {
+    background-color: #dc3545;
+}
+
+/* Tema oscuro: mejora visibilidad de iconos */
+body.dark-theme .btn-accion img {
+    filter: brightness(1.2) drop-shadow(0 1px 2px rgba(255,255,255,0.1));
+}
+
+/* Inicio Lista Usuario */
+
+/* FIN PAGINAS ADMIN */
 
 /* INICIO FOOTER */
 footer{

@@ -9,53 +9,56 @@
 </head>
 <body>
 
-<section>
+<section class="contenedor">
   <div th:replace="~{fragments/header :: header}"></div>
 
-  <main class="main_lista_clientes">
-    <h2>Listado de Clientes</h2>
+  <main id="main_listaUser">
+    <h1>👥 Lista de Clientes Registrados</h1>
 
-    <table>
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Nacimiento</th>
-        <th>Email</th>
-        <th>Teléfono</th>
-        <th>Tipo Documento</th>
-        <th>Número Identificación</th>
-        <th>Tarjeta Sanitaria</th>
-        <th>Género</th>
-        <th>Dirección</th>
-        <th>Ciudad</th>
-        <th>Código Postal</th>
-        <th>Acciones</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="cliente : ${clientes}">
-        <td th:text="${cliente.idCliente}"></td>
-        <td th:text="${cliente.nombre}"></td>
-        <td th:text="${cliente.apellidos}"></td>
-        <td th:text="${cliente.nacimiento}"></td>
-        <td th:text="${cliente.correo_electronico}"></td>
-        <td th:text="${cliente.telefono}"></td>
-        <td th:text="${cliente.tipo_documento}"></td>
-        <td th:text="${cliente.numero_identificacion}"></td>
-        <td th:text="${cliente.numero_tarjeta_sanitaria}"></td>
-        <td th:text="${cliente.genero}"></td>
-        <td th:text="${cliente.direccion}"></td>
-        <td th:text="${cliente.ciudad_id}"></td>
-        <td th:text="${cliente.cp_id}"></td>
-        <td>
-          <a th:href="@{'/clientes/editar/' + ${cliente.idCliente}}">Editar</a>
-          <a th:href="@{'/clientes/eliminar/' + ${cliente.idCliente}}">Editar</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <section class="section_main">
+      <table class="tabla-clientes">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Nacimiento</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Tipo Documento</th>
+          <th>Número Identificación</th>
+          <th>Tarjeta Sanitaria</th>
+          <th>Género</th>
+          <th>Dirección</th>
+          <th>Ciudad</th>
+          <th>Código Postal</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cliente : ${clientes}">
+          <td th:text="${cliente.idCliente}"></td>
+          <td th:text="${cliente.nombre}"></td>
+          <td th:text="${cliente.apellidos}"></td>
+          <td th:text="${cliente.nacimiento}"></td>
+          <td th:text="${cliente.correoElectronico}"></td>
+          <td th:text="${cliente.telefono}"></td>
+          <td th:text="${cliente.tipo_documento}"></td>
+          <td th:text="${cliente.numero_identificacion}"></td>
+          <td th:text="${cliente.numero_tarjeta_sanitaria}"></td>
+          <td th:text="${cliente.genero}"></td>
+          <td th:text="${cliente.direccion}"></td>
+          <td th:text="${cliente.ciudad_id}"></td>
+          <td th:text="${cliente.cp_id}"></td>
+          <td class="acciones-clientes">
+            <a th:href="@{'/clientes/historialCliente/' + ${cliente.idCliente}}" class="btn-accion historial" title="Historial"><img src="./media/icons/historial-medico-icon.svg" alt="historial user"></a>
+            <a th:href="@{'/clientes/editar/' + ${cliente.idCliente}}" class="btn-accion editar"><img class="icon" src="./media/icons/informe-del-paciente-icon.svg" alt="editar user"></a>
+            <a th:href="@{'/clientes/eliminar/' + ${cliente.idCliente}}" class="btn-accion eliminar"><img class="icon" src="./media/icons/eliminar-usuario-icon.svg" alt="eliminar user"></a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
   <div th:replace="~{fragments/footer :: footer}"></div>
