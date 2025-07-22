@@ -47,9 +47,27 @@ public class UsuariosController {
         usuariosRepository.save(usuariosCrud); //Lo guarda en la BBDD
         return "redirect:/listaUsuarios";
     }
-
+    @GetMapping("/mensajesUsuario")
+    public String mensajesUsuario() {
+        return "mensajesUsuario";
+    }
+    @GetMapping("/configUsuario")
+    public String configuracionUsuario() {
+        return "configUsuario";
+    }
+    @GetMapping("/inicioSesion")
+    public String login(){return "inicioSesion";}
     @GetMapping("/logout")
     public String logout(){
         return "redirect:/inicioSesion";
+    }
+    @GetMapping("/registroSintomas")
+    public String registroSintomas() {
+        return "registroSintomas";
+    }
+
+    @GetMapping("/registroTratamiento")
+    public String registroTratamientos() {
+        return "tratamientos";
     }
 }

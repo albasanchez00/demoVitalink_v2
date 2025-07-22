@@ -28,7 +28,6 @@ async function handleKey(event) {
   }
 }
 
-
 function appendMessage(sender, text) {
   const messagesContainer = document.getElementById("chat-messages");
   const messageElement = document.createElement("div");

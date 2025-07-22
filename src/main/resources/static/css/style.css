@@ -293,6 +293,21 @@ main{
         }
     }
 }
+h2,h1{
+    text-align: center;
+}
+.btn-listUser{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    border: 1px solid var(--color-primary-button);
+    background-color: var(--color-secundary-button);
+    height: 40px;
+    padding: 10px;
+    margin-top: 10px;
+}
 /* Formulario Responsive */
 @media screen and (max-width:1023px) {
     .section_form {

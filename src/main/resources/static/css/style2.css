@@ -53,7 +53,9 @@ html, body {
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
-
+h2,h1{
+    text-align: center;
+}
 body.dark-theme {
     --color_fondo: #121212;
     --color_primario: #90caf9;

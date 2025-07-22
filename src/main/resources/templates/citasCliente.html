@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/css/style2.css"> <!-- Asegúrate de tener este estilo -->
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
 <section>
     <h2>Consultar Citas de Usuarios</h2>
     <table>
@@ -19,7 +20,7 @@
         </thead>
         <tbody>
         <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario. + ' ' + usuario.cliente.apellidos}">Nombre</td>
+            <td th:text="${usuario.cliente.nombre + ' ' + usuario.cliente.apellidos}">Nombre</td>
             <td th:text="${usuario.cliente.correoElectronico}">Correo</td>
             <td th:text="${usuario.cliente.telefono}">Teléfono</td>
             <td>
@@ -29,5 +30,6 @@
         </tbody>
     </table>
 </section>
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

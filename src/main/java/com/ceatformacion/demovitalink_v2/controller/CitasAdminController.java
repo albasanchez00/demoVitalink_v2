@@ -5,6 +5,7 @@ import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.CitasRepository;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ public class CitasAdminController {
     private UsuariosRepository usuariosRepository;
 
     // ✅ Mostrar tabla con usuarios y botón "Ver Citas"
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping("/citasCliente")
     public String mostrarCitasClientes(Model model) {
         // Obtener todas las citas de la base de datos
@@ -34,6 +36,7 @@ public class CitasAdminController {
     }
 
     // ✅ Mostrar las citas de un usuario específico
+    @PreAuthorize("hasRole('Admin')")
     @GetMapping("/agendaCitas")
     public String mostrarCitasPorUsuario(@RequestParam int idUsuario, Model model) {
         Optional<Usuarios> usuarioOpt = usuariosRepository.findById(idUsuario);

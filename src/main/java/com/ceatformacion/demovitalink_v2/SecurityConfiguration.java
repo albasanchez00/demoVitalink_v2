@@ -20,7 +20,13 @@ public class SecurityConfiguration {
                 //Acceso al crud
                 .requestMatchers(HttpMethod.GET,"/serviciosCliente").permitAll()
                 .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
+                .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
+                .requestMatchers(HttpMethod.POST,"/recordatorios").permitAll()
+                .requestMatchers(HttpMethod.POST,"/registroSintomas").permitAll()
+                .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
+                .requestMatchers(HttpMethod.GET,"/terminoCondiciones").permitAll()
                 .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
+                .requestMatchers(HttpMethod.POST,"/configUsuario").hasAnyRole("Admin","User")
                 .requestMatchers(HttpMethod.GET,"/panelUsuario").hasAnyRole("Admin","User")
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'
