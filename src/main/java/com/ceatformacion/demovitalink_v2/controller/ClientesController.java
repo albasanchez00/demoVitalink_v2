@@ -37,35 +37,48 @@ public class ClientesController {
     // 2. Guardar cliente y crear usuario
     @PostMapping("/guardarCliente")
     public String guardarCliente(@ModelAttribute("cliente") Clientes cliente, Model model) {
-        // Verifica si ya existe ese correo electrónico en algún usuario
-        Optional<Usuarios> usuarioExistente = usuariosRepository.findByCliente_CorreoElectronico(cliente.getCorreoElectronico());
+        try {
+            // Verifica si ya existe ese correo electrónico en algún usuario
+            Optional<Usuarios> usuarioExistente = usuariosRepository.findByCliente_CorreoElectronico(cliente.getCorreoElectronico());
 
-        if (usuarioExistente.isPresent()) {
-            model.addAttribute("error", "Ya existe un usuario con ese correo.");
+            if (usuarioExistente.isPresent()) {
+                model.addAttribute("error", "Ya existe un usuario con ese correo.");
+                return "registroCliente";
+            }
+
+            // Guarda cliente
+            Clientes clienteGuardado = clientesRepository.save(cliente);
+
+            // Crea usuario
+            String passwordPlano = PasswordGenerator.generar(10);
+            Usuarios nuevoUsuario = new Usuarios();
+            nuevoUsuario.setUsername(cliente.getCorreoElectronico());
+            nuevoUsuario.setPassword(passwordEncoder.encode(passwordPlano));
+            nuevoUsuario.setRol("USER");
+            nuevoUsuario.setCliente(clienteGuardado);
+
+            usuariosRepository.save(nuevoUsuario);
+
+            // Intenta enviar el correo con credenciales
+            boolean emailEnviado = emailService.enviarCredenciales(
+                    cliente.getCorreoElectronico(),
+                    cliente.getNombre(),
+                    passwordPlano
+            );
+
+            if (!emailEnviado) {
+                // El cliente y usuario se crearon, pero el correo falló
+                model.addAttribute("warning", "Usuario registrado correctamente pero hubo un problema al enviar el correo con las credenciales. " +
+                        "Por favor, contacte con el administrador.");
+                return "registroCliente";
+            }
+
+            return "redirect:/listaClientes?success=true";
+
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al procesar el registro. Por favor, inténtelo de nuevo.");
             return "registroCliente";
         }
-
-        // Guarda cliente
-        Clientes clienteGuardado = clientesRepository.save(cliente);
-
-        // Crea usuario
-        String passwordPlano = PasswordGenerator.generar(10);
-        Usuarios nuevoUsuario = new Usuarios();
-        nuevoUsuario.setUsername(cliente.getCorreoElectronico());
-        nuevoUsuario.setPassword(passwordEncoder.encode(passwordPlano));
-        nuevoUsuario.setRol("USER");
-        nuevoUsuario.setCliente(clienteGuardado);
-
-        usuariosRepository.save(nuevoUsuario);
-
-        // Envía correo con credenciales
-        emailService.enviarCredenciales(
-                cliente.getCorreoElectronico(),
-                cliente.getNombre(),
-                passwordPlano
-        );
-
-        return "redirect:/registroCliente?success=true";
     }
 
     // 3. Lista de clientes
@@ -86,7 +99,7 @@ public class ClientesController {
         Optional<Usuarios> usuario = usuariosRepository.findByCliente_CorreoElectronico(correoElectronico);
         if (usuario.isPresent()) {
             model.addAttribute("usuario", usuario.get());
-            return "datosUsuario";
+            return "listaClientes";
         } else {
             model.addAttribute("error", "No se encontró ningún usuario con ese correo.");
             return "errorUsuario";
@@ -98,7 +111,7 @@ public class ClientesController {
         Optional<Clientes> cliente = clientesRepository.findById(id);
         if (cliente.isPresent()) {
             model.addAttribute("cliente", cliente.get()); // <--- Esto es lo importante
-            return "editarClientes"; // <--- Debe coincidir con tu archivo HTML
+            return "listaClientes"; // <--- Debe coincidir con tu archivo HTML
         } else {
             return "redirect:/listaClientes?error=notfound";
         }
@@ -107,12 +120,12 @@ public class ClientesController {
     @PostMapping("/clientes/actualizar")
     public String actualizarCliente(@ModelAttribute Clientes cliente) {
         clientesRepository.save(cliente);
-        return "redirect:/listaClientes?success=editado";
+        return "redirect:/listaClientes";
     }
     @GetMapping("/clientes/eliminar/{id}")
     public String eliminarCliente(@PathVariable int id) {
         clientesRepository.deleteById(id);
-        return "redirect:/listaClientes?success=eliminado";
+        return "redirect:/listaClientes";
     }
 
 
