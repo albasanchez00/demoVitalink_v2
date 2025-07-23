@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
                 datasets: [{
                     label: 'Síntomas registrados',
-                    data: [10, 8, 5, 3],
+                    data: [10, 8, 5, 10],
                     borderColor: '#008d95',
                     backgroundColor: 'rgba(0, 141, 149, 0.1)',
                     tension: 0.3,
