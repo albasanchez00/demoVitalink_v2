@@ -15,7 +15,6 @@
     <title>VitaLink</title>
     <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
     <link rel="stylesheet" href="./css/style.css">
-    <script src="../static/js/sccript.js"></script>
     <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
@@ -23,7 +22,75 @@
     <!-- Incluye el fragmento de cabecera aquí -->
     <div th:replace="fragments/header :: header"></div>
     <main>
+        <section class="banner-demo">
+            <div class="banner-overlay">
+                <div class="banner-content">
+                    <h2>¿Quieres conocer cómo funciona VitaLink?</h2>
+                    <p>Solicita una demo gratuita y descubre cómo mejorar la experiencia de los pacientes.</p>
+                    <a href="#contacto" class="btn-banner">Solicitar Demo</a>
+                </div>
+            </div>
+        </section>
         <section class="section_main">
+
+
+            <section class="features-slider">
+                <div class="slider-track">
+                    <div class="slide">
+                        <div class="feature">
+                            <picture><img src="./media/icons/calendar-days-icon.svg" alt="calendar icon" class="icon"></picture>
+                            <h3>Control de Citas Médicas</h3>
+                            <p>Gestiona tus citas médicas de forma sencilla. Programa, reprograma o cancela citas desde la plataforma, con alertas automatizadas y una vista cronológica para mantener al día tu historial de consultas.</p>
+                        </div>
+                        <div class="feature">
+                            <picture><img src="./media/icons/jar-of-pills-icon.svg" alt="medical records icon" class="icon"></picture>
+                            <h3>Seguimiento de tratamientos</h3>
+                            <p>Registra, consulta y actualiza los tratamientos médicos en curso. Incluye información sobre medicamentos, dosis, frecuencia y duración, con la opción de activar recordatorios y seguimiento sintomático asociado.</p>
+                        </div>
+                        <div class="feature">
+                            <picture><img src="./media/icons/notes-medical-solid-icon.svg" alt="notes icon" class="icon"></picture>
+                            <h3>Gestión de pacientes</h3>
+                            <p>Centraliza toda la información clínica de los pacientes en un solo lugar. Desde datos personales hasta antecedentes médicos, esta funcionalidad permite un acceso rápido, seguro y organizado para profesionales y pacientes.</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="feature">
+                            <picture><img src="./media/icons/graphic-files-icon.svg" alt="stadistic icon" class="icon"></picture>
+                            <h3>Resportes de Salud</h3>
+                            <p>Visualiza tu evolución médica mediante gráficos y resúmenes. Obtén reportes claros sobre síntomas, tratamientos y progreso general, ideales para compartir con tu médico o llevar un control personal más preciso.</p>
+                        </div>
+                        <div class="feature">
+                            <picture><img src="./media/icons/clinic-history-icon.svg" alt="clinic history" class="icon"></picture>
+                            <h3>Historial Médico</h3>
+                            <p>Accede a todo tu historial clínico de manera ordenada y segura. Incluye diagnósticos, recetas, visitas médicas anteriores y resultados de pruebas, disponibles desde cualquier dispositivo.</p>
+                        </div>
+                        <div class="feature">
+                            <picture><img src="./media/icons/assistant-icon.svg" alt="assistant-icon" class="icon"></picture>
+                            <h3>Asistente 24h</h3>
+                            <p>Consulta tus dudas de salud en cualquier momento gracias a nuestro asistente inteligente. Disponible 24/7, ofrece información médica confiable y orientación básica sin sustituir a un profesional.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-controls">
+                    <button class="prev">←</button>
+                    <button class="next">→</button>
+                </div>
+            </section>
+
+            <section class="nosotros-section">
+                <div class="nosotros-container">
+                    <div class="nosotros-img">
+                        <img src="./media/img/imagen-empresa.png" alt="Nuestra empresa">
+                    </div>
+                    <div class="nosotros-texto">
+                        <h2>Sobre Vitalink</h2>
+                        <p>En <strong>VitaLink</strong>, creemos que la tecnología debe estar al servicio de la salud. Por eso, desarrollamos una plataforma integral que transforma la forma en que se gestionan los tratamientos médicos, el seguimiento clínico y la relación entre pacientes y profesionales.</p>
+                        <p>Nuestra misión es clara: <strong>impulsar una atención médica más eficiente, personalizada y accesible</strong>. A través de herramientas intuitivas y seguras, facilitamos el control de citas, la administración de medicamentos, el registro de síntomas y la generación de informes visuales, todo en un solo lugar.</p>
+                        <p>Estamos comprometidos con la <strong>innovación y la mejora continua del sistema sanitario</strong>, aportando soluciones digitales adaptadas a las necesidades reales de <strong>hospitales, clínicas y centros de salud</strong>, tanto en el ámbito público como privado.</p>
+                        <p>Con VitaLink, damos un paso más hacia una sanidad conectada, proactiva y centrada en las personas.</p>
+                    </div>
+                </div>
+            </section>
             <section class="section_form">
                 <form action="formContacto.js" method="get" id="formulario">
                     <p>
@@ -44,48 +111,12 @@
                 </form>
                 <picture><img src="./media/img/form_isometric-design-of-a-customer-service-center.svg" alt="customer service center"></picture>
             </section>
-
-            <section class="features-container">
-                <div class="feature">
-                    <picture><img src="./media/icons/calendar-days-icon.svg" alt="calendar icon" class="icon"></picture>
-                    <h3>Gestión de Citas</h3>
-                    <p>Descripción de la característica 1.</p>
-                </div>
-                <div class="feature">
-                    <picture><img src="./media/icons/jar-of-pills-icon.svg" alt="medical records icon" class="icon"></picture>
-                    <h3>Administración de tratamientos</h3>
-                    <p>Descripción de la característica 2.</p>
-                </div>
-                <div class="feature">
-                    <picture><img src="./media/icons/notes-medical-solid-icon.svg" alt="notes icon" class="icon"></picture>
-                    <h3>Informes Sintomáticos</h3>
-                    <p>Descripción de la característica 3.</p>
-                </div>
-                <div class="feature">
-                    <picture><img src="./media/icons/graphic-files-icon.svg" alt="stadistic icon" class="icon"></picture>
-                    <h3>Resportes de Salud</h3>
-                    <p>Descripción de la característica 4.</p>
-                </div>
-                <div class="feature">
-                    <picture><img src="./media/icons/clinic-history-icon.svg" alt="clinic history" class="icon"></picture>
-                    <h3>Historial Médico</h3>
-                    <p>Descripción de la característica 5.</p>
-                </div>
-                <div class="feature">
-                    <picture><img src="./media/icons/assistant-icon.svg" alt="assistant-icon" class="icon"></picture>
-                    <h3>Asistente 24h</h3>
-                    <p>Descripción de la característica 6.</p>
-                </div>
-            </section>
-
-            <section id="section_main_2">
-                <!-- El resto del contenido permanece igual -->
-                <!-- ... -->
-            </section>
         </section>
     </main>
 
     <div th:replace="fragments/footer :: footer"></div>
 </section>
+<script th:src="@{/js/banner.js}"></script>
+<script th:src="@{/js/sccript.js}"></script>
 </body>
 </html>

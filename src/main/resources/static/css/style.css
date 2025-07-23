@@ -52,7 +52,6 @@ main::-webkit-scrollbar {
 /* `main` crece para ocupar todo el espacio restante */
 main {
     flex: 1;
-    padding: 20px;
     overflow: auto; /* Evita el desbordamiento */
 }
 .icon{
@@ -332,50 +331,248 @@ h2,h1{
 
 
 /* Inicio Sección Features */
-.features-container {
+.features-slider {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 6rem auto;
+}
+
+.slider-track {
     display: flex;
-    flex-wrap: wrap; /* Permite que se acomoden en varias filas si no caben */
-    justify-content: space-around; /* Distribución uniforme */
-    width: 100vw;
-    align-items: center;
-    background-color: var(--color_blanco); /* Color de fondo */
-    padding: 20px;
-    margin: 40px 0;
+    transition: transform 0.5s ease-in-out;
+    width: 100%; /* ajustado al número de slides */
 }
-/* Estilos de cada característica */
+
+.slide {
+    display: flex;
+    flex: 0 0 100%;
+    justify-content: space-around;
+    gap: 1rem;
+    h3 {
+        color: var(--color-primary-button);
+        margin: 10px 0;
+    }
+}
+
 .feature {
-    width: 30%; /* 3 elementos por fila en escritorio */
+    flex: 1 1 30%;
+    min-width: 0;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1rem;
     text-align: center;
-    padding: 20px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
-.feature img {
-    width: 50px; /* Tamaño del icono */
-    height: auto;
-    margin-bottom: 10px;
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
 }
 
-.feature h3 {
-    color: var(--color-primary-button); /* Color naranja similar a la imagen */
+.slider-controls button {
+    background-color: #008d95;
+    color: white;
+    border: none;
+    padding: 8px 14px;
     font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.feature p {
-    color: var(--color-secundary-button); /* Texto en gris */
-    font-size: 14px;
+.slider-controls button:hover {
+    background-color: #006d72;
 }
-
-/* 🔹 Responsive: Ajuste para móviles */
-@media screen and (max-width: 1022px) {
-    .features-container {
-        padding: 10px; /* Espaciado más pequeño */
+@media (max-width: 768px) {
+    .slide {
+        flex-direction: column;
+        align-items: center;
     }
+
     .feature {
-        width: 100%; /* 1 por fila en móviles */
+        flex: 1 1 100%;
+        width: 90%;
+        max-width: 350px;
+    }
+
+    .slider-track {
+        width: 100%; /* mantiene la transición sin desbordes */
+    }
+
+    .features-slider {
+        padding: 1rem;
     }
 }
+
 /* Fin Sección Features */
 
+
+/* Inicio Sección Sobre Nosotros */
+.nosotros-section {
+    padding: 3rem 1rem;
+    display: flex;
+    justify-content: center;
+}
+.nosotros-container {
+    background-color: #fff;
+    display: flex;
+    max-width: 1200px;
+    gap: 2rem;
+    align-items: center;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    flex-wrap: wrap;
+}
+.nosotros-img img {
+    width: 100%;
+    max-width: 550px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0;
+}
+.nosotros-texto {
+    flex: 1;
+    padding: 2rem;
+    color: #003b4d;
+}
+.nosotros-texto h2 {
+    color: var(--color_primario);
+    margin-bottom: 1rem;
+}
+.nosotros-texto p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #333;
+    strong{
+        color: var(--color_secundario);
+    }
+}
+.btn-descubre {
+    display: inline-block;
+    background-color: #008d95;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+.btn-descubre:hover {
+    background-color: #006d72;
+}
+@media (max-width: 992px) {
+    .nosotros-container {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .nosotros-img img {
+        max-width: 100%;
+    }
+
+    .nosotros-texto {
+        padding: 1rem;
+    }
+
+    .banner-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .banner-content p {
+        font-size: 1rem;
+    }
+
+    .btn-banner {
+        font-size: 0.95rem;
+        padding: 10px 20px;
+    }
+}
+
+/* Fin Sección Sobre Nosotros */
+
+.banner-demo {
+    background-image: url('../media/img/imagen-empresa.png'); /* cambia por tu imagen */
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.banner-overlay {
+    background-color: rgba(0, 0, 0, 0.55); /* oscurece la imagen */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-content {
+    color: #fff;
+    text-align: center;
+    padding: 2rem;
+    max-width: 800px;
+}
+
+.banner-content h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.banner-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-banner {
+    background-color: #00a6b4;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-banner:hover {
+    background-color: #007c85;
+}
+@media (max-width: 576px) {
+    .banner-demo {
+        height: auto;
+        padding: 3rem 1rem;
+    }
+
+    .banner-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .banner-content p {
+        font-size: 0.95rem;
+    }
+
+    .nosotros-texto h2 {
+        font-size: 1.5rem;
+    }
+
+    .nosotros-texto p {
+        font-size: 0.95rem;
+    }
+
+    .btn-descubre, .btn-banner {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+    }
+}
 
 /* Inicio Sección servicios */
 #section_main_2{

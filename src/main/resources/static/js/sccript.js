@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         navLinks.classList.toggle("show");
         menuToggle.classList.toggle("active");
     });
+
 });
 
 

@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/citasCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/agendaCitas").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasAnyRole("Admin","User")
+                .requestMatchers(HttpMethod.POST,"/historialMedico").hasAnyRole("Admin","User")
 
                 //Formulario de Gestión de Clientes: solo rol 'User'
                 .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
