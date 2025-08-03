@@ -63,38 +63,40 @@
             <section class="section_tabla_tratamientos">
                 <h2>💊 Tratamientos Registrados</h2>
 
-                <table class="tabla-tratamientos">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Medicamento</th>
-                        <th>Formula</th>
-                        <th>Dosis</th>
-                        <th>Frecuencia</th>
-                        <th>Inicio</th>
-                        <th>Fin</th>
-                        <th>Con alimentos</th>
-                        <th>Observaciones</th>
-                        <th>Estado</th>
-                        <th>Relacionados</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="tratamiento : ${tratamientos}">
-                        <td th:text="${tratamiento.id_tratamiento}"></td>
-                        <td th:text="${tratamiento.nombre_tratamiento}"></td>
-                        <td th:text="${tratamiento.formula}"></td>
-                        <td th:text="${tratamiento.dosis}"></td>
-                        <td th:text="${tratamiento.frecuencia}"></td>
-                        <td th:text="${tratamiento.fecha_inicio}"></td>
-                        <td th:text="${tratamiento.fecha_fin}"></td>
-                        <td th:text="${tratamiento.toma_alimentos}"></td>
-                        <td th:text="${tratamiento.observaciones}"></td>
-                        <td th:text="${tratamiento.estado_tratamiento}"></td>
-                        <td th:text="${tratamiento.sintomas}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div>
+                    <table class="tabla-tratamientos">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Medicamento</th>
+                            <th>Formula</th>
+                            <th>Dosis</th>
+                            <th>Frecuencia</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Con alimentos</th>
+                            <th>Observaciones</th>
+                            <th>Estado</th>
+                            <th>Relacionados</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tratamiento : ${tratamientos}">
+                            <td th:text="${tratamiento.id_tratamiento}"></td>
+                            <td th:text="${tratamiento.nombre_tratamiento}"></td>
+                            <td th:text="${tratamiento.formula}"></td>
+                            <td th:text="${tratamiento.dosis}"></td>
+                            <td th:text="${tratamiento.frecuencia}"></td>
+                            <td th:text="${tratamiento.fecha_inicio}"></td>
+                            <td th:text="${tratamiento.fecha_fin}"></td>
+                            <td th:text="${tratamiento.toma_alimentos}"></td>
+                            <td th:text="${tratamiento.observaciones}"></td>
+                            <td th:text="${tratamiento.estado_tratamiento}"></td>
+                            <td th:text="${tratamiento.sintomas}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
           </main>
 

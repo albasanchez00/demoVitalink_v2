@@ -416,53 +416,83 @@ header{
     background-color: var(--color-primary-button);
 }
 /* CHAT FLOTANTE (sin cambios) */
+/* BOTÓN DE CHAT EN DESKTOP */
 #chat-toggle, #chat-toggle2 {
     position: fixed;
-    bottom: 130px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
+    bottom: 110px;
+    right: 30px;
+    width: 58px;
+    height: 58px;
     background-color: var(--color-primary-button);
     color: white;
+    font-size: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 24px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     z-index: 1000;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
+
+#chat-toggle:hover,
+#chat-toggle2:hover {
+    transform: scale(1.1);
+    background-color: var(--color-secundary-button); /* cambia a color alternativo si quieres */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* CUADRO DE CHAT EN DESKTOP */
 #chat-box, #chat-box2 {
     position: fixed;
-    bottom: 185px;
-    right: 20px;
-    width: 300px;
-    height: 400px;
+    bottom: 180px;
+    right: 30px;
+    width: 340px;
+    height: 440px;
     background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-radius: 12px;
     display: none;
     flex-direction: column;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
     overflow: hidden;
-    z-index: 1000;
+    z-index: 1001;
+    animation: fadeInUp 0.3s ease forwards;
 }
-#chat-box.open #chat-box2.open{
+
+#chat-box.open,
+#chat-box2.open {
     display: flex;
 }
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* CABECERA */
 #chat-header, #chat-header2 {
-    flex: 0 0 50px;
     background-color: var(--color-primary-button);
     color: white;
-    padding: 10px;
+    font-weight: bold;
+    padding: 12px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
+
 #chat-header span, #chat-header2 span {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.3rem;
     cursor: pointer;
 }
+
+/* CUERPO DEL CHAT */
 #chat-body, #chat-body2 {
     flex: 1;
     display: flex;
@@ -470,25 +500,32 @@ header{
     padding: 10px;
     overflow: hidden;
 }
-#chat-body strong, #chat-body2 strong {
-    color: var(--color_secundario);
-}
+
 #chat-messages, #chat-messages2 {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 10px;
 }
-#chat-messages p, #chat-messages2 p {
-    margin: 10px 0;
-}
+
 #chat-input, #chat-input2 {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
-.thinking {
-    opacity: 0.6;
-    font-style: italic;
+
+@media (max-width: 480px) {
+    #chat-toggle, #chat-toggle2 {
+        bottom: 20px; /* antes estaba en 20px, así se eleva más */
+        right: 15px;
+        width: 52px;
+        height: 52px;
+    }
+
+    #chat-box, #chat-box2 {
+        bottom: 80px;
+        right: 5vw;
+        width: 90vw;
+    }
 }
 /* BREAKPOINT ≥768px (ESCRITORIO) */
 @media (min-width: 768px) {
@@ -846,35 +883,43 @@ header{
 
 /* Responsive para móviles */
 @media screen and (max-width: 768px) {
-    .tabla-tratamientos {
-        font-size: 0.85rem;
+    .tabla-tratamientos thead {
+        display: none;
     }
 
-    .section_tabla_tratamientos {
-        padding: 1rem;
-    }
-
-    .tabla-tratamientos th,
+    .tabla-tratamientos,
+    .tabla-tratamientos tbody,
+    .tabla-tratamientos tr,
     .tabla-tratamientos td {
-        padding: 10px 6px;
+        display: block;
+        width: 100%;
+    }
+
+    .tabla-tratamientos tr {
+        margin-bottom: 1rem;
+        background-color: #fff;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabla-tratamientos td {
+        text-align: left;
+        padding: 0.5rem 0;
+        position: relative;
+        font-size: 0.95rem;
+    }
+
+    .tabla-tratamientos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: var(--color_primario);
+        margin-bottom: 4px;
     }
 }
 
-.btn-agregar {
-    display: inline-block;
-    margin-top: 2rem;
-    padding: 0.8rem 1.5rem;
-    background-color: #28a745;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 6px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.btn-agregar:hover {
-    background-color: #218838;
-}
 
 /* FIN PÁGINA REGISTRO DE TRATAMIENTOS */
 
