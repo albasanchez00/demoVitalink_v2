@@ -3,30 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Usuario</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
     <meta name="description" content="Panel de usuario con estadísticas, recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
-    <link rel="stylesheet" href="./css/style2.css">
+    <title>Panel de Usuario</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}" type="text/css">
 </head>
 <body>
 <section class="contenedor">
-    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
     <main id="main_panelUser">
 
         <section class="section_main" sec:authorize="hasRole('User')">
             <section class="section_panelUser">
-                <div>
-                    <a th:href="@{/logout}" aria-label="Cerrar sesión" class="btn-logout" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg></a>
-                </div>
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit">Salir</button>
+                </form>
+
                 <nav class="nav_panelUser">
                     <ul>
                         <li><a href="/pedirCita" title="Ver estadísticas de usuario">Solicitar Cita</a></li>
                         <li><a href="/estadisticasUsuario" title="Ver estadísticas de usuario">Estadísticas</a></li>
+                        <li><a th:href="@{/usuarios/registroSintomas}">Sintomas</a></li>
                         <li><a href="/recordatorios" title="Ver recordatorios">Recordatorios</a></li>
                         <li><a href="/historialMedico" title="Ver historial médico">Historial Médico</a></li>
                         <li><a href="/tratamientos" title="Ver tratamientos">Tratamientos</a></li>
-                        <li><a href="/configUsuario" title="Configuración de usuario">Configuración</a></li>
+                        <li><a href="/usuarios/configUsuario" title="Configuración de usuario">Configuración</a></li>
 
                     </ul>
                 </nav>
@@ -56,15 +59,17 @@
 
         </section>
         <section class="section_main" sec:authorize="hasRole('Admin')">
-            <div>
-                <a th:href="@{/logout}" aria-label="Cerrar sesión" class="btn-logout" ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg></a>
-            </div>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit">Salir</button>
+            </form>
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
                         <li><a th:href="@{/registroCliente}">Usuarios</a></li>
                         <li><a th:href="@{/citasCliente}">Citas</a></li>
                         <li><a href="./adminTratamientos.html">Tratamientos</a></li>
+                        <li><a th:href="@{/usuarios/registroSintomas}">Sintomas</a></li>
                         <li><a href="./adminReportes.html">Reportes</a></li>
                         <li><a href="./adminMensajes.html">Mensajes</a></li>
                         <li><a href="./configAdmin.html">Configuración</a></li>
@@ -93,7 +98,7 @@
             </div>
         </section>
     </main>
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
 <script>
     function toggleChat() {
@@ -101,7 +106,9 @@
         chatBox.classList.toggle("open");
     }
 </script>
-<script src="/js/panelUsuario.js"></script>
-<script src="/js/darkTheme.js"></script>
+<script th:src="@{/js/panelUsuario.js}" src="/js/panelUsuario.js"></script>
+<script th:src="@{/js/darkTheme.js}" src="/js/darkTheme.js"></script>
+<script th:src="@{/js/asistente.js}" src="/js/asistente.js"></script>
+
 </body>
 </html>

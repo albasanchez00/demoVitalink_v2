@@ -15,6 +15,7 @@ public class UsuariosDetailsServices implements UserDetailsService {
         this.usuariosRepository = usuariosRepository;
     }
 
+
     //Metodo que devuelve los datos del usuario
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

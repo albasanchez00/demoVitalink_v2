@@ -1,71 +1,119 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Síntomas</title>
-  <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-  <!-- Librería de gráficos Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../static/js/sintomas.js"></script>
-  <link rel="stylesheet" href="./css/style2.css">
-    <script src="/js/darkTheme.js" defer></script>
+    <meta charset="UTF-8">
+    <title>Registro de Síntomas</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/css/style2.css}" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
-  <section class="contenedor">
-      <div th:replace="fragments/header :: header"></div>
+<section class="contenedor">
+    <!-- Header -->
+    <div th:replace="fragments/header :: header"></div>
 
-    <main id="main_panelUser">
-        <section class="section_Sintomas">
-            <!-- Formulario de síntomas con estilo desde style2.css -->
+    <main id="main_registroSintomas">
+        <header class="section_header">
             <h1>Registro de Síntomas</h1>
-            <form id="form-sintomas">
-                <input type="hidden" id="userId" value="123">
+        </header>
+        <!-- Modal Crear/Editar -->
 
-                <label>Fecha:<input type="date" id="fecha" required></label>
-                <label>Síntoma:<input type="text" id="sintoma" required></label>
-                <label>Intensidad:
-                <select id="intensidad">
-                    <option value="1">1 - Leve</option>
-                    <option value="3">2 - Moderado</option>
-                    <option value="5">3 - Severo</option>
-                </select>
-                </label>
-                <label>Notas:<textarea id="notas" rows="3"></textarea></label>
 
-                <button type="submit" style="grid-column: span 2;">Registrar</button>
+        <div id="modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+                <div class="modal-contenido">
+                    <button type="button" class="btn-cerrar-x" id="btn-cerrar" aria-label="Cerrar">✕</button>
+                    <h2 id="titulo-modal">Registrar síntoma</h2>
+                    <form id="form-sintoma">
+                        <!-- Obtenemos el id_usuario del usuario autenticado -->
+                        <input type="hidden" id="id_usuario"
+                               th:value="${#authentication?.principal?.usuario?.id_usuario}">
+                        <input type="hidden" id="id_sintoma">
+
+                        <div class="grid">
+                            <label>Tipo
+                                <select id="tipo" required>
+                                    <option value="">— Selecciona —</option>
+                                    <option value="DOLOR_CABEZA">DOLOR_CABEZA</option>
+                                    <option value="FIEBRE">FIEBRE</option>
+                                    <option value="NAUSEAS">NAUSEAS</option>
+                                    <option value="VOMITOS">VOMITOS</option>
+                                    <option value="FATIGA">FATIGA</option>
+                                    <option value="DOLOR_ABDOMINAL">DOLOR_ABDOMINAL</option>
+                                    <option value="TOS">TOS</option>
+                                    <option value="OTRO">OTRO</option>
+                                </select>
+                            </label>
+
+                            <label>Zona
+                                <select id="zona">
+                                    <option value="">—</option>
+                                    <option value="CABEZA">CABEZA</option>
+                                    <option value="GARGANTA">GARGANTA</option>
+                                    <option value="PECHO">PECHO</option>
+                                    <option value="ABDOMEN">ABDOMEN</option>
+                                    <option value="ESPALDA">ESPALDA</option>
+                                    <option value="BRAZO">BRAZO</option>
+                                    <option value="PIERNA">PIERNA</option>
+                                    <option value="GENERAL">GENERAL</option>
+                                    <option value="OTRA">OTRA</option>
+                                </select>
+                            </label>
+
+                            <label>Descripción
+                                <textarea id="descripcion" maxlength="300" placeholder="Máx. 300 caracteres"></textarea>
+                            </label>
+
+                            <label>Fecha y hora
+                                <input type="datetime-local" id="fechaRegistro">
+                            </label>
+                        </div>
+
+                        <div class="acciones">
+                            <button type="submit" class="btn btn-primario">Guardar</button>
+                            <button type="button" id="btn-cancelar" class="btn">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        <section class="filtros" aria-label="Filtros de búsqueda">
+            <h3>Buscar Sintomas</h3>
+            <form id="form-filtros" class="form-inline" onsubmit="return false;">
+                <input type="text" id="filtro-tipo" placeholder="Tipo (ej. DOLOR_CABEZA)">
+                <button class="btn">Aplicar</button>
+                <button id="btn-abrir" class="btn btn-primario">Añadir síntoma</button>
             </form>
+        </section>
 
-            <section class="filtro-Registro">
-                <!-- Filtros para búsqueda -->
-                <section id="filtros">
-                    <h3>Filtrar Registros</h3>
-                    <label>Fecha:<input type="date" id="filtroFecha"></label>
-                    <label>Síntoma:<input type="text" id="filtroSintoma"></label>
-                    <button onclick="filtrarRegistros()">Aplicar Filtros</button>
-                </section>
 
-                <!-- Tabla con clase personalizada -->
-                <section id="registros">
-                    <h3>Historial de Síntomas</h3>
-                    <table class="tabla_Registros">
-                    <thead>
-                        <tr><th>Fecha</th><th>Síntoma</th><th>Intensidad</th><th>Notas</th></tr>
-                    </thead>
-                    <tbody id="tablaRegistros"></tbody>
-                    </table>
-                </section>
-            </section>
+        <!-- Filtros -->
 
-            <!-- Gráfico con estilo propio -->
-            <section id="graficos">
-                <h3>Gráfica de Intensidad</h3>
-                <canvas id="graficoSintomas" height="100"></canvas>
-            </section>
-        </section>    
+
+        <!-- Tabla -->
+        <section class="tabla-responsive">
+            <table class="tabla-tratamientos">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Zona</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="tbody-sintomas">
+                <!-- registros -->
+                </tbody>
+            </table>
+        </section>
     </main>
 
-    <div th:replace="fragments/footer :: footer"></div>
-  </section>
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+</section>
+<!-- Script mínimo -->
+<script th:src="@{/js/sintomas.js}"></script>
 </body>
 </html>

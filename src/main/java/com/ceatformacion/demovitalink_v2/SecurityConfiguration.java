@@ -5,53 +5,82 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableMethodSecurity // habilita @PreAuthorize y demás anotaciones a nivel de método
 public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         //Configurar las páginas que según el rol mostrará o negará
-        http.authorizeHttpRequests(auth->auth.requestMatchers(HttpMethod.GET,"/","/index","/registroUsuario","/media/**","/css/**","/js/**").permitAll()
+        http
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+
+                .authorizeHttpRequests(auth->auth
+                        // Públicos + estáticos
+                        .requestMatchers(HttpMethod.GET,"/","/index","/webjars/**","/usuarios/**","/usuarios/registroUsuario","/media/**","/css/**","/js/**").permitAll()
+
+                // LOGIN (liberar ambos métodos para evitar el bucle)
+                .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").hasAnyRole("Admin","User")
+                .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").hasAnyRole("Admin","User")
+                .requestMatchers(HttpMethod.GET, "/api/sintomas/mios").permitAll() // <- temporal para ver datos
+                .requestMatchers("/error").permitAll()
+
+                        // Vistas protegidas (usa AUTHORITIES si tus valores son "Admin"/"User")
+                .requestMatchers(HttpMethod.GET, "/usuarios/panelUsuario").permitAll()
+                .requestMatchers("/usuarios/registroSintomas").permitAll()
+
+                // Registro público
+                .requestMatchers(HttpMethod.GET,  "/usuarios/registroUsuario").permitAll()
+                .requestMatchers(HttpMethod.POST, "/usuarios/guardarUsuario").permitAll()
+
                 //Acceso al crud
                 .requestMatchers(HttpMethod.GET,"/serviciosCliente").permitAll()
-                .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
                 .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
                 .requestMatchers(HttpMethod.POST,"/recordatorios").permitAll()
                 .requestMatchers(HttpMethod.POST,"/registroSintomas").permitAll()
                 .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
                 .requestMatchers(HttpMethod.GET,"/terminoCondiciones").permitAll()
                 .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
-                .requestMatchers(HttpMethod.POST,"/configUsuario").hasAnyRole("Admin","User")
-                .requestMatchers(HttpMethod.GET,"/panelUsuario").hasAnyRole("Admin","User")
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'
-                .requestMatchers(HttpMethod.GET,"/registroUsuario").permitAll()
-                .requestMatchers(HttpMethod.POST,"/guardarUsuario").permitAll()
                 .requestMatchers(HttpMethod.GET,"/listaUsuarios/{id}").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/citasCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET, "/agendaCitas").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasAnyRole("Admin","User")
                 .requestMatchers(HttpMethod.POST,"/historialMedico").hasAnyRole("Admin","User")
+                .requestMatchers(HttpMethod.POST,"/configUsuario").hasAnyRole("Admin","User")
+                .requestMatchers("/admin/**").hasRole("Admin")
 
-                //Formulario de Gestión de Clientes: solo rol 'User'
+                        //Formulario de Gestión de Clientes: solo rol 'User'
                 .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.POST,"/guardarCliente").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/listaClientes/{id}").hasRole("Admin")
                 .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("User")
                 .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("User")
                 .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasRole("User")
+
+                .requestMatchers("/api/sintomas/**").authenticated()
+                .requestMatchers("/sintomas").authenticated()  // la vista
+
                 //Cualquier otra ruta necesita autentificación.
                 .anyRequest().authenticated()
-        ).formLogin(form->form.loginPage("/inicioSesion")
-                .loginProcessingUrl("/inicioSesion")
-                .defaultSuccessUrl("/panelUsuario",true).permitAll()
-        ).logout(LogoutConfigurer::permitAll);
+        ).formLogin(form -> form
+                .loginPage("/inicioSesion")
+                .loginProcessingUrl("/usuarios/inicioSesion") // POST
+                .defaultSuccessUrl("/usuarios/panelUsuario", true)
+                .permitAll()
+        )
+        .logout(logout -> logout
+                .logoutUrl("/logout") // POST por defecto
+                .logoutSuccessUrl("/inicioSesion")
+                .permitAll()
+        );
 
         return http.build();
     }
@@ -68,5 +97,4 @@ public class SecurityConfiguration {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
         return authConfig.getAuthenticationManager();
     }
-
 }

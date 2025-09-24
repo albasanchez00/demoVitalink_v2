@@ -9,11 +9,12 @@
     <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <main class="main-iSesion">
     <section class="section_iSesion">
-        <form th:action="@{/inicioSesion}" method="post">
+        <form th:action="@{/usuarios/inicioSesion}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <p>
                 <label for="username">Usuario:</label>
                 <input type="text" name="username" id="username" required autofocus>
@@ -36,6 +37,6 @@
     </section>
 </main>
 
-<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

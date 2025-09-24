@@ -26,11 +26,16 @@ async function handleKey(event) {
       appendMessage("Asistente", "Ocurrió un error al procesar tu mensaje.");
     }
   }
+    function appendMessage(sender, text) {
+        const messagesContainer = document.getElementById("chat-messages");
+        const messageElement = document.createElement("div");
+        messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        messagesContainer.appendChild(messageElement);
+    }
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('chat-input');
+    if (input) input.addEventListener('keydown', handleKey);
+});
 
-function appendMessage(sender, text) {
-  const messagesContainer = document.getElementById("chat-messages");
-  const messageElement = document.createElement("div");
-  messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
-  messagesContainer.appendChild(messageElement);
-}
+

@@ -9,31 +9,46 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/usuarios")
 public class UsuariosController {
-    @Autowired
-    private UsuariosRepository usuariosRepository;
-    @Autowired
-    private CitasRepository citasRepository;
-    @Autowired
-    private PasswordEncoder encoder;
+
+    @Autowired private UsuariosRepository usuariosRepository;
+    @Autowired private CitasRepository citasRepository;
+    @Autowired private PasswordEncoder encoder;
+
+    // === LOGIN ===
+    @GetMapping("/inicioSesion")
+    public String loginPage(@RequestParam(value = "error", required = false) String error,
+                            @RequestParam(value = "logout", required = false) String logout,
+                            Model model) {
+        if (error != null)  model.addAttribute("error", "Credenciales inválidas.");
+        if (logout != null) model.addAttribute("msg", "Sesión cerrada correctamente.");
+        return "usuarios/inicioSesion"; // -> templates/usuarios/inicioSesion.html
+    }
+
+    // (opcional) página de acceso denegado
+    @GetMapping("/accesoDenegado")
+    public String accesoDenegado(Model model) {
+        model.addAttribute("error", "No tienes permisos para acceder a esta sección.");
+        return "usuarios/inicioSesion";
+    }
+
+    // === TU CÓDIGO EXISTENTE ===
 
     //mostrar panelUsuario.html
     @GetMapping("/panelUsuario")
-    public String mostrarPanelAdmin(){
+    public String mostrarPanelUsuario() {
         return "panelUsuario";
     }
+
+    // POST: procesa algo y vuelve al panel
     @PostMapping("/panelUsuario")
-    public String listadoAdmin(@ModelAttribute Usuarios usuariosForm, Model model){
-        usuariosRepository.save(usuariosForm);//Se guarda en la BBDD.
-        return "redirect:/panelUsuario";
+    public String procesarAlgo(@ModelAttribute Usuarios usuariosForm) {
+        usuariosRepository.save(usuariosForm);
+        return "redirect:/usuarios/panelUsuario";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -42,32 +57,22 @@ public class UsuariosController {
         model.addAttribute("usuarios", usuariosRepository.findAll());
         return "listaUsuarios";
     }
+
     @PostMapping("/listaUsuarios")
     public String leerCliente(@ModelAttribute Usuarios usuariosCrud, Model model){
-        usuariosRepository.save(usuariosCrud); //Lo guarda en la BBDD
-        return "redirect:/listaUsuarios";
-    }
-    @GetMapping("/mensajesUsuario")
-    public String mensajesUsuario() {
-        return "mensajesUsuario";
-    }
-    @GetMapping("/configUsuario")
-    public String configuracionUsuario() {
-        return "configUsuario";
-    }
-    @GetMapping("/inicioSesion")
-    public String login(){return "inicioSesion";}
-    @GetMapping("/logout")
-    public String logout(){
-        return "redirect:/inicioSesion";
-    }
-    @GetMapping("/registroSintomas")
-    public String registroSintomas() {
-        return "registroSintomas";
+        usuariosRepository.save(usuariosCrud);
+        return "redirect:/usuarios/listaUsuarios"; // <-- corrige el path
     }
 
+    @GetMapping("/mensajesUsuario")
+    public String mensajesUsuario() { return "mensajesUsuario"; }
+
+    @GetMapping("/configUsuario")
+    public String configuracionUsuario() { return "configUsuario"; }
+
+    @GetMapping("/registroSintomas")
+    public String registroSintomas() { return "registroSintomas"; }
+
     @GetMapping("/registroTratamiento")
-    public String registroTratamientos() {
-        return "tratamientos";
-    }
+    public String registroTratamientos() { return "tratamientos"; }
 }
