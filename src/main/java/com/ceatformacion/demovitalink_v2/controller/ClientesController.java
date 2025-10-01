@@ -7,8 +7,6 @@ import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.EmailService;
 import com.ceatformacion.demovitalink_v2.utils.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -89,10 +87,6 @@ public class ClientesController {
     }
 
 
-
-
-
-
     // 5. Buscar usuario por correo de cliente
     @GetMapping("/buscar-usuario")
     public String buscarUsuarioPorEmail(@RequestParam("email") String correoElectronico, Model model) {
@@ -126,19 +120,5 @@ public class ClientesController {
     public String eliminarCliente(@PathVariable int id) {
         clientesRepository.deleteById(id);
         return "redirect:/listaClientes";
-    }
-
-
-    @GetMapping("/estadisticasUsuario")
-    public String mostrarEstadisticas() {
-        return "estadisticasUsuario"; // <-- nombre del archivo HTML en /templates
-    }
-    @GetMapping("/recordatorios")
-    public String mostrarRecordatorios() {
-        return "recordatorios"; // <-- nombre del archivo HTML en /templates
-    }
-    @GetMapping("/historialMedico")
-    public String mostrarHistorial() {
-        return "historialMedico"; // <-- nombre del archivo HTML en /templates
     }
 }

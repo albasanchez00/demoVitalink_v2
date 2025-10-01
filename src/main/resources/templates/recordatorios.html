@@ -4,46 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recordatorios Paciente</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/media/favicon_IA_Medica.ico" type="image/x-icon">
     <meta name="description" content="Panel de usuario con recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
-    <link rel="stylesheet" href="./css/style2.css">
-    <script src="../static/js/recordatoriosUsuario.js"></script>
+    <link rel="stylesheet" href="/css/style2.css">
     <script src="/js/darkTheme.js" defer></script>
+    <!-- IMPORTANTE: la ruta correcta al JS del módulo -->
+    <script src="/js/recordatoriosUsuario.js" defer></script>
 </head>
 <body>
-    <section class="contenedor">
-        <div th:replace="fragments/header :: header"></div>
-        
-        <main id="main_panelUser">
-            <h1 class="text_center">Gestión de Recordatorios</h1>
-        
-            <section id="formulario">
-              <form id="form-recordatorio">
-                <label for="titulo">Título:</label>
-                <input type="text" id="titulo" name="titulo" required>
-        
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" name="fecha" required>
-        
-                <label for="hora">Hora:</label>
-                <input type="time" id="hora" name="hora" required>
-        
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" rows="3"></textarea>
-        
-                <button type="submit">Guardar Recordatorio</button>
-              </form>
-            </section>
-        
-            <section id="calendario">
-              <h2>Recordatorios Activos</h2>
-              <ul id="lista-recordatorios">
-                <li>No hay recordatorios aún.</li>
-              </ul>
-            </section>
-        </main>
+<section class="contenedor">
+    <!-- cambia a sintaxis nueva de Thymeleaf si quieres evitar el warning -->
+    <div th:replace="~{fragments/header :: header}"></div>
 
-        <div th:replace="fragments/footer :: footer"></div>
-    </section>
+    <main id="main_panelUser">
+        <h1 class="text_center rec-title">Gestión de Recordatorios</h1>
+
+        <section class="rec-wrap">
+            <!-- Formulario -->
+            <section id="formulario">
+                <form id="form-recordatorio" class="rec-form" novalidate>
+                    <input type="hidden" id="id_usuario" th:value="${#authentication.principal.usuario.id_usuario}">
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" required placeholder="Ej. Tomar Ibuprofeno 400mg">
+
+                    <div class="rec-grid-2">
+                        <label>
+                            Tipo:
+                            <select id="tipo" name="tipo" required>
+                                <option value="MEDICAMENTO">Medicamento</option>
+                                <option value="CITA">Cita</option>
+                                <option value="TRATAMIENTO">Tratamiento</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            Repetición:
+                            <select id="repeticion" name="repeticion">
+                                <option value="NONE">Una vez</option>
+                                <option value="DAILY">Diario</option>
+                                <option value="WEEKLY">Semanal</option>
+                                <option value="MONTHLY">Mensual</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            Canal:
+                            <select id="canal" name="canal">
+                                <option value="INAPP">In-App</option>
+                                <option value="EMAIL">Email</option>
+                                <option value="SMS">SMS</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            Vincular con…
+                            <select id="vinculo" name="vinculo">
+                                <option value="">Sin vínculo</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="rec-grid-2">
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" id="fecha" name="fecha" required>
+
+                        <label for="hora">Hora:</label>
+                        <input type="time" id="hora" name="hora" required>
+                    </div>
+
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion" rows="3" placeholder="Notas, dosis, ubicación, etc."></textarea>
+
+                    <input type="hidden" id="editId" name="editId" value="">
+                    <div class="rec-actions">
+                        <button type="submit">Guardar Recordatorio</button>
+                        <button type="button" id="btn-limpiar">Limpiar</button>
+                        <button type="button" id="btn-demo">Cargar ejemplos</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Listado y filtros -->
+            <section id="calendario">
+                <h2>Recordatorios Activos</h2>
+
+                <ul class="rec-chips">
+                    <li><a class="rec-chip active chip-filter" data-filter="ALL">Todos</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="HOY">Hoy</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="PROXIMOS">Próximos</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="PASADOS">Pasados</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="MEDICAMENTO">Medicamentos</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="CITA">Citas</a></li>
+                    <li><a class="rec-chip chip-filter" data-filter="TRATAMIENTO">Tratamientos</a></li>
+                </ul>
+
+                <p id="resumen" class="rec-resumen"></p>
+                <ul id="lista-recordatorios" class="rec-list">
+                    <li>No hay recordatorios aún.</li>
+                </ul>
+            </section>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+<script th:src="@{/js/recordatoriosUsuario.js}"></script>
 </body>
 </html>

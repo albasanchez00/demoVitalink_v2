@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Historial del Paciente</title>
+
+    <!-- (Opcional) Solo si NO ignoras CSRF en /api/** -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+    <link rel="stylesheet" href="/css/style2.css" />
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+
+    <!-- data-user-id por si tu JS lo quiere leer desde el DOM -->
+    <main id="main_panelUser" th:with="uid=${userId}" th:attr="data-user-id=${uid}">
+        <!-- Si no tienes el dialecto spring-security para thymeleaf, cambia sec:authorize por th:if="${true}" -->
+        <section class="section_main hist-wrap" sec:authorize="isAuthenticated()">
+
+            <!-- Header -->
+            <header class="hist-header">
+                <h2 class="hist-title">Historial del paciente</h2>
+                <div class="hist-actions">
+                    <a class="btn btn_primario" th:href="@{/usuarios/registroSintomas}">Registrar síntoma</a>
+                    <a class="btn btn_secundario" th:href="@{/tratamientos}">Añadir tratamiento</a>
+                    <a class="btn" th:href="@{/pedirCita}">Nueva cita</a>
+                </div>
+            </header>
+
+            <!-- Filtros -->
+            <section class="hist-filtros card">
+                <form class="hist-form" th:action="@{/usuarios/historialPaciente}" method="get">
+                    <div class="hist-grid-3">
+                        <div>
+                            <label for="desde">Desde</label>
+                            <input type="date" id="desde" name="desde"
+                                   th:value="${filtro != null ? filtro.desde : null}" />
+                        </div>
+                        <div>
+                            <label for="hasta">Hasta</label>
+                            <input type="date" id="hasta" name="hasta"
+                                   th:value="${filtro != null ? filtro.hasta : null}" />
+                        </div>
+                        <div>
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo">
+                                <option value=""
+                                        th:selected="${filtro == null or filtro.tipo == null or filtro.tipo == ''}">Todos</option>
+                                <option value="SINTOMA"
+                                        th:selected="${filtro != null and filtro.tipo == 'SINTOMA'}">Síntoma</option>
+                                <option value="TRATAMIENTO"
+                                        th:selected="${filtro != null and filtro.tipo == 'TRATAMIENTO'}">Tratamiento</option>
+                                <option value="CITA"
+                                        th:selected="${filtro != null and filtro.tipo == 'CITA'}">Cita</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Toggle avanzado -->
+                    <div class="hist-adv-toggle">
+                        <button type="button" class="link" id="btnFiltrosAvanzados">Filtros avanzados</button>
+                    </div>
+
+                    <!-- Si mostrarAvanzados es true -> visible, en cualquier otro caso -> hidden -->
+                    <div class="hist-avanzados" id="bloqueAvanzados"
+                         th:attr="hidden=${(filtro != null and filtro.mostrarAvanzados != null and filtro.mostrarAvanzados) ? null : 'hidden'}">
+                        <div class="hist-grid-3">
+                            <div>
+                                <label for="zona">Zona</label>
+                                <input type="text" id="zona" name="zona"
+                                       th:value="${filtro != null ? filtro.zona : null}" />
+                            </div>
+                            <div>
+                                <label for="intensidad">Intensidad</label>
+                                <input type="number" id="intensidad" name="intensidad" min="1" max="10"
+                                       th:value="${filtro != null ? filtro.intensidad : null}" />
+                            </div>
+                            <div>
+                                <label for="estadoTratamiento">Estado</label>
+                                <select id="estadoTratamiento" name="estadoTratamiento">
+                                    <option value=""
+                                            th:selected="${filtro == null or filtro.estadoTratamiento == null or filtro.estadoTratamiento == ''}">Todos</option>
+                                    <option value="ACTIVO"
+                                            th:selected="${filtro != null and filtro.estadoTratamiento == 'ACTIVO'}">Activo</option>
+                                    <option value="PAUSADO"
+                                            th:selected="${filtro != null and filtro.estadoTratamiento == 'PAUSADO'}">Pausado</option>
+                                    <option value="FINALIZADO"
+                                            th:selected="${filtro != null and filtro.estadoTratamiento == 'FINALIZADO'}">Finalizado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hist-actions">
+                        <button type="submit" class="btn btn_primario">Aplicar filtros</button>
+                        <!-- Limpiar → usa la misma ruta de la vista -->
+                        <a class="btn btn_linea" th:href="@{/usuarios/historialPaciente}">Limpiar</a>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Timeline -->
+            <section class="hist-timeline card">
+                <ul class="hist-lista">
+                    <li class="hist-item" th:each="e : ${eventos}">
+                        <div class="hist-fecha" th:text="${#temporals.format(e.fecha,'dd/MM/yyyy HH:mm')}">12/09/2025 10:30</div>
+                        <div class="hist-tipo">
+                            <span class="chip chip-sintoma" th:if="${e.tipo=='SINTOMA'}">Síntoma</span>
+                            <span class="chip chip-tratamiento" th:if="${e.tipo=='TRATAMIENTO'}">Tratamiento</span>
+                            <span class="chip chip-cita" th:if="${e.tipo=='CITA'}">Cita</span>
+                        </div>
+                        <div class="hist-contenido">
+                            <h4 th:text="${e.titulo}">Título</h4>
+                            <p th:text="${e.descripcion}">Descripción</p>
+
+                            <div class="hist-meta" th:if="${e.zona != null}">
+                                <span><strong>Zona:</strong> <span th:text="${e.zona}">—</span></span>
+                            </div>
+                            <div class="hist-meta" th:if="${e.intensidad != null}">
+                                <span><strong>Intensidad:</strong> <span th:text="${e.intensidad}">—</span></span>
+                            </div>
+
+                            <div class="hist-item-actions">
+                                <a th:href="${e.urlDetalle}" class="link">Ver</a>
+                                <span>·</span>
+                                <a th:href="${e.urlEditar}" class="link">Editar</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Mensaje vacío -->
+                <p th:if="${page != null and page.totalElements == 0}" class="text_center">
+                    No hay registros para los filtros seleccionados.
+                </p>
+
+                <!-- Paginación (solo si hay elementos) -->
+                <div class="hist-paginacion" th:if="${page != null and page.totalElements > 0}">
+                    <form th:action="@{/usuarios/historialPaciente}" method="get" style="display:flex; gap:.5rem; align-items:center;">
+                        <input type="hidden" name="desde" th:value="${filtro != null ? filtro.desde : null}" />
+                        <input type="hidden" name="hasta" th:value="${filtro != null ? filtro.hasta : null}" />
+                        <input type="hidden" name="tipo" th:value="${filtro != null ? filtro.tipo : null}" />
+                        <input type="hidden" name="zona" th:value="${filtro != null ? filtro.zona : null}" />
+                        <input type="hidden" name="intensidad" th:value="${filtro != null ? filtro.intensidad : null}" />
+                        <input type="hidden" name="estadoTratamiento" th:value="${filtro != null ? filtro.estadoTratamiento : null}" />
+                        <input type="hidden" name="size" th:value="${page.size}" />
+
+                        <button class="btn btn_linea" type="submit" name="page" th:value="${page.number - 1}" th:if="${!page.first}">Anterior</button>
+                        <span>Página <span th:text="${page.number + 1}">1</span> de <span th:text="${page.totalPages}">1</span></span>
+                        <button class="btn btn_linea" type="submit" name="page" th:value="${page.number + 1}" th:if="${!page.last}">Siguiente</button>
+                    </form>
+                </div>
+            </section>
+
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+
+<!-- Inyecta el id_usuario (opción híbrida): lo añade el controlador -->
+<script th:inline="javascript">
+    window.USER_ID = /*[[${userId}]]*/ 0;
+</script>
+<!-- Tu JS para comportamiento extra (colapsar filtros, etc.) -->
+<script src="/js/historial.js" defer></script>
+</body>
+</html>

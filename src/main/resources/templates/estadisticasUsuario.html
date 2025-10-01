@@ -4,46 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evolución Paciente</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/style2.css">
-    <!-- 1) Primero Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js" defer></script>
-    <!-- 2) Luego tu lógica, también defer -->
-    <script src="/js/evolucionUsuario.js" defer></script>
-    <!-- 3) Y por último darkTheme.js, igualmente defer -->
-    <script src="/js/darkTheme.js" defer></script>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+    <script th:src="@{/js/darkTheme.js}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <section class="contenedor">
         <div th:replace="fragments/header :: header"></div>
 
         <main id="main-panelEvolucion">
-            <section class="section_main">
-              <h1 class="text_center">Estadísticas del Paciente</h1>
+            <section class="section_main" >
+            <input type="hidden" id="idUsuario" th:value="${id_usuario}"/>
+                <section id="estadisticas" class="stats-wrap">
+                    <header class="stats-header">
+                        <div class="stats-title">
+                            <span class="stats-emoji">📊</span>
+                            <h1>Estadísticas del Paciente</h1>
+                        </div>
+                    </header>
 
-              <div class="dashboard-overview-estadisctics">
-                <!-- Gráfico de evolución (línea) -->
-                <div class="card-evolucion wide-card">
-                  <h3>Evolución de Síntomas</h3>
-                  <canvas id="lineChart"></canvas>
-                </div>
-
-                <!-- Gráfico de frecuencia de síntomas (barras) -->
-                <div class="card-evolucion">
-                  <h3>Síntomas Más Comunes</h3>
-                  <canvas id="barChart"></canvas>
-                </div>
-
-                <!-- Gráfico de adherencia (pastel) -->
-                <div class="card-evolucion">
-                  <h3>Adherencia al Tratamiento</h3>
-                  <canvas id="pieChart"></canvas>
-                </div>
-              </div>
+                    <!-- Barra de filtros compacta -->
+                    <div class="stats-filtros">
+                        <label>Desde <input type="date" id="desde"></label>
+                        <label>Hasta <input type="date" id="hasta"></label>
+                        <button id="aplicar" class="btn_primario">Aplicar</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="card">
+                            <div class="card-head"><h3>Tratamientos</h3></div>
+                            <canvas id="chartTratamientosTipo"></canvas>
+                        </div>
+                        <div class="card">
+                            <div class="card-head"><h3>Síntomas por día</h3></div>
+                            <canvas id="chartSintomasDia"></canvas>
+                        </div>
+                        <div class="card">
+                            <div class="card-head"><h3>Citas por día</h3></div>
+                            <canvas id="chartCitasDia"></canvas>
+                        </div>
+                    </div>
+                </section>
             </section>
           </main>
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>
+    <script th:src="@{/js/estadisticas.js}"></script>
+    <script>
+        // pon aquí el id REAL del usuario logueado
+        window.id_usuario = /*[[${id_usuario}?:0]]*/ 0;
+    </script>
 </body>
 </html>
