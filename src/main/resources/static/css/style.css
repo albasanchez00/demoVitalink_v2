@@ -1303,6 +1303,7 @@ footer{
     color: white;
     text-align: center;
     font-size: 14px;
+    padding: 20px;
     picture img{
         width: 60px;
         height: auto;

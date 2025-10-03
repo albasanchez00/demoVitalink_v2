@@ -9,7 +9,7 @@
 </head>
 <body>
 <section class="contenedor">
-    <div th:replace="fragments/header :: header"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
 
     <main id="main_configuracionUsuario">
         <section class="config-usuario-container">
@@ -17,58 +17,140 @@
 
             <div class="config-usuario-panel">
                 <aside class="config-usuario-menu">
-                    <button onclick="mostrarSeccion('seccion-datos', this)" class="btn-config activo">Datos</button>
-                    <button onclick="mostrarSeccion('seccion-contrasena', this)" class="btn-config">Contraseña</button>
-                    <button onclick="mostrarSeccion('seccion-preferencias', this)" class="btn-config">Preferencias</button>
+                    <button type="button" onclick="mostrarSeccion('seccion-datos', this)" class="btn-config activo">Datos</button>
+                    <button type="button" onclick="mostrarSeccion('seccion-contrasena', this)" class="btn-config">Contraseña</button>
+                    <button type="button" onclick="mostrarSeccion('seccion-preferencias', this)" class="btn-config">Preferencias</button>
                 </aside>
+
                 <section class="config-usuario-formulario">
-                    <div id="seccion-datos" class="config-seccion activa">
+
+                    <!-- DATOS -->
+                    <form id="seccion-datos" class="config-seccion activa"
+                          th:action="@{/usuarios/configUsuario/datos}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <label>Nombre:
-                            <input type="text" placeholder="Nombre...">
+                            <input type="text" name="nombre" th:value="${cliente?.nombre}">
                         </label>
-                        <label>Apellido:
-                            <input type="text" placeholder="Apellido...">
+                        <label>Apellidos:
+                            <input type="text" name="apellidos" th:value="${cliente?.apellidos}">
                         </label>
                         <label>Correo electrónico:
-                            <input type="email" placeholder="correo@ejemplo.com">
+                            <input type="email" name="correoElectronico" th:value="${cliente?.correoElectronico}">
                         </label>
                         <label>Teléfono:
-                            <input type="tel" placeholder="123456789">
+                            <input type="tel" name="telefono" th:value="${cliente?.telefono}">
                         </label>
-                    </div>
+                        <button type="submit" class="btn-config">Guardar cambios</button>
 
-                    <div id="seccion-contrasena" class="config-seccion">
+                        <p th:if="${msgDatosOk}" th:text="${msgDatosOk}"></p>
+                        <p th:if="${msgDatosErr}" th:text="${msgDatosErr}"></p>
+                    </form>
+
+                    <!-- CONTRASEÑA -->
+                    <form id="seccion-contrasena" class="config-seccion"
+                          th:action="@{/usuarios/configUsuario/password}" method="post" autocomplete="off">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <label>Contraseña actual:
-                            <input type="password">
+                            <input type="password" name="actual">
                         </label>
                         <label>Nueva contraseña:
-                            <input type="password">
+                            <input type="password" name="nueva">
                         </label>
                         <label>Confirmar nueva:
-                            <input type="password">
+                            <input type="password" name="confirmacion">
                         </label>
-                    </div>
+                        <button type="submit" class="btn-config">Actualizar contraseña</button>
 
-                    <div id="seccion-preferencias" class="config-seccion">
-                        <label><input type="checkbox"> Recibir notificaciones</label>
-                        <button id="toggle-theme" class="btn-config">
-                            🌙 Cambiar tema
-                        </button>
-                    </div>
+                        <p th:if="${msgPassOk}" th:text="${msgPassOk}"></p>
+                        <p th:if="${msgPassErr}" th:text="${msgPassErr}"></p>
+                    </form>
 
-                    <button class="btn-guardar-config">Guardar Cambios</button>
-                    <p id="mensaje-confirmacion" class="config-mensaje" style="display:none;">
-                        ¡Cambios guardados correctamente!
-                    </p>
+                    <!-- PREFERENCIAS -->
+                    <!-- PREFERENCIAS (nuevo diseño) -->
+                    <form id="seccion-preferencias" class="config-seccion"
+                          th:action="@{/usuarios/configUsuario/preferencias}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                        <div class="pref-card">
+                            <div class="pref-head">
+                                <div>
+                                    <h3>Preferencias</h3>
+                                    <p>Personaliza cómo quieres usar la aplicación.</p>
+                                </div>
+                                <span class="pref-badge">Beta</span>
+                            </div>
+
+                            <!-- Notificaciones -->
+                            <div class="pref-row">
+                                <div class="pref-row-left">
+                                    <h4>Recibir notificaciones</h4>
+                                    <p>Te avisaremos de cambios importantes y recordatorios.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" name="notificaciones" value="true" th:checked="${prefs?.notificaciones}">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <hr class="pref-divider"/>
+
+                            <!-- Tema -->
+                            <div class="pref-block">
+                                <h4>Tema de la interfaz</h4>
+                                <p class="pref-sub">Ajusta el aspecto visual. “Auto” sigue el tema del sistema.</p>
+
+                                <div class="segmented">
+                                    <input type="radio" id="tema-auto"  name="tema" value="auto"  th:checked="${(prefs?.tema ?: 'auto') == 'auto'}">
+                                    <label for="tema-auto">Auto</label>
+
+                                    <input type="radio" id="tema-light" name="tema" value="light" th:checked="${(prefs?.tema ?: 'auto') == 'light'}">
+                                    <label for="tema-light">Claro</label>
+
+                                    <input type="radio" id="tema-dark"  name="tema" value="dark"  th:checked="${(prefs?.tema ?: 'auto') == 'dark'}">
+                                    <label for="tema-dark">Oscuro</label>
+                                </div>
+
+                                <!-- Previsualización rápida -->
+                                <div class="theme-preview">
+                                    <div class="chip chip--auto">Auto</div>
+                                    <div class="chip chip--light">Claro</div>
+                                    <div class="chip chip--dark">Oscuro</div>
+                                </div>
+                            </div>
+
+                            <div class="pref-actions">
+                                <button type="submit" class="btn-config btn-guardar-config">Guardar preferencias</button>
+                            </div>
+
+                            <!-- mensajes flash -->
+                            <p class="config-mensaje" th:if="${msgPrefsOk}" th:text="${msgPrefsOk}"></p>
+                            <p class="config-error"   th:if="${msgPrefsErr}" th:text="${msgPrefsErr}"></p>
+                        </div>
+                    </form>
                 </section>
             </div>
         </section>
     </main>
 
-    <div th:replace="fragments/footer :: footer"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
-<script src="/js/configUsuario.js"></script>
-<script src="/js/evolucionUsuario.js"></script>
-<script src="/js/darkTheme.js"></script>
+
+<script>
+    function mostrarSeccion(id, btn){
+        document.querySelectorAll('.config-seccion').forEach(s => s.classList.remove('activa'));
+        document.getElementById(id).classList.add('activa');
+        document.querySelectorAll('.btn-config').forEach(b => b.classList.remove('activo'));
+        if (btn) btn.classList.add('activo');
+    }
+    function toggleTema() {
+        const input = document.getElementById('tema');
+        const orden = ['auto', 'dark', 'light'];
+        const idx = orden.indexOf(input.value || 'auto');
+        input.value = orden[(idx + 1) % orden.length];
+        document.documentElement.setAttribute('data-theme', input.value);
+    }
+</script>
+<script th:src="@{/js/evolucionUsuario.js}"></script>
+<script th:src="@{/js/darkTheme.js}"></script>
 </body>
 </html>

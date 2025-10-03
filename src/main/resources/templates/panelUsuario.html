@@ -16,23 +16,25 @@
 
         <section class="section_main" sec:authorize="hasRole('User')">
             <section class="section_panelUser">
-                <form th:action="@{/logout}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit">Salir</button>
-                </form>
-
                 <nav class="nav_panelUser">
                     <ul>
-                        <li><a href="/pedirCita" title="Ver estadísticas de usuario">Solicitar Cita</a></li>
-                        <li><a href="/estadisticasUsuario" title="Ver estadísticas de usuario">Estadísticas</a></li>
+                        <li><a href="/pedirCita" title="Ver estadísticas de usuario">Citas</a></li>
                         <li><a th:href="@{/usuarios/registroSintomas}">Sintomas</a></li>
-                        <li><a href="/recordatorios" title="Ver recordatorios">Recordatorios</a></li>
-                        <li><a th:href="@{/usuarios/historialPaciente}">Historial</a></li>
                         <li><a href="/tratamientos" title="Ver tratamientos">Tratamientos</a></li>
+                        <li><a th:href="@{/usuarios/recordatorios}" title="Ver recordatorios">Recordatorios</a></li>
+                        <li><a href="/estadisticasUsuario" title="Ver estadísticas de usuario">Estadísticas</a></li>
+                        <li><a th:href="@{/usuarios/historialPaciente}">Historial</a></li>
                         <li><a href="/usuarios/configUsuario" title="Configuración de usuario">Configuración</a></li>
-
                     </ul>
                 </nav>
+            </section>
+            <section>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn-logout">
+                        ⎋ Salir
+                    </button>
+                </form>
             </section>
             <section class="dashboard-overview">
                 <div class="card">⏰ Recordatorios de Medicación</div>
@@ -59,10 +61,6 @@
 
         </section>
         <section class="section_main" sec:authorize="hasRole('Admin')">
-            <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                <button type="submit">Salir</button>
-            </form>
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
@@ -76,7 +74,14 @@
                     </ul>
                 </nav>
             </section>
-
+            <section>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn-logout">
+                        ⎋ Salir
+                    </button>
+                </form>
+            </section>
             <section class="dashboard-overview">
                 <div class="card">👥 Total de Usuarios Registrados</div>
                 <div class="card">📅 Citas Programadas Hoy</div>

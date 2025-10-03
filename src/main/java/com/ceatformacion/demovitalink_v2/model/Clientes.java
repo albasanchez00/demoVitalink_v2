@@ -9,12 +9,12 @@ public class Clientes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
-    private int idCliente;
+    private int idCliente; // el nombre del campo Java puede ser idCliente
     private String nombre;
     private String apellidos;
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate nacimiento;
-    @Column(name = "correo_electronico")
+    @Column(name = "correo_electronico", length = 150)
     private String correoElectronico;
     private String telefono;
     private String tipo_documento;
@@ -24,22 +24,20 @@ public class Clientes {
     private String direccion;
     private String ciudad_id;
     private String cp_id;
+    @Column(name = "pref_notificaciones")
+    private Boolean prefNotificaciones = Boolean.TRUE;
+    @Column(name = "pref_tema", length = 10)
+    private String prefTema = "auto";
 
     @OneToOne(mappedBy = "cliente")
     private Usuarios usuario;
 
-    public int getIdCliente() {
-        return idCliente;
-    }
-
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
+    public int getIdCliente() { return idCliente; }
+    public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
 
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -47,7 +45,6 @@ public class Clientes {
     public String getApellidos() {
         return apellidos;
     }
-
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
     }
@@ -55,7 +52,6 @@ public class Clientes {
     public LocalDate getNacimiento() {
         return nacimiento;
     }
-
     public void setNacimiento(LocalDate nacimiento) {
         this.nacimiento = nacimiento;
     }
@@ -63,7 +59,6 @@ public class Clientes {
     public String getCorreoElectronico() {
         return correoElectronico;
     }
-
     public void setCorreoElectronico(String correoElectronico) {
         this.correoElectronico = correoElectronico;
     }
@@ -71,7 +66,6 @@ public class Clientes {
     public String getTelefono() {
         return telefono;
     }
-
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
@@ -79,7 +73,6 @@ public class Clientes {
     public String getTipo_documento() {
         return tipo_documento;
     }
-
     public void setTipo_documento(String tipo_documento) {
         this.tipo_documento = tipo_documento;
     }
@@ -87,23 +80,16 @@ public class Clientes {
     public String getNumero_identificacion() {
         return numero_identificacion;
     }
-
-    public void setNumero_identificacion(String numero_identificacion) {
-        this.numero_identificacion = numero_identificacion;
-    }
+    public void setNumero_identificacion(String numero_identificacion) { this.numero_identificacion = numero_identificacion; }
 
     public String getNumero_tarjeta_sanitaria() {
         return numero_tarjeta_sanitaria;
     }
-
-    public void setNumero_tarjeta_sanitaria(String numero_tarjeta_sanitaria) {
-        this.numero_tarjeta_sanitaria = numero_tarjeta_sanitaria;
-    }
+    public void setNumero_tarjeta_sanitaria(String numero_tarjeta_sanitaria) { this.numero_tarjeta_sanitaria = numero_tarjeta_sanitaria; }
 
     public String getGenero() {
         return genero;
     }
-
     public void setGenero(String genero) {
         this.genero = genero;
     }
@@ -111,7 +97,6 @@ public class Clientes {
     public String getDireccion() {
         return direccion;
     }
-
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
@@ -119,7 +104,6 @@ public class Clientes {
     public String getCiudad_id() {
         return ciudad_id;
     }
-
     public void setCiudad_id(String ciudad_id) {
         this.ciudad_id = ciudad_id;
     }
@@ -127,7 +111,6 @@ public class Clientes {
     public String getCp_id() {
         return cp_id;
     }
-
     public void setCp_id(String cp_id) {
         this.cp_id = cp_id;
     }
@@ -135,10 +118,15 @@ public class Clientes {
     public Usuarios getUsuario() {
         return usuario;
     }
-
     public void setUsuario(Usuarios usuario) {
         this.usuario = usuario;
     }
+
+    public Boolean getPrefNotificaciones() { return prefNotificaciones; }
+    public void setPrefNotificaciones(Boolean prefNotificaciones) { this.prefNotificaciones = prefNotificaciones; }
+
+    public String getPrefTema() { return prefTema; }
+    public void setPrefTema(String prefTema) { this.prefTema = prefTema; }
 
     @Override
     public String toString() {
@@ -155,6 +143,9 @@ public class Clientes {
                 "\nGenero → " + genero +
                 "\nDirección → " + direccion +
                 "\nCiudad → " + ciudad_id +
-                "\nCódigo postal → " + cp_id;
+                "\nCódigo postal → " + cp_id+
+                "\n Tema web → " + prefTema +
+                "\n Notificaciones → " + prefNotificaciones;
     }
+
 }
