@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Política de Cookies</title>
+  <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <script th:src="@{/js/darkTheme.js}" defer></script>
+  <script th:src="@{/js/menu.js}" defer></script>
+  <script th:src="@{/js/sccript.js}" defer></script>
+  <script th:src="@{/js/politicaPrivacidad.js}" defer></script>
+</head>
+<body>
+  <section>
+    <!-- ===== Header existente ===== -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- ===== Contenido principal con el mismo diseño de policy ===== -->
+    <main class="policy policy--light">
+      <!-- Hero -->
+      <section class="policy__hero">
+        <nav class="policy__breadcrumb">
+          <a th:href="@{/}">Inicio</a> › <span>Política de Cookies</span>
+        </nav>
+        <h1 class="policy__title">Política de Cookies</h1>
+        <p class="policy__meta">Última actualización: 4 de octubre de 2025 · Responsable: VitaLink</p>
+      </section>
+
+      <!-- Grid: TOC + Content -->
+      <section class="policy__wrap">
+        <!-- Índice lateral -->
+        <aside class="policy__toc" aria-expanded="true">
+          <button class="policy__toc-toggle" aria-controls="toc-list" aria-expanded="true">Contenido</button>
+          <ul id="toc-list">
+            <li><a href="#que-son">1. ¿Qué son las cookies?</a></li>
+            <li><a href="#tipos">2. Tipos de cookies</a></li>
+            <li><a href="#para-que">3. ¿Para qué las utilizamos?</a></li>
+            <li><a href="#cookies-que-usamos">4. Cookies que utilizamos</a></li>
+            <li><a href="#terceros">5. Cookies de terceros</a></li>
+            <li><a href="#consentimiento">6. Consentimiento y configuración</a></li>
+            <li><a href="#desactivar">7. Cómo desactivar o eliminar cookies</a></li>
+            <li><a href="#retencion">8. Periodo de conservación</a></li>
+            <li><a href="#actualizaciones">9. Actualizaciones de esta política</a></li>
+            <li><a href="#contacto">10. Contacto</a></li>
+          </ul>
+        </aside>
+
+        <!-- Contenido -->
+        <article class="policy__content">
+          <section id="que-son" class="policy__section">
+            <h2>¿Qué son las cookies?</h2>
+            <p>Las cookies son pequeños archivos que se almacenan en tu dispositivo cuando visitas un sitio web. Sirven para recordar tus preferencias, realizar mediciones de uso y mejorar tu experiencia de navegación.</p>
+          </section>
+
+          <section id="tipos" class="policy__section">
+            <h2>Tipos de cookies</h2>
+            <ul>
+              <li><strong>Cookies técnicas</strong> (necesarias): permiten la navegación y el uso básico del sitio.</li>
+              <li><strong>Cookies de preferencias</strong>: recuerdan opciones como idioma o región.</li>
+              <li><strong>Cookies de análisis/medición</strong>: ayudan a entender cómo usan el sitio los visitantes.</li>
+              <li><strong>Cookies de marketing</strong>: permiten mostrar publicidad basada en tus hábitos de navegación.</li>
+              <li><strong>Cookies de sesión</strong> y <strong>persistentes</strong>: según su duración.</li>
+              <li><strong>Propias</strong> y <strong>de terceros</strong>: según quién las gestione.</li>
+            </ul>
+          </section>
+
+          <section id="para-que" class="policy__section">
+            <h2>¿Para qué las utilizamos?</h2>
+            <p>Usamos cookies para asegurar el funcionamiento del sitio, recordar tus ajustes, elaborar estadísticas anónimas de uso y, en su caso, personalizar contenidos o comunicaciones.</p>
+            <div class="policy__callout">
+              No utilizamos cookies para obtener información sensible sin tu consentimiento.
+            </div>
+          </section>
+
+          <section id="cookies-que-usamos" class="policy__section">
+            <h2>Cookies que utilizamos</h2>
+            <p>(Ejemplo orientativo; ajusta a tu implementación real.)</p>
+            <div style="overflow:auto">
+              <table aria-describedby="tabla-descripcion-cookies">
+                <thead>
+                  <tr>
+                    <th>Cookie</th>
+                    <th>Tipo</th>
+                    <th>Proveedor</th>
+                    <th>Finalidad</th>
+                    <th>Duración</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>vl_session</td>
+                    <td>Técnica (propia)</td>
+                    <td>VitaLink</td>
+                    <td>Mantener la sesión iniciada y la seguridad.</td>
+                    <td>Sesión</td>
+                  </tr>
+                  <tr>
+                    <td>vl_pref_lang</td>
+                    <td>Preferencias (propia)</td>
+                    <td>VitaLink</td>
+                    <td>Recordar el idioma seleccionado.</td>
+                    <td>6 meses</td>
+                  </tr>
+                  <tr>
+                    <td>_ga</td>
+                    <td>Análisis (tercero)</td>
+                    <td>Google Analytics</td>
+                    <td>Métricas de uso del sitio.</td>
+                    <td>2 años</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p id="tabla-descripcion-cookies" class="policy__legal">La tabla anterior es un ejemplo. Reemplázala por la lista exacta de cookies que utilices.</p>
+          </section>
+
+          <section id="terceros" class="policy__section">
+            <h2>Cookies de terceros</h2>
+            <p>Algunas funcionalidades pueden utilizar cookies de terceros (p. ej., analítica o reproductores embebidos). Estos terceros son responsables de sus propias políticas de cookies.</p>
+          </section>
+
+          <section id="consentimiento" class="policy__section">
+            <h2>Consentimiento y configuración</h2>
+            <p>Al entrar por primera vez te mostramos un banner para aceptar, rechazar o configurar las cookies no necesarias. Puedes modificar tu elección en cualquier momento desde <a href="#!" onclick="window.dispatchEvent(new Event('openCookieSettings'));return false;">Configuración de cookies</a>.</p>
+            <div class="policy__callout">Las cookies técnicas no requieren consentimiento por ser necesarias para el funcionamiento del sitio.</div>
+          </section>
+
+          <section id="desactivar" class="policy__section">
+            <h2>Cómo desactivar o eliminar cookies</h2>
+            <p>Puedes desactivarlas desde la configuración de tu navegador. Enlaces de ayuda:</p>
+            <ul>
+              <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
+              <li><a href="https://support.mozilla.org/kb/clear-cookies-and-site-data-firefox" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+              <li><a href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471" target="_blank" rel="noopener">Safari</a></li>
+              <li><a href="https://support.microsoft.com/microsoft-edge/permite-o-bloquea-las-cookies" target="_blank" rel="noopener">Microsoft Edge</a></li>
+            </ul>
+          </section>
+
+          <section id="retencion" class="policy__section">
+            <h2>Periodo de conservación</h2>
+            <p>Conservamos la información durante el tiempo estrictamente necesario para la finalidad de cada cookie, conforme a la tabla anterior y a la normativa aplicable.</p>
+          </section>
+
+          <section id="actualizaciones" class="policy__section">
+            <h2>Actualizaciones de esta política</h2>
+            <p>Podemos actualizar esta política de cookies cuando incorporemos nuevas cookies o cambien las finalidades. Publicaremos la última versión en esta página.</p>
+          </section>
+
+          <section id="contacto" class="policy__section">
+            <h2>Contacto</h2>
+            <p>Si tienes dudas sobre nuestra política de cookies, puedes escribirnos a <strong>contact@vitalink.com</strong>.</p>
+            <div class="policy__legal">
+              <span>VitaLink · CIF 095678B</span>
+              <span>Tomelloso, España · contact@vitalink.com</span>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <!-- ===== Footer existente ===== -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </section>
+</body>
+</html>

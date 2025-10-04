@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Base Legal</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <script th:src="@{/js/darkTheme.js}" defer></script>
+    <script th:src="@{/js/menu.js}" defer></script>
+    <script th:src="@{/js/sccript.js}" defer></script>
+    <script th:src="@{/js/politicaPrivacidad.js}" defer></script>
+</head>
+<body>
+  <section>
+    <!-- ===== Header existente ===== -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- ===== Main Policy ===== -->
+    <main class="policy policy--light">
+      <!-- Hero -->
+      <section class="policy__hero">
+        <nav class="policy__breadcrumb">
+          <a th:href="@{/}">Inicio</a> › <span>Base Legal</span>
+        </nav>
+        <h1 class="policy__title">Base Legal</h1>
+        <p class="policy__meta">Última actualización: 4 de octubre de 2025 · Responsable: VitaLink</p>
+      </section>
+
+      <!-- Grid -->
+      <section class="policy__wrap">
+        <!-- Aside TOC -->
+        <aside class="policy__toc" aria-expanded="true">
+          <button class="policy__toc-toggle" aria-controls="toc-list" aria-expanded="true">Contenido</button>
+          <ul id="toc-list">
+            <li><a href="#informacion-general">1. Información General</a></li>
+            <li><a href="#marco-normativo">2. Marco Normativo Aplicable</a></li>
+            <li><a href="#consentimiento">3. Base Legal del Tratamiento de Datos</a></li>
+            <li><a href="#obligaciones">4. Obligaciones del Usuario</a></li>
+            <li><a href="#responsabilidad">5. Limitación de Responsabilidad</a></li>
+            <li><a href="#derechos">6. Derechos de los Usuarios</a></li>
+            <li><a href="#jurisdiccion">7. Jurisdicción y Legislación</a></li>
+            <li><a href="#contacto">8. Contacto</a></li>
+          </ul>
+        </aside>
+
+        <!-- Contenido -->
+        <article class="policy__content">
+          <section id="informacion-general" class="policy__section">
+            <h2>Información General</h2>
+            <p>En cumplimiento con lo dispuesto en la legislación vigente, se informa a los usuarios de la aplicación VitaLink sobre la base legal que sustenta los tratamientos de datos y el uso de la plataforma.</p>
+          </section>
+
+          <section id="marco-normativo" class="policy__section">
+            <h2>Marco Normativo Aplicable</h2>
+            <p>El tratamiento de datos personales se realiza conforme a las siguientes normativas:</p>
+            <ul>
+              <li>Reglamento (UE) 2016/679, General de Protección de Datos (RGPD).</li>
+              <li>Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).</li>
+              <li>Ley 34/2002 de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE).</li>
+            </ul>
+          </section>
+
+          <section id="consentimiento" class="policy__section">
+            <h2>Base Legal del Tratamiento de Datos</h2>
+            <p>La base legal principal para el tratamiento de los datos de los usuarios es el <strong>consentimiento explícito</strong>, así como la <strong>ejecución de un contrato</strong> cuando sea necesario para prestar el servicio.</p>
+            <div class="policy__callout">
+              En algunos casos, también podremos tratar datos para cumplir con obligaciones legales aplicables.
+            </div>
+          </section>
+
+          <section id="obligaciones" class="policy__section">
+            <h2>Obligaciones del Usuario</h2>
+            <p>Los usuarios se comprometen a facilitar datos veraces y actualizados, así como a usar la aplicación de forma conforme a la ley y las condiciones establecidas.</p>
+          </section>
+
+          <section id="responsabilidad" class="policy__section">
+            <h2>Limitación de Responsabilidad</h2>
+            <p>VitaLink no se hace responsable de interpretaciones erróneas, mal uso o incumplimiento por parte de los usuarios respecto a la información contenida en la aplicación.</p>
+          </section>
+
+          <section id="derechos" class="policy__section">
+            <h2>Derechos de los Usuarios</h2>
+            <p>Los usuarios podrán ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad de datos, según lo establecido en la legislación vigente.</p>
+          </section>
+
+          <section id="jurisdiccion" class="policy__section">
+            <h2>Jurisdicción y Legislación</h2>
+            <p>Las relaciones entre VitaLink y los usuarios se regirán por la legislación española. Para la resolución de controversias, las partes se someten a los Juzgados y Tribunales de Tomelloso.</p>
+          </section>
+
+          <section id="contacto" class="policy__section">
+            <h2>Contacto</h2>
+            <p>Si tienes cualquier duda sobre esta Base Legal, puedes escribirnos a <strong>contact@vitalink.com</strong>.</p>
+            <div class="policy__legal">
+              <span>VitaLink · CIF 095678B</span>
+              <span>Tomelloso, España · contact@vitalink.com</span>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <!-- ===== Footer existente ===== -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </section>
+</body>
+</html>

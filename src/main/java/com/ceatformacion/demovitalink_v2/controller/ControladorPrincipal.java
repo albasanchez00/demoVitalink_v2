@@ -26,8 +26,15 @@ public class ControladorPrincipal {
         return "contacto";
     }
 
-    @GetMapping("/terminoCondiciones")
-    public String terminosCondiciones() {
-        return "terminoCondiciones";
-    }
+    @GetMapping({"/politicaPrivacidad"})
+    public String politicaPrivacidad() { return "politicaPrivacidad"; }
+
+    @GetMapping({"/terminoCondiciones"})
+    public String terminoCondiciones() { return "terminoCondiciones"; }
+
+    @GetMapping({"/politicaCookies"})
+    public String politicaCookies() { return "politicaCookies"; }
+
+    @GetMapping({"/baseLegal"})
+    public String baseLegal() { return "baseLegal"; }
 }

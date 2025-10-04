@@ -1287,6 +1287,273 @@ h2,h1{
     }
 }
 /* Fin Página Terminos */
+
+/* Inicio Página Privacidad */
+/* ================================
+   PRIVACY POLICY PAGE (namespace .policy)
+   Profesional, limpio, accesible
+   ================================ */
+
+/* Layout base */
+/* Forzar paleta clara en la policy cuando haya .policy--light */
+.policy.policy--light{
+    --policy-bg: #ffffff;
+    --policy-surface: #fcfcfc;
+    --policy-border: #e8eef2;
+    --policy-text: #213547;
+    --policy-muted: #5b6b7b;
+    background: #f7fafc; /* o tu --fondo-body claro */
+}
+.policy.policy--light .policy__hero{
+    color: #fff; /* mantiene el hero con gradiente de marca */
+}
+.policy {
+    --policy-max: 1100px;
+    --policy-gap: 24px;
+    --policy-bg: #ffffff;
+    --policy-surface: #fcfcfc;
+    --policy-border: #e8eef2;
+    --policy-text: #213547;
+    --policy-muted: #5b6b7b;
+
+    color: var(--policy-text);
+    background: var(--fondo-body);
+    padding: clamp(16px, 3vw, 32px) 16px;
+}
+
+/* Contenedor y columnas */
+.policy__wrap {
+    max-width: var(--policy-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: var(--policy-gap);
+}
+
+@media (max-width: 992px) {
+    .policy__wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Cabecera/hero */
+.policy__hero {
+    max-width: var(--policy-max);
+    margin: 0 auto clamp(16px, 3vw, 28px);
+    background: linear-gradient(120deg, var(--color_primario) 0%, var(--color_secundario) 100%);
+    color: white;
+    padding: clamp(18px, 4vw, 28px);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+.policy__title {
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+}
+.policy__meta {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: .95;
+}
+
+/* TOC lateral */
+/* Ajuste de altura del aside (TOC) durante el scroll */
+:root{ --header-h: 72px; }    /* pon aquí la altura real de tu header fijo */
+
+.policy__toc{
+    position: sticky;
+    top: calc(var(--header-h) + 12px);             /* separación del header */
+    max-height: calc(100dvh - var(--header-h) - 24px); /* ocupa el alto de la ventana */
+    overflow: auto;                                 /* scroll interno cuando haga falta */
+    scrollbar-width: thin;
+    box-shadow: 0 6px 20px rgba(0,0,0,.05);
+    align-self: start;
+    background: var(--policy-surface);
+    border: 1px solid var(--policy-border);
+    border-radius: 16px;
+    padding: 15px;
+}
+.policy__toc::-webkit-scrollbar{ width: 8px; }
+.policy__toc::-webkit-scrollbar-thumb{ border-radius: 6px; }
+
+/* (solo si ves que no se pega bien) evita que el sticky se rompa por overflow en el padre */
+.policy__wrap{ overflow: visible; }
+
+.policy__toc h3 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--policy-muted);
+    margin-bottom: 8px;
+}
+
+.policy__toc ul {
+    list-style: none;
+    display: grid;
+    gap: 6px;
+}
+.policy__toc a {
+    color: var(--policy-text);
+    background: transparent;
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: block;
+    font-size: 14px;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    transition: border-color .2s, background .2s, color .2s;
+}
+.policy__toc a:focus-visible,
+.policy__toc a:hover {
+    border-color: var(--color_primario);
+    background: color-mix(in oklab, var(--color_primario) 10%, transparent);
+    color: var(--color_primario);
+    outline: none;
+}
+
+/* Contenido */
+.policy__content {
+    background: var(--policy-bg);
+    border: 1px solid var(--policy-border);
+    border-radius: 18px;
+    padding: clamp(18px, 3.2vw, 28px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    counter-reset: section;
+}
+
+/* Tipografía */
+.policy__content p {
+    font-size: clamp(15px, 1.05vw, 17px);
+    line-height: 1.7;
+    color: var(--policy-text);
+    margin: 10px 0 16px;
+}
+.policy__content ul, .policy__content ol {
+    padding-left: 1.2rem;
+    margin: 8px 0 16px;
+    color: var(--policy-text);
+}
+.policy__content li {
+    margin: 6px 0;
+}
+.policy__content a {
+    color: var(--color_primario);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.policy__content a:hover {
+    color: var(--color_secundario);
+}
+
+/* Encabezados numerados */
+.policy__content h2 {
+    counter-increment: section;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: clamp(20px, 2.2vw, 28px);
+    line-height: 1.25;
+    margin: 28px 0 10px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+}
+.policy__content h2::before {
+    content: counter(section) ".";
+    color: var(--color_primario);
+    font-weight: 900;
+}
+
+.policy__content h3 {
+    font-size: clamp(17px, 1.6vw, 22px);
+    margin: 18px 0 8px;
+    font-weight: 700;
+}
+
+/* Secciones en tarjetas suaves */
+.policy__section {
+    border: 1px solid var(--policy-border);
+    border-radius: 16px;
+    padding: clamp(14px, 2.6vw, 20px);
+    background: var(--policy-surface);
+    box-shadow: 0 4px 14px rgba(0,0,0,.04);
+    margin-bottom: 14px;
+}
+
+/* Llamados/cajas destacadas */
+.policy__callout {
+    background: linear-gradient(0deg, color-mix(in oklab, var(--color_primario) 8%, transparent), color-mix(in oklab, var(--color_primario) 8%, transparent));
+    border-left: 4px solid var(--color_primario);
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin: 12px 0;
+    color: var(--policy-text);
+}
+.policy__callout--warn {
+    border-left-color: #d97706;
+    background: linear-gradient(0deg, color-mix(in oklab, #d97706 10%, transparent), color-mix(in oklab, #d97706 10%, transparent));
+}
+
+/* Bloques legales pequeños (última actualización, responsable, etc.) */
+.policy__legal {
+    display: grid;
+    gap: 8px;
+    color: var(--policy-muted);
+    font-size: 14px;
+    border-top: 1px dashed var(--policy-border);
+    margin-top: 18px;
+    padding-top: 12px;
+}
+
+/* Tabla simple */
+.policy table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 12px 0 16px;
+}
+.policy th, .policy td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--policy-border);
+}
+.policy tbody tr:hover {
+    background: color-mix(in oklab, var(--color_primario) 6%, transparent);
+}
+
+/* Accesibilidad: foco visible y salto al contenido */
+.policy a:focus-visible,
+.policy button:focus-visible {
+    outline: 2px solid var(--color_primario);
+    outline-offset: 2px;
+}
+
+/* Breadcrumb opcional en la cabecera */
+.policy__breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: #ffffffdd;
+}
+.policy__breadcrumb a {
+    color: #ffffff;
+    text-decoration: none;
+    opacity: .9;
+}
+.policy__breadcrumb a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Espaciado con tu header/footer existentes */
+header + .policy__hero { margin-top: 14px; }
+.policy__wrap + footer { margin-top: 24px; }
+
+/* Fin Página Privacidad */
 /* FIN PÁGINAS POLÍTICAS */
 
 

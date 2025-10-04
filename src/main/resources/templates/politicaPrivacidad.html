@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politicas de Privacidad</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <script th:src="@{/js/darkTheme.js}" defer></script>
+    <script th:src="@{/js/menu.js}" defer></script>
+    <script th:src="@{/js/sccript.js}" defer></script>
+    <script th:src="@{/js/politicaPrivacidad.js}" defer></script>
+</head>
+<body>
+    <section>
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="policy policy--light">
+            <!-- Hero -->
+            <section class="policy__hero">
+                <nav class="policy__breadcrumb">
+                    <a th:href="@{/}">Inicio</a> › <span>Política de privacidad</span>
+                </nav>
+                <h1 class="policy__title">Política de privacidad</h1>
+                <p class="policy__meta">Última actualización: 4 de octubre de 2025 · Responsable: VitaLink</p>
+            </section>
+
+            <!-- Grid: TOC + Contenido -->
+            <section class="policy__wrap">
+
+                <!-- Índice lateral (opcional) -->
+                <aside class="policy__toc" aria-label="Tabla de contenidos" aria-expanded="true">
+                    <h3>Contenido</h3>
+                     <button class="policy__toc-toggle" aria-controls="toc-list" aria-expanded="true">
+                        Contenido
+                    </button>
+                    <ul id="toc-list">
+                        <li><a href="#info-que-recopilamos">1. Información que recopilamos</a></li>
+                        <li><a href="#uso-de-datos">2. Uso de los datos</a></li>
+                        <li><a href="#derechos">3. Derechos del usuario (GDPR)</a></li>
+                        <li><a href="#cookies">4. Cookies</a></li>
+                        <li><a href="#contacto">5. Contacto</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Contenido -->
+                <article class="policy__content">
+                    <section id="info-que-recopilamos" class="policy__section">
+                        <h2>Información que recopilamos</h2>
+                        <p>…</p>
+                    </section>
+
+                    <section id="uso-de-datos" class="policy__section">
+                        <h2>Uso de los datos</h2>
+                        <p>…</p>
+                        <div class="policy__callout">Procesamos tus datos para prestar el servicio, cumplir obligaciones legales y mejorar la plataforma.</div>
+                    </section>
+
+                    <section id="derechos" class="policy__section">
+                        <h2>Derechos del usuario</h2>
+                        <ul>
+                            <li>Acceso, rectificación y supresión.</li>
+                            <li>Portabilidad y limitación del tratamiento.</li>
+                            <li>Oposición y retirada del consentimiento.</li>
+                        </ul>
+                    </section>
+
+                    <section id="cookies" class="policy__section">
+                        <h2>Cookies</h2>
+                        <p>…</p>
+                        <div class="policy__callout policy__callout--warn">
+                            Puedes configurar tus preferencias de cookies desde el banner o la sección de ajustes.
+                        </div>
+                    </section>
+
+                    <section id="contacto" class="policy__section">
+                        <h2>Contacto</h2>
+                        <p>…</p>
+                        <div class="policy__legal">
+                            <span>VitaLink · CIF/ID: …</span>
+                            <span>Dirección: … · Email: …</span>
+                        </div>
+                    </section>
+                </article>
+            </section>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </section>
+</body>
+</html>

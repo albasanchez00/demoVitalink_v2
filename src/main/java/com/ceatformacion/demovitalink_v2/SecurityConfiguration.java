@@ -27,7 +27,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth->auth
 
                 // Públicos + estáticos
-                .requestMatchers(HttpMethod.GET,"/","/index", "/api/**","/webjars/**","/usuarios/**","/usuarios/registroUsuario","/media/**","/css/**","/js/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/","/index",
+                        "/politicaPrivacidad", "/terminoCondiciones",
+                        "/politicaCookies", "/baseLegal", "/api/**","/webjars/**","/usuarios/**","/usuarios/registroUsuario","/media/**","/css/**","/js/**").permitAll()
 
                 // LOGIN (liberar ambos métodos para evitar el bucle)
                 .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").hasAnyRole("Admin","User")
@@ -51,7 +53,6 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST,"/historialPaciente").permitAll()
                 .requestMatchers(HttpMethod.POST,"/registroSintomas").permitAll()
                 .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
-                .requestMatchers(HttpMethod.GET,"/terminoCondiciones").permitAll()
                 .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'

@@ -1,72 +1,122 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminos y Condiciones</title>
-    <link rel="shortcut icon" href="./media/favicon_IA_Medica.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./css/style.css">
-    <script src="/js/darkTheme.js" defer></script>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <script th:src="@{/js/darkTheme.js}" defer></script>
+    <script th:src="@{/js/menu.js}" defer></script>
+    <script th:src="@{/js/sccript.js}" defer></script>
+    <script th:src="@{/js/politicaPrivacidad.js}" defer></script>
 </head>
 <body>
     <section>
-        <div th:replace="fragments/header :: header"></div>
+        <div th:replace="~{fragments/header :: header}"></div>
 
-        <main>
-            <section class="section_termCondicion">
-                <h1>Términos y Condiciones</h1>
-                <section>
-                    <h2>1. Identificación del Responsable </h2>
-                    <p>VitaLink, con CIF 095678B, domicilio en Tomelloso, y correo electrónico de contacto contact@vitalink.com, es la titular y responsable de la aplicación VitaLink App (en adelante, "la Aplicación"). </p>
-                </section>
-                <section>
-                    <h2>2. Objeto</h2>
-                    <p>Los presentes Términos y Condiciones regulan el acceso y uso de la Aplicación, destinada a facilitar la gestión y seguimiento de tratamientos médicos por parte de los usuarios. </p>
-                </section>
-                <section>
-                    <h2>3. Aceptación de los Términos</h2>
-                    <p>El acceso y uso de la Aplicación implica la aceptación plena y sin reservas de los presentes Términos y Condiciones.</p>
-                </section>
-                <section>
-                    <h2>4. Uso de la Aplicación</h2>
-                    <ul>
-                        <li><strong>Requisitos de uso:</strong> Para utilizar la Aplicación, el usuario debe ser mayor de edad y disponer de la capacidad legal necesaria. </li>
-                        <li><strong>Responsabilidad del usuario:</strong> El usuario se compromete a proporcionar información veraz y actualizada, y a utilizar la Aplicación conforme a la ley y a estos Términos y Condiciones. </li>
+        <main class="policy policy--light">
+            <!-- Hero -->
+            <section class="policy__hero">
+                <nav class="policy__breadcrumb">
+                <a th:href="@{/}">Inicio</a> › <span>Términos y Condiciones</span>
+                </nav>
+                <h1 class="policy__title">Términos y Condiciones</h1>
+                <p class="policy__meta">Última actualización: 4 de octubre de 2025 · Responsable: VitaLink</p>
+            </section>
+
+            <!-- Grid: TOC + Contenido -->
+            <section class="policy__wrap">
+                <!-- Índice lateral -->
+                <aside class="policy__toc" aria-expanded="true">
+                    <button class="policy__toc-toggle" aria-controls="toc-list" aria-expanded="true">
+                        Contenido
+                    </button>
+                    <ul id="toc-list">
+                        <li><a href="#identificacion">1. Identificación del Responsable</a></li>
+                        <li><a href="#objeto">2. Objeto</a></li>
+                        <li><a href="#aceptacion">3. Aceptación de los Términos</a></li>
+                        <li><a href="#uso">4. Uso de la Aplicación</a></li>
+                        <li><a href="#servicios">5. Servicios Ofrecidos</a></li>
+                        <li><a href="#limitaciones">6. Limitaciones de Responsabilidad</a></li>
+                        <li><a href="#datos">7. Protección de Datos Personales</a></li>
+                        <li><a href="#propiedad">8. Propiedad Intelectual</a></li>
+                        <li><a href="#modificaciones">9. Modificaciones</a></li>
+                        <li><a href="#jurisdiccion">10. Legislación Aplicable y Jurisdicción</a></li>
                     </ul>
-                </section>
-                <section>
-                    <h2>5. Servicios Ofrecidos</h2>
-                    <p>La Aplicación permite a los usuarios:</p>
-                    <ul>
+                </aside>
+
+                <!-- Contenido principal -->
+                <article class="policy__content">
+                    <section id="identificacion" class="policy__section">
+                        <h2>Identificación del Responsable</h2>
+                        <p>VitaLink, con CIF 095678B, domicilio en Tomelloso, y correo electrónico de contacto <strong>contact@vitalink.com</strong>, es la titular y responsable de la aplicación VitaLink App (en adelante, “la Aplicación”).</p>
+                    </section>
+
+                    <section id="objeto" class="policy__section">
+                        <h2>Objeto</h2>
+                        <p>Los presentes Términos y Condiciones regulan el acceso y uso de la Aplicación, destinada a facilitar la gestión y seguimiento de tratamientos médicos por parte de los usuarios.</p>
+                    </section>
+
+                    <section id="aceptacion" class="policy__section">
+                        <h2>Aceptación de los Términos</h2>
+                        <p>El acceso y uso de la Aplicación implica la aceptación plena y sin reservas de los presentes Términos y Condiciones.</p>
+                    </section>
+
+                    <section id="uso" class="policy__section">
+                        <h2>Uso de la Aplicación</h2>
+                        <ul>
+                        <li><strong>Requisitos de uso:</strong> El usuario debe ser mayor de edad y disponer de la capacidad legal necesaria.</li>
+                        <li><strong>Responsabilidad del usuario:</strong> El usuario se compromete a proporcionar información veraz y actualizada, y a utilizar la Aplicación conforme a la ley y a estos Términos.</li>
+                        </ul>
+                    </section>
+
+                    <section id="servicios" class="policy__section">
+                        <h2>Servicios Ofrecidos</h2>
+                        <p>La Aplicación permite a los usuarios:</p>
+                        <ul>
                         <li>Registrar y gestionar sus tratamientos médicos.</li>
-                        <li>Programar y recibir recordatorios de medicación y citas médicas.</li>
-                        <li>Registrar y monitorear síntomas y evolución de su estado de salud.</li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>6. Limitaciones de Responsabilidad</h2>
-                    <p>La Aplicación no sustituye la consulta médica profesional. VitaLink no se responsabiliza de las decisiones tomadas por los usuarios basadas en la información proporcionada por la Aplicación.</p>
-                </section>
-                <section>
-                    <h2>7. Protección de Datos Personales</h2>
-                    <p>El tratamiento de los datos personales de los usuarios se regirá por lo dispuesto en la Política de Privacidad de la Aplicación, disponible en esta página web.</p>
-                </section>
-                <section>
-                    <h2>8. Propiedad Intelectual</h2>
-                    <p>[Nombre de la Empresa] es titular de todos los derechos de propiedad intelectual e industrial de la Aplicación. Queda prohibida la reproducción, distribución o transformación no autorizada de la Aplicación.</p>
-                </section>
-                <section>
-                    <h2>9. Modificaciones</h2>
-                    <p>VitaLink se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las modificaciones serán notificadas a los usuarios a través de la Aplicación o por otros medios adecuados.</p>
-                </section>
-                <section>
-                    <h2>10. Legislación Aplicable y Jurisdicción </h2>
-                    <p>Estos Términos y Condiciones se rigen por la legislación española. Para la resolución de cualquier conflicto, las partes se someten a los juzgados y tribunales de Tomelloso, renunciando expresamente a cualquier otro fuero que pudiera corresponderles.</p>
-                </section>
+                        <li>Programar recordatorios de medicación y citas médicas.</li>
+                        <li>Registrar síntomas y evolución del estado de salud.</li>
+                        </ul>
+                    </section>
+
+                    <section id="limitaciones" class="policy__section">
+                        <h2>Limitaciones de Responsabilidad</h2>
+                        <p>La Aplicación no sustituye la consulta médica profesional. VitaLink no se responsabiliza de decisiones tomadas por los usuarios basadas en la información proporcionada.</p>
+                        <div class="policy__callout policy__callout--warn">
+                        La información de VitaLink tiene fines informativos y no constituye diagnóstico ni consejo médico profesional.
+                        </div>
+                    </section>
+
+                    <section id="datos" class="policy__section">
+                        <h2>Protección de Datos Personales</h2>
+                        <p>El tratamiento de los datos personales se regirá por la <a href="politicaPrivacidad.html">Política de Privacidad</a> de VitaLink.</p>
+                    </section>
+
+                    <section id="propiedad" class="policy__section">
+                        <h2>Propiedad Intelectual</h2>
+                        <p>VitaLink es titular de los derechos de propiedad intelectual e industrial de la Aplicación. Se prohíbe la reproducción, distribución o transformación no autorizada.</p>
+                    </section>
+
+                    <section id="modificaciones" class="policy__section">
+                        <h2>Modificaciones</h2>
+                        <p>VitaLink se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Las modificaciones serán notificadas a los usuarios por medios adecuados.</p>
+                    </section>
+
+                    <section id="jurisdiccion" class="policy__section">
+                        <h2>Legislación Aplicable y Jurisdicción</h2>
+                        <p>Estos Términos y Condiciones se rigen por la legislación española. Para cualquier conflicto, las partes se someten a los juzgados y tribunales de Tomelloso.</p>
+                        <div class="policy__legal">
+                        <span>VitaLink · CIF 095678B</span>
+                        <span>Tomelloso, España · contact@vitalink.com</span>
+                        </div>
+                    </section>
+                </article>
             </section>
         </main>
-
-        <div th:replace="fragments/footer :: footer"></div>
+        
+        <div th:replace="~{fragments/footer :: footer}"></div>
     </section>
 </body>
 </html>
