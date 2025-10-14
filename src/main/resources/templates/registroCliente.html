@@ -21,6 +21,7 @@
                     <div>
                         <h2 th:text="${cliente?.idCliente == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
                         <a th:href="@{/listaClientes}" class="btn-listUser">Lista Usuarios</a>
+                        <a th:href="@{/usuarios/registroUsuario}" class="btn-listUser">Registrar Usuarios</a>
                     </div>
                     <form id="form-registro" th:action="@{/guardarCliente}" method="POST" th:object="${cliente}">
                         <p>
@@ -106,6 +107,25 @@
                         <p>
                             <label for="cp_id">Código Postal:</label>
                             <input type="text" th:field="*{cp_id}" pattern="[0-9]{5}" maxlength="5" name="cp_id" id="cp_id">
+                        </p>
+
+                        <p>
+                            <select name="rol" id="rol" required>
+                                <option value="" disabled selected>Seleccionar rol</option>
+                                <option th:each="r : ${roles}" th:value="${r}"
+                                        th:text="${r.name() == 'MEDICO' ? 'Profesional' : #strings.capitalize(r.name().toLowerCase())}">
+                                </option>
+                            </select>
+                        </p>
+
+                        <p>
+                            <label for="medicoId">Médico de referencia</label>
+                            <select id="medicoId" name="medicoId">
+                                <option value="" selected>— Sin asignar —</option>
+                                <option th:each="m : ${medicos}"
+                                        th:value="${m.id_usuario}"
+                                        th:text="${m.username}">Dr. ...</option>
+                            </select>
                         </p>
 
                         <p class="politicsUse">

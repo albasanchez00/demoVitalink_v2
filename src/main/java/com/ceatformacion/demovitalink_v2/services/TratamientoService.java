@@ -8,7 +8,9 @@ import java.util.Optional;
 
 public interface TratamientoService {
     List<Tratamientos> obtenerTratamientosPorUsuario(Usuarios usuario);
+    List<Tratamientos> obtenerTratamientosPorIdUsuario(int id_usuario); // <- nuevo
     Optional<Tratamientos> obtenerPorId(int id_tratamiento);
     Tratamientos guardar(Tratamientos tratamientos);
     void eliminar(int id_tratamiento);
+    List<Tratamientos> obtenerTodos();
 }

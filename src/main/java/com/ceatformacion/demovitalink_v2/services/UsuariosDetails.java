@@ -20,8 +20,10 @@ public class UsuariosDetails implements UserDetails {
     //Metodo que devuelve los datos del usuario
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_"+usuario.getRol()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
     }
+
+
     //Metodo que devuelve el password del usuario
     @Override
     public String getPassword() {

@@ -32,17 +32,15 @@ public class SecurityConfiguration {
                         "/politicaCookies", "/baseLegal", "/api/**","/webjars/**","/usuarios/**","/usuarios/registroUsuario","/media/**","/css/**","/js/**").permitAll()
 
                 // LOGIN (liberar ambos métodos para evitar el bucle)
-                .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").hasAnyRole("Admin","User")
-                .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").hasAnyRole("Admin","User")
+                .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").permitAll()
+                .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sintomas/mios").permitAll() // <- temporal para ver datos
                 .requestMatchers("/error").permitAll()
+
 
                 // Vistas protegidas (usa AUTHORITIES si tus valores son "Admin"/"User")
                 .requestMatchers(HttpMethod.GET, "/usuarios/panelUsuario").permitAll()
                 .requestMatchers("/usuarios/registroSintomas").permitAll()
-                // Registro público
-                .requestMatchers(HttpMethod.GET,  "/usuarios/registroUsuario").permitAll()
-                .requestMatchers(HttpMethod.POST, "/usuarios/guardarUsuario").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/usuarios/historialPaciente").permitAll()
 
@@ -56,20 +54,28 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'
-                .requestMatchers(HttpMethod.GET,"/listaUsuarios/{id}").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/citasCliente").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET, "/agendaCitas").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasAnyRole("Admin","User")
-                .requestMatchers("/admin/**").hasRole("Admin")
+                .requestMatchers(HttpMethod.POST,"/eliminarUsuario/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST,"/editarUsuario/{id}").hasAnyRole("ADMIN","USER")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                //Formulario de Gestión de Clientes: solo rol 'User'
-                .requestMatchers(HttpMethod.GET,"/registroCliente").hasRole("Admin")
-                .requestMatchers(HttpMethod.POST,"/guardarCliente").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET,"/listaClientes/{id}").hasRole("Admin")
-                .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("User")
-                .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("User")
-                .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasRole("User") // exige ROLE_USER o ROLE_ADMIN
+                //Formulario de Gestión de Clientes: solo rol 'Admin' o 'Medico'
+                .requestMatchers("/registroUsuario",
+                        "/usuarios/guardarUsuario",
+                        "/usuarios/listaUsuarios/{id}")
+                .hasRole("ADMIN")
+
+                // gestión de clientes (ajusta si solo ADMIN, o también MEDICO)
+                // ZONA MÉDICO/ADMIN
+                .requestMatchers(
+                        "/listaClientes",
+                        "/registroCliente","/guardarCliente",
+                        "/clientes/**",
+                        "/medico/**"
+                ).hasAnyRole("MEDICO","ADMIN")
+
+                .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")
+                .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("USER")
+                .requestMatchers(HttpMethod.POST,"/tratamientos/**").permitAll() // exige ROLE_USER o ROLE_ADMIN
 
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/usuario/historial").authenticated()
@@ -94,7 +100,7 @@ public class SecurityConfiguration {
 
         )
         .formLogin(form -> form
-                .loginPage("/inicioSesion")
+                .loginPage("/inicioSesion").permitAll()
                 .loginProcessingUrl("/usuarios/inicioSesion") // POST
                 .defaultSuccessUrl("/usuarios/panelUsuario", true)
                 .permitAll()

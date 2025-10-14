@@ -8,7 +8,6 @@
   <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
-
 <section class="contenedor">
   <div th:replace="~{fragments/header :: header}"></div>
 
@@ -50,11 +49,25 @@
           <td th:text="${cliente.direccion}"></td>
           <td th:text="${cliente.ciudad_id}"></td>
           <td th:text="${cliente.cp_id}"></td>
-          <td class="acciones-clientes">
-            <a th:href="@{'/clientes/historialCliente/' + ${cliente.idCliente}}" class="btn-accion historial" title="Historial"><img src="./media/icons/historial-medico-icon.svg" alt="historial user"></a>
-            <a th:href="@{'/clientes/editar/' + ${cliente.idCliente}}" class="btn-accion editar"><img class="icon" src="./media/icons/informe-del-paciente-icon.svg" alt="editar user"></a>
-            <a th:href="@{'/clientes/eliminar/' + ${cliente.idCliente}}" class="btn-accion eliminar"><img class="icon" src="./media/icons/eliminar-usuario-icon.svg" alt="eliminar user"></a>
-          </td>
+            <td class="acciones-clientes">
+                <a th:href="@{/clientes/historialCliente/{id}(id=${cliente.idCliente})}"
+                   class="btn-accion historial" title="Historial">
+                    <img th:src="@{/media/icons/historial-medico-icon.svg}" alt="historial user">
+                </a>
+
+                <a th:href="@{/clientes/editar/{id}(id=${cliente.idCliente})}"
+                   class="btn-accion editar" title="Editar">
+                    <img th:src="@{/media/icons/informe-del-paciente-icon.svg}" class="icon" alt="editar user">
+                </a>
+
+                <!-- Mejor como POST con confirmación (ver punto 3) -->
+                <a th:href="@{/clientes/eliminar/{id}(id=${cliente.idCliente})}"
+                   class="btn-accion eliminar"
+                   title="Eliminar"
+                   onclick="return confirm('¿Eliminar este cliente?');">
+                    <img th:src="@{/media/icons/eliminar-usuario-icon.svg}" class="icon" alt="eliminar user">
+                </a>
+            </td>
         </tr>
         </tbody>
       </table>
@@ -63,6 +76,5 @@
 
   <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
-
 </body>
 </html>

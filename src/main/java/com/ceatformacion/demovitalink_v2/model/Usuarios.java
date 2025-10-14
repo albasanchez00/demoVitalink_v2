@@ -25,7 +25,9 @@ public class Usuarios {
     private String username;
     @Column(name = "password", nullable = false, length = 100 /* >=60 */)
     private String password;
-    private String rol;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false, length = 20)
+    private Rol rol;
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_cliente", referencedColumnName = "id_cliente") // <— usa id_cliente
     private Clientes cliente;
@@ -43,14 +45,13 @@ public class Usuarios {
     public String getPassword() {return password;}
     public void setPassword(String password) {this.password = password;}
 
-    public String getRol() {return rol;}
-    public void setRol(String rol) {this.rol = rol;}
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
 
     @Override
     public String toString() {
         return "Usuarios{Id:"+ id_usuario +"}" +
                 "\nUsuario → " + username +
-                "\nPassword → " + password +
                 "\nRol → " + rol;
     }
 }

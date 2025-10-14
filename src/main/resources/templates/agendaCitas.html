@@ -1,54 +1,91 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Agenda de Citas</title>
     <link rel="shortcut icon" href="/media/favicon_IA_Medica.ico" type="image/x-icon">
-    <meta name="description" content="Agenda médica por usuario">
+    <meta name="description" content="Agenda médica">
     <link rel="stylesheet" href="/css/style2.css">
     <script type="text/javascript" defer src="/js/panelAdmin.js"></script>
     <script type="text/javascript" defer src="/js/asistente.js"></script>
     <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
+
 <main>
-    <section class="section_main">
+    <section class="section_main" sec:authorize="hasAnyRole('ADMIN','MEDICO')">
         <header class="titulo_seccion">
-            <h2>📅 Citas del Cliente</h2>
+            <h2 th:text="'📅 Agenda de ' + ${medicoNombre}">Agenda</h2>
         </header>
 
-        <section class="tabla_citas" th:if="${citas != null}">
-            <p th:if="${citas.isEmpty()}" class="mensaje-vacio">Este cliente no tiene citas registradas.</p>
+        <!-- Mensajes opcionales -->
+        <div th:if="${mensaje != null}" class="alert alert-info" th:text="${mensaje}"></div>
+        <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
 
-            <table th:if="${!citas.isEmpty()}">
+        <!-- Tabla de citas -->
+        <section class="tabla_citas" th:if="${citas != null}">
+            <p class="mensaje-vacio" th:if="${#lists.isEmpty(citas)}">
+                No hay citas para mostrar.
+            </p>
+
+            <table th:if="${!#lists.isEmpty(citas)}">
                 <thead>
                 <tr>
                     <th>Fecha</th>
                     <th>Hora</th>
                     <th>Paciente</th>
+                    <th>Estado</th>
                     <th>Motivo</th>
-                    <th>Acciones</th>
+                    <!-- <th>Acciones</th> -->
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="cita : ${citas}">
-                    <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</td>
-                    <td th:text="${#temporals.format(cita.hora, 'HH:mm')}">Hora</td>
-                    <td th:text="${cita.cliente.nombre + ' ' + cita.cliente.apellidos}">Paciente</td>
-                    <td th:text="${cita.descripcion}">Motivo</td>
-                    <td>
-                        <button class="btn-editar">✏️</button>
-                        <button class="btn-cancelar">❌</button>
-                    </td>
-                </tr>
+                    <tr th:each="cita : ${citas}">
+                        <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">01/01/2025</td>
+                        <td th:text="${#temporals.format(cita.hora, 'HH:mm')}">09:30</td>
+
+                        <!-- Paciente: seguro ante nulos (usuario o cliente pueden ser null) -->
+                        <td th:text="${cita.usuario != null ? cita.usuario.username : '—'}">Paciente</td>
+
+                        <td th:text="${cita.estado}">PENDIENTE</td>
+                        <td th:text="${cita.descripcion}">Motivo</td>
+
+                        <!-- Acciones futuras (cuando tengas endpoints):
+                        <td>
+                          <form th:action="@{|/medico/citas/${cita.id_cita}/confirmar|}" method="post" style="display:inline">
+                            <button type="submit" class="btn-editar">✔ Confirmar</button>
+                          </form>
+                          <form th:action="@{|/medico/citas/${cita.id_cita}/cancelar|}" method="post" style="display:inline">
+                            <button type="submit" class="btn-cancelar">❌ Cancelar</button>
+                          </form>
+                        </td>
+                        -->
+                    </tr>
                 </tbody>
             </table>
 
-            <a href="/citasCliente" class="btn-volver">🔙 Volver al listado de citas</a>
+            <div class="acciones-listado" style="margin-top: 1rem;">
+                <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver al panel</a>
+            </div>
+        </section>
+
+        <!-- Si el controlador aún no mete 'citas' en el modelo -->
+        <section class="tabla_citas" th:if="${citas == null}">
+            <p class="mensaje-vacio">No se recibieron datos de citas.</p>
+            <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver al panel</a>
         </section>
     </section>
+
+    <!-- Si alguien sin rol intenta entrar -->
+    <section class="section_main" sec:authorize="!hasAnyRole('ADMIN','MEDICO')">
+        <div class="alert alert-danger">No tienes permisos para ver esta página.</div>
+        <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver</a>
+    </section>
 </main>
-<div th:replace="fragments/footer :: footer"></div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

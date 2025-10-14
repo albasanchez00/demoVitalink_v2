@@ -32,6 +32,14 @@ public class Clientes {
     @OneToOne(mappedBy = "cliente")
     private Usuarios usuario;
 
+    // Clientes.java
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_medico_ref", referencedColumnName = "id_usuario")
+    private Usuarios medicoReferencia;   // el médico de cabecera del paciente
+
+    public Usuarios getMedicoReferencia() { return medicoReferencia; }
+    public void setMedicoReferencia(Usuarios m) { this.medicoReferencia = m; }
+
     public int getIdCliente() { return idCliente; }
     public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
 

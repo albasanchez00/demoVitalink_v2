@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
 
     <main id="main_panelUser">
 
-        <section class="section_main" sec:authorize="hasRole('User')">
+        <section class="section_main" sec:authorize="hasRole('USER')">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
@@ -60,15 +60,13 @@
 
 
         </section>
-        <section class="section_main" sec:authorize="hasRole('Admin')">
+        <section class="section_main" sec:authorize="hasRole('ADMIN')">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
                         <li><a th:href="@{/registroCliente}">Usuarios</a></li>
-                        <li><a th:href="@{/citasCliente}">Citas</a></li>
-                        <li><a href="./adminTratamientos.html">Tratamientos</a></li>
-                        <li><a th:href="@{/usuarios/registroSintomas}">Sintomas</a></li>
                         <li><a href="./adminReportes.html">Reportes</a></li>
+                        <li><a href="#">Actividad</a></li>
                         <li><a href="./adminMensajes.html">Mensajes</a></li>
                         <li><a href="./configAdmin.html">Configuración</a></li>
                     </ul>
@@ -102,6 +100,48 @@
                 </div>
             </div>
         </section>
+
+        <section class="section_main" sec:authorize="hasRole('MEDICO')">
+            <section class="section_panelUser">
+                <nav class="nav_panelUser">
+                    <ul>
+                        <li><a th:href="@{/}">Pacientes</a></li>
+                        <li><a th:href="@{/medico/citas}">Citas</a></li>
+                        <li><a th:href="@{/medico/tratamientos}">🩺 Tratamientos</a></li>
+                        <li><a th:href="@{/usuarios/registroSintomas}">Sintomas</a></li>
+                        <li><a href="./mensajeMedico.html">Mensajes</a></li>
+                        <li><a href="./configMedico.html">Configuración</a></li>
+                    </ul>
+                </nav>
+            </section>
+            <section>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn-logout">
+                        ⎋ Salir
+                    </button>
+                </form>
+            </section>
+            <section class="dashboard-overview">
+                <div class="card">👥 Pacientes vinculados</div>
+                <div class="card">📅 Citas Programadas Hoy</div>
+                <div class="card">📈 Registro de Tratamientos</div>
+                <div class="card">🧾 Reportes Sintomáticos Recientes</div>
+                <div class="card">📬 Mensajes Pendientes</div>
+                <div class="card wide-card">🛠️ Configuraciones Generales</div>
+            </section>
+
+            <div id="chat-toggle3" onclick="toggleChat()">💬</div>
+            <!-- Ventana de chat -->
+            <div id="chat-box3">
+                <div id="chat-header3">Asistente Virtual <span onclick="toggleChat()">X</span></div>
+                <div id="chat-body3">
+                    <p><strong>Asistente:</strong> ¡Hola! ¿En qué puedo ayudarte?</p>
+                    <div id="chat-messages3"></div>
+                    <input type="text" id="chat-input3" placeholder="Escribe tu mensaje aquí..." />
+                </div>
+            </div>
+        </section>
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
@@ -112,9 +152,9 @@
     }
 </script>
 <script th:src="@{/js/panelUsuario.js}" src="/js/panelUsuario.js"></script>
+<script th:src="@{/js/panelAdmin.js}" src="/js/panelUsuario.js"></script>
 <script th:src="@{/js/darkTheme.js}" src="/js/darkTheme.js"></script>
 <script th:src="@{/js/asistente.js}" src="/js/asistente.js"></script>
-<script th:src="@{/js/sccript   .js}" src="/js/sccript.js"></script>
-
+<script th:src="@{/js/sccript.js}" src="/js/sccript.js"></script>
 </body>
 </html>

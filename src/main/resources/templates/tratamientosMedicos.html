@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tratamientos del paciente (Médico)</title>
+    <link rel="stylesheet" href="/css/style2.css"/>
+    <script src="/js/darkTheme.js" defer></script>
+    <script src="/js/sccript.js" defer></script>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main id="main-tratamientos">
+        <section class="section_tabla_tratamientos">
+            <header class="flex header-actions">
+                <div>
+                    <h2>
+                      <span th:if="${usuario != null}"
+                            th:text="'Nuevo tratamiento para: ' + ${usuario.username}">
+                        Nuevo tratamiento
+                      </span>
+                    </h2>
+
+                    <!-- id oculto si viene seleccionado -->
+                    <input th:if="${usuario != null}" type="hidden" name="id_usuario"
+                           th:value="${usuario.id_usuario}" />
+
+
+                    <!-- Filtro por usuario -->
+                    <form th:action="@{/medico/tratamientos}" method="get">
+                        <label for="id_usuario">Paciente:</label>
+                        <select id="id_usuario" name="id_usuario" onchange="this.form.submit()">
+                            <option th:selected="${idSeleccionado == null}">Todos</option>
+                            <option th:each="u : ${usuarios}"
+                                    th:value="${u.id_usuario}"
+                                    th:text="${u.username}"
+                                    th:selected="${idSeleccionado != null and idSeleccionado == u.id_usuario}">
+                            </option>
+                        </select>
+                        <noscript><button type="submit">Filtrar</button></noscript>
+                    </form>
+                </div>
+
+                <!-- Botón "Nuevo" variando según haya usuario seleccionado -->
+                <!-- SIN usuario seleccionado -->
+                <a class="btn" th:if="${usuario == null}" th:href="@{/medico/nuevo}">
+                    + Nuevo tratamiento
+                </a>
+
+                <!-- CON usuario seleccionado (si lo usas) -->
+                <a class="btn" th:if="${usuario != null}"
+                   th:href="@{/medico/nuevo/{id}(id=${usuario.id_usuario})}">
+                    + Nuevo tratamiento
+                </a>
+            </header>
+
+            <div class="tabla-wrap">
+                <table class="tabla-tratamientos">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Medicamento</th>
+                        <th>Fórmula</th>
+                        <th>Dosis</th>
+                        <th>Frecuencia</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Con alimentos</th>
+                        <th>Observaciones</th>
+                        <th>Estado</th>
+                        <th>Síntomas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${tratamientos}">
+                        <td th:text="${t.id_tratamiento}">1</td>
+                        <td th:text="${t.nombre_tratamiento}">Paracetamol</td>
+                        <td th:text="${t.formula}">Tableta</td>
+                        <td th:text="${t.dosis}">500 mg</td>
+                        <td th:text="${t.frecuencia}">Cada 8h</td>
+                        <td th:text="${t.fecha_inicio != null ? #temporals.format(t.fecha_inicio, 'yyyy-MM-dd') : ''}"></td>
+                        <td th:text="${t.fecha_fin    != null ? #temporals.format(t.fecha_fin,    'yyyy-MM-dd') : ''}"></td>
+                        <td th:text="${t.toma_alimentos}">Sí</td>
+                        <td th:text="${t.observaciones}">—</td>
+                        <td th:text="${t.estado_tratamiento}">Activo</td>
+                        <td th:text="${t.sintomas}">Dolor</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${param.success}" class="alert success">
+                Tratamiento guardado correctamente.
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+</body>
+</html>

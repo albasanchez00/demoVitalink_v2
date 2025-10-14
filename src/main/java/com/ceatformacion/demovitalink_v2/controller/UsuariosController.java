@@ -2,11 +2,13 @@ package com.ceatformacion.demovitalink_v2.controller;
 
 import com.ceatformacion.demovitalink_v2.model.Citas;
 import com.ceatformacion.demovitalink_v2.model.Clientes;
+import com.ceatformacion.demovitalink_v2.model.Rol;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.CitasRepository;
 import com.ceatformacion.demovitalink_v2.repository.ClientesRepository;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.UsuariosDetails;
+import com.ceatformacion.demovitalink_v2.utils.PasswordGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -27,14 +29,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+
 @Controller
 @RequestMapping("/usuarios")
 public class UsuariosController {
 
     @Autowired private ClientesRepository clientesRepository;
     @Autowired private UsuariosRepository usuariosRepository;
-    @Autowired private CitasRepository citasRepository;
     @Autowired private PasswordEncoder encoder;
+
+    // Asegura que SIEMPRE exista `${usuario}` en el Model para las vistas de este controller
+    @ModelAttribute("usuario")
+    public Usuarios initUsuario() {
+        return new Usuarios();
+    }
 
     // === LOGIN ===
     @GetMapping("/inicioSesion")
@@ -89,9 +97,6 @@ public class UsuariosController {
     public String registroTratamientos() { return "tratamientos"; }
 
     // === CONFIGURACIÓN ===
-
-    // GET página de configuración (carga usuario + cliente con fetch join)
-    // === GET página de configuración ===
     @GetMapping("/configUsuario")
     public String configuracionUsuario(Model model,
                                        @AuthenticationPrincipal UsuariosDetails principal) {
@@ -102,7 +107,6 @@ public class UsuariosController {
         model.addAttribute("usuario", u);
         model.addAttribute("cliente", c);
 
-        // Prefs demo (si aún no las persistes)
         Map<String, Object> prefs = new HashMap<>();
         prefs.put("notificaciones", Boolean.TRUE);
         prefs.put("tema", "auto");
@@ -111,7 +115,6 @@ public class UsuariosController {
         return "configUsuario";
     }
 
-    // === POST Datos personales (crea Cliente si no existe) ===
     @PostMapping("/configUsuario/datos")
     @Transactional
     public String actualizarDatos(@AuthenticationPrincipal UsuariosDetails principal,
@@ -125,17 +128,14 @@ public class UsuariosController {
             Usuarios u = usuariosRepository.findByIdWithCliente(principal.getUsuario().getId_usuario())
                     .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-            // 1) Si NO hay cliente, lo creamos y enlazamos
             Clientes c = u.getCliente();
             if (c == null) {
                 c = new Clientes();
-                // Inicializa lo mínimo (puedes copiar nombre/email si quieres)
                 clientesRepository.save(c);     // obtiene id_cliente
                 u.setCliente(c);                // enlaza
-                usuariosRepository.save(u);     // persiste el enlace (id_cliente en usuarios)
+                usuariosRepository.save(u);     // persiste el enlace
             }
 
-            // 2) Normaliza y guarda campos del cliente
             if (nombre != null)    c.setNombre(nombre.trim());
             if (apellidos != null) c.setApellidos(apellidos.trim());
             if (telefono != null)  c.setTelefono(telefono.trim());
@@ -149,7 +149,6 @@ public class UsuariosController {
                 }
                 String actual = c.getCorreoElectronico();
                 if (actual == null || !actual.equalsIgnoreCase(nuevo)) {
-                    // Evita duplicados de username
                     Optional<Usuarios> dupe = usuariosRepository.findByUsernameIgnoreCase(nuevo);
                     if (dupe.isPresent() && dupe.get().getId_usuario() != u.getId_usuario()) {
                         ra.addFlashAttribute("msgDatosErr", "Ese correo ya está en uso.");
@@ -160,34 +159,28 @@ public class UsuariosController {
                 }
             }
 
-            // 3) Guarda cliente
             clientesRepository.saveAndFlush(c);
 
-            // 4) Si cambió el correo, sincroniza username
             if (cambioCorreo) {
                 u.setUsername(c.getCorreoElectronico());
                 usuariosRepository.saveAndFlush(u);
             }
 
             ra.addFlashAttribute("msgDatosOk", "Datos actualizados correctamente.");
-        } catch (org.springframework.dao.DataIntegrityViolationException dive) {
-            ra.addFlashAttribute("msgDatosErr", "Restricción de datos: " + dive.getMostSpecificCause().getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
             ra.addFlashAttribute("msgDatosErr", "No se pudieron guardar los datos.");
         }
         return "redirect:/usuarios/configUsuario";
     }
 
-    // === POST Cambiar contraseña ===
     @PostMapping("/configUsuario/password")
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public String cambiarPassword(@AuthenticationPrincipal UsuariosDetails principal,
                                   @RequestParam String actual,
                                   @RequestParam String nueva,
                                   @RequestParam String confirmacion,
-                                  HttpServletRequest request,           // jakarta.*
-                                  HttpServletResponse response) {       // jakarta.*
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
         Usuarios u = usuariosRepository.findById(principal.getUsuario().getId_usuario())
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
@@ -205,20 +198,15 @@ public class UsuariosController {
             return "redirect:/usuarios/configUsuario?perror=badcurrent";
         }
 
-        // 1) Guardar nueva contraseña (BCrypt via CompositePasswordEncoder)
         u.setPassword(encoder.encode(nueva));
         usuariosRepository.saveAndFlush(u);
 
-        // 2) Cerrar sesión actual para exigir login con la nueva clave
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         new SecurityContextLogoutHandler().logout(request, response, auth);
 
-        // 3) Redirigir al login (GET) con un flag para mostrar aviso
-        return "redirect:/inicioSesion?changed=1";
+        return "redirect:/usuarios/inicioSesion?changed=1";
     }
 
-
-    // === POST Preferencias (si aún no las persistes) ===
     @PostMapping("/configUsuario/preferencias")
     public String guardarPreferencias(@RequestParam(defaultValue = "false") boolean notificaciones,
                                       @RequestParam(defaultValue = "auto") String tema,
@@ -226,4 +214,53 @@ public class UsuariosController {
         ra.addFlashAttribute("msgPrefsOk", "Preferencias guardadas (tema: " + tema + ").");
         return "redirect:/usuarios/configUsuario";
     }
+
+    // === ALTA DE PERSONAL SANITARIO (SOLO ADMIN) ===
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/registroUsuario")
+    public String mostrarRegistroUsuario(Model model) {
+        // Solo médicos; si quieres permitir ADMIN añade Rol.ADMIN aquí.
+        model.addAttribute("roles", new Rol[]{ Rol.MEDICO });
+        // Si prefieres permitir ambos:
+        // model.addAttribute("roles", new Rol[]{ Rol.MEDICO, Rol.ADMIN });
+        return "registroUsuario";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/guardarUsuario")
+    @Transactional
+    public String guardarUsuario(@ModelAttribute("usuario") Usuarios usuario, Model model) {
+        String email = usuario.getUsername() == null ? null : usuario.getUsername().trim().toLowerCase();
+
+        if (email == null || email.isBlank()) {
+            model.addAttribute("roles", new Rol[]{ Rol.MEDICO });
+            model.addAttribute("error", "El correo es obligatorio.");
+            return "registroUsuario";
+        }
+        if (usuariosRepository.existsByUsernameIgnoreCase(email)) {
+            model.addAttribute("roles", new Rol[]{ Rol.MEDICO });
+            model.addAttribute("error", "Ya existe un usuario con ese correo.");
+            return "registroUsuario";
+        }
+
+        usuario.setUsername(email);
+
+        String passPlano = (usuario.getPassword() == null || usuario.getPassword().isBlank())
+                ? PasswordGenerator.generar(10)
+                : usuario.getPassword().trim();
+        usuario.setPassword(encoder.encode(passPlano));
+
+        if (usuario.getRol() == null) {
+            usuario.setRol(Rol.MEDICO);
+        }
+
+        // Personal sanitario: no enlazamos Cliente
+        usuariosRepository.save(usuario);
+
+        // Si deseas, envía las credenciales aquí con tu EmailService
+        // emailService.enviarCredenciales(email, "Personal Sanitario", passPlano);
+
+        return "redirect:/usuarios/listaUsuarios?success=true";
+    }
+
 }

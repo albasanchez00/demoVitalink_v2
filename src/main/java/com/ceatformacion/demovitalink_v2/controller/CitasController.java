@@ -4,83 +4,89 @@ import com.ceatformacion.demovitalink_v2.model.Citas;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.CitasService;
+import com.ceatformacion.demovitalink_v2.services.UsuariosDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class CitasController {
-    @Autowired
-    private CitasService citasService;
-    @Autowired
-    private UsuariosRepository usuariosRepository;
 
+    private final CitasService citasService;
+    private final UsuariosRepository usuariosRepository;
+
+    public CitasController(CitasService citasService, UsuariosRepository usuariosRepository) {
+        this.citasService = citasService;
+        this.usuariosRepository = usuariosRepository;
+    }
+
+    // FORMULARIO + LISTA DE MIS CITAS
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/pedirCita")
-    public String mostrarFormularioCita(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        getCitasPorUsuario(username);
-        model.addAttribute("citas", new Citas());
+    public String mostrarFormularioCita(@AuthenticationPrincipal UsuariosDetails principal, Model model) {
+        Usuarios usuario = usuariosRepository.findById(principal.getUsuario().getId_usuario())
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+
+        model.addAttribute("citas", new Citas()); // backing bean del form
+        model.addAttribute("misCitas", citasService.obtenerCitasPorUsuario(usuario)); // lista para la vista
+
         return "pedirCita";
     }
 
+    // GUARDAR CITA
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/guardarCitas")
-    public String guardarCita(@ModelAttribute("citas") Citas cita) {
-        try {
-            // Obtener usuario autenticado (ejemplo con Spring Security)
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String username = auth.getName();
+    public String guardarCita(@AuthenticationPrincipal UsuariosDetails principal,
+                              @ModelAttribute("citas") Citas cita,
+                              RedirectAttributes ra) {
+        Usuarios usuario = usuariosRepository.findById(principal.getUsuario().getId_usuario())
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-            Usuarios usuario = usuariosRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Asigna el paciente (usuario) a la cita
+        cita.setUsuario(usuario);
 
-            cita.setUsuario(usuario);
+        // Si en tu entidad Citas tienes estado/duración por defecto, no hace falta tocarlos aquí
+        citasService.guardarCita(cita);
 
-            citasService.guardarCita(cita);
-       //     getCitasPorUsuario(username);
-            return "redirect:/pedirCita?success=true";
-        } catch (Exception e) {
-            return "redirect:/pedirCita?error=" + e.getMessage();
-        }
+        ra.addFlashAttribute("ok", "Cita creada correctamente.");
+        return "redirect:/pedirCita";
     }
 
-    public ResponseEntity<?> getCitasPorUsuario(@RequestParam String username) {
-        try {
-            Usuarios usuario = usuariosRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    // (OPCIONAL) ENDPOINT JSON PARA CALENDARIO DEL USUARIO LOGUEADO
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping(value = "/api/citas/mias", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Map<String, Object>> citasMias(@AuthenticationPrincipal UsuariosDetails principal) {
+        Usuarios usuario = usuariosRepository.findById(principal.getUsuario().getId_usuario())
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-            List<Citas> citas = citasService.obtenerCitasPorUsuario(usuario);
-            List<Map<String, Object>> citasMap = citas.stream()
-                .map(this::convertirCitaAMap)
-                .collect(Collectors.toList());
-            System.out.println(Arrays.toString(citas.toArray()));
-            return ResponseEntity.ok(citasMap);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return citasService.obtenerCitasPorUsuario(usuario).stream()
+                .map(c -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("id", c.getId_cita());
+                    // usa título si existe, sino "Cita"
+                    m.put("title", (c.getTitulo() != null && !c.getTitulo().isBlank())
+                            ? c.getTitulo()
+                            : "Cita");
+                    LocalDateTime start = LocalDateTime.of(c.getFecha(), c.getHora());
+                    LocalDateTime end = start.plusMinutes(c.getDuracionMinutos());
+                    m.put("start", start.toString());
+                    m.put("end", end.toString());
+                    m.put("estado", c.getEstado().name());
+                    return m;
+                })
+                .toList();
     }
-
-    private Map<String, Object> convertirCitaAMap(Citas cita) {
-        Map<String, Object> citaMap = new HashMap<>();
-        citaMap.put("title", cita.getDescripcion() + " - " + cita.getTitulo());
-        String start = cita.getFecha().toString() + "T" + cita.getHora().toString();
-        citaMap.put("start", start);
-        System.out.println(start);
-        String end = cita.getFecha().toString() + "T" + (cita.getHora().plusHours(1)).toString();
-        citaMap.put("end", end);
-        System.out.println(end);
-        return citaMap;
-    }
-
-
 }

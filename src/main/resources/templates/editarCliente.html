@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar cliente</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+<h1>Editar cliente</h1>
+
+<form th:action="@{/clientes/actualizar}" th:object="${cliente}" method="post">
+    <!-- CSRF -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <!-- ID del cliente -->
+    <input type="hidden" th:field="*{idCliente}"/>
+
+    <div>
+        <label>Nombre</label>
+        <input type="text" th:field="*{nombre}" required>
+    </div>
+
+    <div>
+        <label>Apellidos</label>
+        <input type="text" th:field="*{apellidos}">
+    </div>
+
+    <div>
+        <label>Teléfono</label>
+        <input type="text" th:field="*{telefono}">
+    </div>
+
+    <div>
+        <label>Email</label>
+        <input type="email" th:field="*{correoElectronico}">
+    </div>
+
+    <div>
+        <label>Médico de referencia</label>
+        <!-- name=medicoId para que llegue al @RequestParam("medicoId") -->
+        <select name="medicoId">
+            <option value="">-- Sin médico --</option>
+            <option th:each="m : ${medicos}"
+                    th:value="${m.id_usuario}"
+                    th:text="${m.username}"
+                    th:selected="${medicoSeleccionadoId} != null and ${medicoSeleccionadoId} == ${m.id_usuario}">
+            </option>
+        </select>
+    </div>
+
+    <button type="submit">Guardar cambios</button>
+    <a th:href="@{/listaClientes}">Volver</a>
+</form>
+
+</body>
+</html>
