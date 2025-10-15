@@ -13,4 +13,7 @@ public interface TratamientoService {
     Tratamientos guardar(Tratamientos tratamientos);
     void eliminar(int id_tratamiento);
     List<Tratamientos> obtenerTodos();
+    Optional<Tratamientos> buscarPorId(Integer id_tratamiento);
+    void finalizar(Integer id);
+    void eliminar(Integer id);
 }

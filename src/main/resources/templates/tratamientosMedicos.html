@@ -14,20 +14,13 @@
     <main id="main-tratamientos">
         <section class="section_tabla_tratamientos">
             <header class="flex header-actions">
-                <div>
+                <div class="header-right">
                     <h2>
-                      <span th:if="${usuario != null}"
-                            th:text="'Nuevo tratamiento para: ' + ${usuario.username}">
-                        Nuevo tratamiento
-                      </span>
+                        <span th:if="${usuario != null}"
+                          th:text="'Tratamientos de: ' + ${usuario.username}">Tratamientos</span>
+                        <span th:if="${usuario == null}">Tratamientos</span>
                     </h2>
 
-                    <!-- id oculto si viene seleccionado -->
-                    <input th:if="${usuario != null}" type="hidden" name="id_usuario"
-                           th:value="${usuario.id_usuario}" />
-
-
-                    <!-- Filtro por usuario -->
                     <form th:action="@{/medico/tratamientos}" method="get">
                         <label for="id_usuario">Paciente:</label>
                         <select id="id_usuario" name="id_usuario" onchange="this.form.submit()">
@@ -41,19 +34,15 @@
                         <noscript><button type="submit">Filtrar</button></noscript>
                     </form>
                 </div>
-
-                <!-- Botón "Nuevo" variando según haya usuario seleccionado -->
-                <!-- SIN usuario seleccionado -->
-                <a class="btn" th:if="${usuario == null}" th:href="@{/medico/nuevo}">
-                    + Nuevo tratamiento
-                </a>
-
-                <!-- CON usuario seleccionado (si lo usas) -->
-                <a class="btn" th:if="${usuario != null}"
-                   th:href="@{/medico/nuevo/{id}(id=${usuario.id_usuario})}">
-                    + Nuevo tratamiento
-                </a>
             </header>
+
+            <div class="header-left">
+                <!-- Botón de volver panelUsuario -->
+                <a class="btn-sec volver-btn" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
+                <!-- Botón de nuevo tratamiento -->
+                <a class="btn" th:if="${usuario != null}" th:href="@{/medico/nuevo/{id}(id=${usuario.id_usuario})}">+ Nuevo tratamiento</a>
+                <a class="btn" th:if="${usuario == null}" th:href="@{/medico/nuevo}">+ Nuevo tratamiento</a>
+            </div>
 
             <div class="tabla-wrap">
                 <table class="tabla-tratamientos">
@@ -70,6 +59,7 @@
                         <th>Observaciones</th>
                         <th>Estado</th>
                         <th>Síntomas</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,14 +75,36 @@
                         <td th:text="${t.observaciones}">—</td>
                         <td th:text="${t.estado_tratamiento}">Activo</td>
                         <td th:text="${t.sintomas}">Dolor</td>
+                        <td class="acciones">
+                            <!-- Editar -->
+                            <a class="btn-editar" th:href="@{/medico/editar/{id}(id=${t.id_tratamiento})}">✏ Editar</a>
+
+                            <!-- Finalizar (solo si NO está finalizado) -->
+                            <form th:if="${t.estado_tratamiento != 'Finalizado'}"
+                                  th:action="@{/medico/finalizar/{id}(id=${t.id_tratamiento})}"
+                                  method="post" style="display:inline;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="id_usuario" th:value="${idSeleccionado}"/>
+                                <button type="submit" class="btn-sec">✔ Finalizar</button>
+                            </form>
+
+                            <!-- Eliminar -->
+                            <form th:action="@{/medico/eliminar/{id}(id=${t.id_tratamiento})}"
+                                  method="post" style="display:inline;"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este tratamiento? Esta acción no se puede deshacer.');">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="id_usuario" th:value="${idSeleccionado}"/>
+                                <button type="submit" class="btn-sec" style="background:#ffecec;border-color:#f5c2c2;">🗑 Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-
-            <div th:if="${param.success}" class="alert success">
-                Tratamiento guardado correctamente.
-            </div>
+            <div th:if="${param.finalized}" class="alert success">Tratamiento finalizado.</div>
+            <div th:if="${param.deleted}"   class="alert success">Tratamiento eliminado.</div>
+            <div th:if="${param.success}" class="alert success">Tratamiento guardado correctamente.</div>
+            <div th:if="${param.updated}" class="alert success">Tratamiento actualizado correctamente.</div>
         </section>
     </main>
 

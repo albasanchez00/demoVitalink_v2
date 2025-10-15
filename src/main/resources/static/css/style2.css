@@ -1298,6 +1298,115 @@ body.dark-theme .rec-actions .btn-sec{
 body.dark-theme .rec-actions .btn-sec:hover{
     background:#3a3a3a;
 }
+/* ====== BOTONES DE ACCIONES (tabla tratamientos) ====== */
+.tabla-tratamientos .acciones {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tabla-tratamientos .btn-editar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary-button);
+    color: var(--color_blanco);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.tabla-tratamientos .btn-editar:hover {
+    background-color: var(--color-secundary-button);
+    transform: translateY(-1px);
+}
+/* Botón volver al panel */
+.volver-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #f7f9fb;
+    color: var(--color_texto);
+    border: 1px solid #dfe3eb;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+.volver-btn:hover {
+    background: #eef2ff;
+    transform: translateY(-1px);
+}
+
+.acciones .btn-sec {
+    display: inline-flex; align-items: center;
+    padding: 6px 10px; border-radius: 8px;
+    border:1px solid #dfe3eb; background:#f7f9fb; cursor:pointer;
+    font-weight:600;
+}
+.acciones .btn-sec:hover { background:#eef2ff; }
+
+.acciones .btn-sec.success { background:#e8f8ee; border-color:#bfe8cd; }
+.acciones .btn-sec.success:hover { background:#daf3e4; }
+
+/* ===== Acciones compactas dentro de la tabla ===== */
+.tabla-tratamientos td.acciones{
+    /* el TD actúa como contenedor flexible */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;          /* si no cabe, baja a otra línea */
+    padding: 8px 6px;         /* un pelín más compacto */
+}
+
+.tabla-tratamientos td.acciones form{
+    margin: 0;                /* sin márgenes extra del form */
+}
+
+/* Tamaño y padding más pequeños para los tres botones */
+.tabla-tratamientos .btn-editar,
+.tabla-tratamientos .btn-sec{
+    font-size: .82rem;
+    padding: 6px 10px;
+    line-height: 1;
+}
+
+/* Botón eliminar un poco más estrecho */
+.tabla-tratamientos .btn-sec[data-role="delete"]{
+    padding: 6px 9px;
+}
+
+/* Opcional: limitar ancho de la columna para forzar wrap ordenado */
+.tabla-tratamientos th:last-child,
+.tabla-tratamientos td.acciones{
+    max-width: 220px;
+}
+
+/* Responsive: en pantallas más estrechas, apila los botones */
+@media (max-width: 1100px){
+    .tabla-tratamientos td.acciones{
+        justify-content: center;
+        gap: 4px;
+    }
+    .tabla-tratamientos .btn-editar,
+    .tabla-tratamientos .btn-sec{
+        font-size: .78rem;
+        padding: 5px 8px;
+    }
+}
+
+/* Dark mode */
+body.dark-theme .tabla-tratamientos .btn-editar {
+    background-color: var(--color_primario);
+    color: #fff;
+}
+body.dark-theme .tabla-tratamientos .btn-editar:hover {
+    background-color: color-mix(in srgb, var(--color_primario) 80%, #fff);
+}
 /* ===== MEDICO — Fin Tratamientos ===== */
 
 

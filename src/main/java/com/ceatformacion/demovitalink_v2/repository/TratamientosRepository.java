@@ -28,4 +28,5 @@ public interface TratamientosRepository extends JpaRepository <Tratamientos, Int
 
     @Query(value = "SELECT COUNT(*) FROM tratamientos WHERE id_usuario = :id_usuario", nativeQuery = true)
     long countByUsuario(@Param("id_usuario") int id_usuario);
+
 }

@@ -26,7 +26,24 @@ public class TratamientoServiceImpl implements TratamientoService{
     public List<Tratamientos> obtenerTodos() {
         return repo.findAll();
     }
+    public Optional<Tratamientos> buscarPorId(Integer id_tratamiento){
+        return repo.findById(id_tratamiento);
+    }
 
+    @Override
+    public void finalizar(Integer id) {
+        Tratamientos t = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tratamiento no encontrado"));
+        t.setEstado_tratamiento("Finalizado");
+        if (t.getFecha_fin() == null) {
+            t.setFecha_fin(java.time.LocalDate.now());
+        }
+        repo.save(t);
+    }
+    @Override
+    public void eliminar(Integer id) {
+        repo.deleteById(id);
+    }
 
     @Override
     public Optional<Tratamientos> obtenerPorId(int id_tratamiento) {
