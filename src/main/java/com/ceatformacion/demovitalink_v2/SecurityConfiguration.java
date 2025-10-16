@@ -71,8 +71,9 @@ public class SecurityConfiguration {
                         "/medico/**"
                 ).hasAnyRole("MEDICO","ADMIN")
                 .requestMatchers("/api/medico/**").hasAnyRole("MEDICO","ADMIN")
+                .requestMatchers("/api/medico/config/**").hasRole("MEDICO")
 
-                        .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")
+                .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")
                 .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("USER")
                 .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasAnyRole("USER","MEDICO") // exige ROLE_USER o ROLE_MEDICO
 

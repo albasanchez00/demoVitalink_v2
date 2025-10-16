@@ -4,27 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Configuración del médico</title>
-    <!-- tus estilos globales -->
     <link rel="stylesheet" href="/css/style2.css"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
-
 <section class="contenedor">
 
-    <!-- Header (si lo tienes como fragmento) -->
     <div th:replace="~{fragments/header :: header}"></div>
 
     <section id="main-configMedico" class="section_config" aria-labelledby="titulo-config">
         <header class="config-header">
+            <a id="btnVolver" class="btn btn-primario" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
             <h2 id="titulo-config">Configuración del médico</h2>
             <button id="btnGuardar" class="btn btn-primario" disabled>Guardar cambios</button>
         </header>
 
         <nav class="tabs" role="tablist" aria-label="Secciones de configuración">
-            <button role="tab" aria-selected="true"
-                    id="tab-btn-perfil"
-                    aria-controls="tab-perfil"
-                    data-tab="perfil">Perfil</button>
+            <button role="tab" aria-selected="true" id="tab-btn-perfil" aria-controls="tab-perfil" data-tab="perfil">Perfil</button>
             <button role="tab" id="tab-btn-ui" aria-controls="tab-ui" data-tab="ui">Preferencias</button>
             <button role="tab" id="tab-btn-agenda" aria-controls="tab-agenda" data-tab="agenda">Agenda</button>
             <button role="tab" id="tab-btn-notis" aria-controls="tab-notis" data-tab="notis">Notificaciones</button>
@@ -59,11 +56,13 @@
                     </div>
                     <div class="form-group">
                         <label for="firmaTexto">Firma (texto)</label>
-                        <input id="firmaTexto" name="perfil.firma.texto" type="text" placeholder="Dr./Dra. …" />
+                        <!-- CAMBIO A NOMBRE PLANO -->
+                        <input id="firmaTexto" name="perfil.firmaTexto" type="text" placeholder="Dr./Dra. …" />
                     </div>
                     <div class="form-group">
                         <label for="firmaImg">Firma (imagen)</label>
-                        <input id="firmaImg" name="perfil.firma.imagen" type="file" accept="image/*" />
+                        <!-- el file input puede ir sin name; lo gestiona JS -->
+                        <input id="firmaImg" type="file" accept="image/*" />
                         <div id="firmaPreview" class="preview" aria-live="polite"></div>
                     </div>
                 </form>
@@ -101,7 +100,125 @@
                 </form>
             </section>
 
-            <!-- …resto de tabs con el mismo patrón… -->
+            <!-- AGENDA -->
+            <section id="tab-agenda" role="tabpanel" aria-labelledby="tab-btn-agenda" hidden>
+                <form id="form-agenda" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="duracion">Duración cita (min)</label>
+                        <input id="duracion" name="agenda.duracionGeneralMin" type="number" min="5" step="5" value="20"/>
+                        <small class="help">Duración por defecto para nuevas citas.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="buffer">Buffer entre citas (min)</label>
+                        <input id="buffer" name="agenda.bufferMin" type="number" min="0" step="5" value="5"/>
+                        <small class="help">Minutos de margen entre citas consecutivas.</small>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="reglasJson">Reglas (JSON)</label>
+                        <textarea id="reglasJson" name="agenda.reglasJson" rows="4" spellcheck="false">{"antelacionMinHoras":24,"cancelacionMinHoras":6,"overbooking":false}</textarea>
+                        <small class="help">Validación al guardar. Ej.: {"antelacionMinHoras":24,"cancelacionMinHoras":6,"overbooking":false}</small>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="disponibilidadJson">Disponibilidad semanal (JSON)</label>
+                        <textarea id="disponibilidadJson" name="agenda.disponibilidadJson" rows="6" spellcheck="false">{"lunes":[{"desde":"09:00","hasta":"14:00","ubicacion":"consulta1"}],"martes":[],"miercoles":[],"jueves":[],"viernes":[]}</textarea>
+                        <small class="help">Franja por día. Ej.: {"lunes":[{"desde":"09:00","hasta":"14:00"}]}</small>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="instruccionesPorTipoJson">Instrucciones por tipo (JSON)</label>
+                        <textarea id="instruccionesPorTipoJson" name="agenda.instruccionesPorTipoJson" rows="4" spellcheck="false">{"general":"Llegue 10' antes","teleconsulta":"Conéctese 5' antes"}</textarea>
+                        <small class="help">Textos que verán los pacientes según tipo de cita.</small>
+                    </div>
+                </form>
+            </section>
+
+            <!-- NOTIFICACIONES -->
+            <section id="tab-notis" role="tabpanel" aria-labelledby="tab-btn-notis" hidden>
+                <form id="form-notis" class="grid-2" novalidate>
+                    <fieldset class="form-group">
+                        <legend>Canales</legend>
+                        <label><input type="checkbox" name="notificaciones.canales.email" checked/> Email</label><br/>
+                        <label><input type="checkbox" name="notificaciones.canales.sms"/> SMS</label><br/>
+                        <label><input type="checkbox" name="notificaciones.canales.inapp" checked/> In-app</label>
+                        <small class="help">Se guardará también en notificaciones.canalesJson (JSON).</small>
+                    </fieldset>
+
+                    <fieldset class="form-group">
+                        <legend>Eventos</legend>
+                        <label><input type="checkbox" name="notificaciones.eventos.nuevaCita" checked/> Nueva cita</label><br/>
+                        <label><input type="checkbox" name="notificaciones.eventos.cancelacion" checked/> Cancelación</label><br/>
+                        <label><input type="checkbox" name="notificaciones.eventos.noAsiste" checked/> No asiste</label><br/>
+                        <label><input type="checkbox" name="notificaciones.eventos.mensaje" checked/> Mensaje</label>
+                        <small class="help">Se guardará también en notificaciones.eventosJson (JSON).</small>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label for="silencioDesde">Silencio desde</label>
+                        <input id="silencioDesde" name="notificaciones.silencioDesde" type="time" value="22:00"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="silencioHasta">Silencio hasta</label>
+                        <input id="silencioHasta" name="notificaciones.silencioHasta" type="time" value="07:00"/>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="plantillasJson">Plantillas (JSON)</label>
+                        <textarea id="plantillasJson" name="notificaciones.plantillasJson" rows="4" spellcheck="false">{"nuevaCita":"Hola {paciente}, su cita es el {fecha}."}</textarea>
+                    </div>
+                </form>
+            </section>
+
+            <!-- MENSAJERÍA -->
+            <section id="tab-chat" role="tabpanel" aria-labelledby="tab-btn-chat" hidden>
+                <div class="empty">
+                    <h3>Mensajería</h3>
+                    <p class="muted">Próximamente: estados de disponibilidad, respuestas rápidas y firmas de chat.</p>
+                </div>
+            </section>
+
+            <!-- PLANTILLAS -->
+            <section id="tab-plantillas" role="tabpanel" aria-labelledby="tab-btn-plantillas" hidden>
+                <div class="empty">
+                    <h3>Plantillas</h3>
+                    <p class="muted">Gestiona plantillas de informes y mensajes desde el módulo de “Plantillas”.</p>
+                </div>
+            </section>
+
+            <!-- INTEGRACIONES -->
+            <section id="tab-integraciones" role="tabpanel" aria-labelledby="tab-btn-integraciones" hidden>
+                <div class="empty">
+                    <h3>Integraciones</h3>
+                    <p class="muted">Calendario externo (ICS), correo y SMS llegarán aquí más adelante.</p>
+                </div>
+            </section>
+
+            <!-- SEGURIDAD -->
+            <section id="tab-seguridad" role="tabpanel" aria-labelledby="tab-btn-seguridad" hidden>
+                <div class="empty">
+                    <h3>Seguridad</h3>
+                    <p class="muted">Cambio de contraseña y 2FA (en roadmap).</p>
+                </div>
+            </section>
+
+            <!-- PRIVACIDAD -->
+            <section id="tab-privacidad" role="tabpanel" aria-labelledby="tab-btn-privacidad" hidden>
+                <div class="empty">
+                    <h3>Privacidad</h3>
+                    <p class="muted">Preferencias de visibilidad y consentimiento (próximamente).</p>
+                </div>
+            </section>
+
+            <!-- CENTRO -->
+            <section id="tab-centro" role="tabpanel" aria-labelledby="tab-btn-centro" hidden>
+                <div class="empty">
+                    <h3>Centro</h3>
+                    <p class="muted">Datos del centro/consulta se configurarán aquí en una fase posterior.</p>
+                </div>
+            </section>
 
         </main>
 
@@ -110,12 +227,10 @@
         </footer>
     </section>
 
-    <!-- Un solo footer -->
     <div th:replace="~{fragments/footer :: footer}"></div>
-
 </section>
 
-<!-- Tu JS (gestión de tabs, dirty state, PUT/GET) -->
-<script src="/js/configMedico.js" defer></script>
+<!-- Importa el JS correcto -->
+<script th:src="@{/js/configMedico.js}" defer></script>
 </body>
 </html>

@@ -1411,110 +1411,196 @@ body.dark-theme .tabla-tratamientos .btn-editar:hover {
 
 
 /* ===== MEDICO — Inicio Configuracion ===== */
-/* ===== CONFIG MÉDICO (scope) ===== */
-#main-configMedico {
-    width: 100%;
-    background: var(--fondo-body, #f7f9fc);
-    padding: 20px 0 28px;
-}
-
-#main-configMedico .config-header {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 12px; margin: 0 auto 12px;
-    width: min(100%, 1000px);
-}
-
-#main-configMedico h2 {
-    margin: 0; color: var(--color_primario, #0d47a1);
-    font-size: clamp(1.1rem, 2.3vw, 1.6rem);
-}
-
-#main-configMedico .btn.btn-primario {
-    padding: .6rem 1rem; border-radius: 10px; border: 0;
-    background: var(--color_primario, #0d47a1); color: #fff; cursor: pointer;
-    opacity: 0.85;
-}
-#main-configMedico .btn.btn-primario:disabled { opacity: .5; cursor: not-allowed; }
-#main-configMedico .btn.btn-primario:not(:disabled):hover { opacity: 1; }
-
-/* Tabs */
-#main-configMedico .tabs {
-    width: min(100%, 1000px);
-    margin: 0 auto 14px;
-    display: flex; flex-wrap: wrap; gap: 6px;
-}
-#main-configMedico .tabs [role="tab"] {
-    appearance: none; border: 1px solid var(--borde-tabs, #e6ebf1);
-    background: var(--superficie, #fff); color: var(--texto, #1f2937);
-    padding: .45rem .8rem; border-radius: 10px; cursor: pointer;
-}
-#main-configMedico .tabs [role="tab"][aria-selected="true"] {
-    background: var(--color_primario, #0d47a1);
-    color: #fff; border-color: var(--color_primario, #0d47a1);
-}
-
-/* Panels */
-#main-configMedico .tab-panels {
-    width: min(100%, 1000px);
+/* Layout general */
+.section_config {
+    width: min(100%, 1100px);
+    height: max-content;
     margin: 0 auto;
     background: var(--color_blanco, #fff);
-    border: 1px solid var(--borde, #e6ebf1);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.06);
-    padding: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e6ebf1;
+    padding: 20px 24px;
 }
 
-/* Grid formularios */
-#main-configMedico .grid-2 {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+.config-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color_primario, #003366);
+    color: #fff;
+    padding: 16px 20px;
+    border-radius: 10px 10px 0 0;
 }
+
+.config-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--color_blanco);
+}
+
+/* Botón guardar */
+#btnVolver {
+    background: var(--color_secundario, #008c8c);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 13px;
+}
+#btnGuardar {
+    background: var(--color_secundario, #008c8c);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+#btnGuardar:hover:not(:disabled) {
+    background: var(--color_secundario, #00a2a2);
+    transform: translateY(-1px);
+}
+#btnGuardar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 16px;
+}
+.tabs [role="tab"] {
+    border: 1px solid #d7dde3;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.tabs [role="tab"][aria-selected="true"] {
+    background: var(--color_secundario, #00a2a2);
+    color: #fff;
+    border-color: var(--color_secundario);
+    font-weight: 600;
+}
+
+/* Contenedor principal */
+.tab-panels {
+    margin-top: 18px;
+    padding: 12px;
+}
+
+/* Grillas */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+}
+.col-span-2 {
+    grid-column: 1 / span 2;
+}
+
+/* Campos y formularios */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.form-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color_texto, #1a2b3c);
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    font-size: 0.9rem;
+    border: 1px solid #d5dce0;
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: #fafafa;
+    transition: border-color 0.2s ease;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color_secundario, #00b5ad);
+    background: #fff;
+}
+.form-group textarea {
+    font-family: monospace;
+    resize: vertical;
+}
+.form-group small.help {
+    color: #708090;
+    font-size: 0.8rem;
+}
+
+/* Fieldset */
+fieldset.form-group {
+    border: 1px solid #d5dce0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fafafa;
+}
+fieldset legend {
+    font-weight: 600;
+    color: var(--color_primario, #003366);
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+/* Placeholder para secciones vacías */
+.empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #62727a;
+}
+.empty h3 {
+    color: var(--color_primario, #003366);
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+.empty p.muted {
+    color: #808b98;
+    font-size: 0.9rem;
+}
+
+/* Estado guardado */
+.config-footer {
+    margin-top: 12px;
+    background: var(--color_primario, #003366);
+    border-radius: 0 0 10px 10px;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
-    #main-configMedico .grid-2 { grid-template-columns: 1fr; }
-}
-
-/* Controles */
-#main-configMedico .form-group { display: grid; gap: 6px; }
-#main-configMedico .form-group label { font-weight: 600; font-size: .95rem; }
-#main-configMedico input[type="text"],
-#main-configMedico input[type="number"],
-#main-configMedico input[type="file"],
-#main-configMedico select,
-#main-configMedico textarea {
-    width: 100%; padding: .55rem .7rem; border-radius: 10px;
-    border: 1px solid var(--borde_input, #d7dde5);
-    background: var(--superficie, #fff); color: var(--texto, #111827);
-}
-#main-configMedico textarea { resize: vertical; }
-
-#main-configMedico .help { color: var(--texto_muted, #6b7280); font-size: .85rem; }
-
-#main-configMedico .preview {
-    min-height: 50px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-}
-
-/* Footer de estado */
-#main-configMedico .config-footer {
-    width: min(100%, 1000px); margin: 10px auto 0; padding: 6px 2px;
-    color: var(--texto_muted, #6b7280); font-size: .9rem;
-}
-
-/* Modo oscuro (si usas data-theme o clase .dark en body) */
-:root[data-theme="dark"] #main-configMedico,
-body.dark #main-configMedico {
-    --fondo-body: #0f172a;
-    --superficie: #0b1426;
-    --color_blanco: #0b1426;
-    --borde: #1f2a44;
-    --borde_input: #243355;
-    --borde-tabs: #243355;
-    --texto: #e5e7eb;
-    --texto_muted: #a3aab8;
-    /* mantenemos --color_primario existente */
-}
-
-:root[data-theme="dark"] #main-configMedico .tab-panels,
-body.dark #main-configMedico .tab-panels {
-    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .config-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    #btnGuardar {
+        align-self: flex-end;
+    }
+    .tabs {
+        justify-content: flex-start;
+    }
 }
 /* ===== MEDICO — Fin Configuracion ===== */
 
