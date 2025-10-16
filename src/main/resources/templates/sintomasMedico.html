@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Síntomas — Panel Médico</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <!-- CSS principal -->
+    <link rel="stylesheet" th:href="@{/css/style2.css}" href="/css/style2.css"/>
+</head>
+<body>
+    <section class="contenedor">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <header class="text_center">
+            <h2>Gestión de Síntomas — Médico</h2>
+            <p>Consulta, filtra y registra síntomas para un paciente.</p>
+        </header>
+
+        <main class="sintomas_medicos">
+            <!-- Contenedor principal del módulo -->
+            <div class="sm-wrap">
+                <!-- Tarjeta: Filtros -->
+                <section class="sm-card">
+                    <div class="sm-card__head">
+                        <h3 class="sm-title">Filtros</h3>
+                        <div class="sm-subtitle">Refina la búsqueda por paciente, tipo, zona y fechas.</div>
+                    </div>
+
+                    <form id="form-filtros" class="sm-form">
+                        <div class="sm-grid sm-grid--4">
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-idUsuario">ID Paciente</label>
+                                <input id="f-idUsuario" name="idUsuario" type="number" min="1" required class="sm-input" placeholder="Ej: 5" />
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-tipo">Tipo de síntoma</label>
+                                <select id="f-tipo" name="tipo" class="sm-select">
+                                    <option value="">Todos</option>
+                                    <option th:each="t : ${T(com.ceatformacion.demovitalink_v2.model.TipoSintoma).values()}"
+                                            th:value="${t}" th:text="${t}">FIEBRE</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-zona">Zona corporal</label>
+                                <select id="f-zona" name="zona" class="sm-select">
+                                    <option value="">Todas</option>
+                                    <option th:each="z : ${T(com.ceatformacion.demovitalink_v2.model.ZonaCorporal).values()}"
+                                            th:value="${z}" th:text="${z}">GARGANTA</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-sort">Orden</label>
+                                <select id="f-sort" name="sort" class="sm-select">
+                                    <option value="fechaRegistro,desc">Fecha ↓</option>
+                                    <option value="fechaRegistro,asc">Fecha ↑</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-desde">Desde</label>
+                                <input id="f-desde" name="desde" type="datetime-local" class="sm-input" />
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="f-hasta">Hasta</label>
+                                <input id="f-hasta" name="hasta" type="datetime-local" class="sm-input" />
+                            </div>
+
+                            <div class="sm-field sm-field--inline">
+                                <label class="sm-label" for="f-size">Por página</label>
+                                <select id="f-size" name="size" class="sm-select sm-select--small">
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-actions sm-actions--right">
+                                <button type="submit" class="btn btn-primary">Buscar</button>
+                                <button type="button" id="btn-limpiar" class="btn">Limpiar</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Tarjeta: Alta rápida -->
+                <section class="sm-card">
+                    <div class="sm-card__head">
+                        <h3 class="sm-title">Registrar nuevo síntoma</h3>
+                        <div class="sm-subtitle">Crea un registro para el paciente seleccionado.</div>
+                    </div>
+
+                    <form id="form-crear" class="sm-form">
+                        <div class="sm-grid sm-grid--3">
+                            <div class="sm-field">
+                                <label class="sm-label" for="c-tipo">Tipo</label>
+                                <select id="c-tipo" class="sm-select" required>
+                                    <option value="" disabled selected>Selecciona</option>
+                                    <option th:each="t : ${T(com.ceatformacion.demovitalink_v2.model.TipoSintoma).values()}"
+                                            th:value="${t}" th:text="${t}">FIEBRE</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="c-zona">Zona</label>
+                                <select id="c-zona" class="sm-select">
+                                    <option value="" selected>Ninguna/General</option>
+                                    <option th:each="z : ${T(com.ceatformacion.demovitalink_v2.model.ZonaCorporal).values()}"
+                                            th:value="${z}" th:text="${z}">GARGANTA</option>
+                                </select>
+                            </div>
+
+                            <div class="sm-field">
+                                <label class="sm-label" for="c-fecha">Fecha (opcional)</label>
+                                <input id="c-fecha" type="datetime-local" class="sm-input" />
+                            </div>
+
+                            <div class="sm-field sm-field--full">
+                                <label class="sm-label" for="c-desc">Descripción</label>
+                                <textarea id="c-desc" rows="3" class="sm-textarea" placeholder="Detalle del síntoma…"></textarea>
+                            </div>
+
+                            <div class="sm-actions sm-actions--left">
+                                <button type="submit" class="btn btn-primary">Crear síntoma</button>
+                                <p id="crear-msg" class="sm-msg" aria-live="polite"></p>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Tarjeta: Resultados -->
+                <section class="sm-card">
+                    <div class="sm-card__head">
+                        <h3 class="sm-title">Resultados</h3>
+                        <div class="sm-subtitle">Lista paginada de síntomas del paciente.</div>
+                    </div>
+
+                    <div class="sm-table-wrap">
+                        <table class="sm-table sm-table--hover">
+                            <thead>
+                            <tr>
+                                <th class="sm-col--date">Fecha</th>
+                                <th>Tipo</th>
+                                <th>Zona</th>
+                                <th class="sm-col--desc">Descripción</th>
+                                <th class="sm-col--actions">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabla-body">
+                            <tr><td colspan="5" class="sm-empty">Sin resultados aún. Realiza una búsqueda.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="sm-pagination">
+                        <div class="sm-pagination__controls">
+                            <button id="btn-prev" class="btn" disabled>Anterior</button>
+                            <button id="btn-next" class="btn" disabled>Siguiente</button>
+                        </div>
+                        <div id="pagin-info" class="sm-pagination__info">Página 0 de 0</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </section>
+
+<!-- Script específico de esta página -->
+<script th:src="@{/js/sintomasMedicos.js}" src="/js/sintomasMedicos.js"></script>
+</body>
+</html>

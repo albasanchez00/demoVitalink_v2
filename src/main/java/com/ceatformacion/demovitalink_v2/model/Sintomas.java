@@ -20,10 +20,12 @@ public class Sintomas {
     private Usuarios usuario;
 
     @Column(name = "tipo", nullable = false, length = 100)
-    private String tipo;
+    @Enumerated(EnumType.STRING)
+    private TipoSintoma tipo;
 
     @Column(name = "zona", length = 50)
-    private String zona;
+    @Enumerated(EnumType.STRING)
+    private ZonaCorporal zona;
 
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
@@ -34,7 +36,8 @@ public class Sintomas {
     // --- Constructores ---
     public Sintomas() {}
 
-    public Sintomas(Usuarios usuario, String tipo, String zona, String descripcion, LocalDateTime fechaRegistro) {
+    public Sintomas(int id_sintoma, Usuarios usuario, TipoSintoma tipo, ZonaCorporal zona, String descripcion, LocalDateTime fechaRegistro) {
+        this.id_sintoma = id_sintoma;
         this.usuario = usuario;
         this.tipo = tipo;
         this.zona = zona;
@@ -49,11 +52,11 @@ public class Sintomas {
     public Usuarios getUsuario() { return usuario; }
     public void setUsuario(Usuarios usuario) { this.usuario = usuario; }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoSintoma getTipo() { return tipo; }
+    public void setTipo(TipoSintoma tipo) { this.tipo = tipo; }
 
-    public String getZona() { return zona; }
-    public void setZona(String zona) { this.zona = zona; }
+    public ZonaCorporal getZona() { return zona; }
+    public void setZona(ZonaCorporal zona) { this.zona = zona; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

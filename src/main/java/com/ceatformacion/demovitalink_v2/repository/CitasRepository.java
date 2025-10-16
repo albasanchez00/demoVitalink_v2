@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -98,5 +99,19 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
    order by c.fecha asc, c.hora asc
 """)
     List<Citas> findAgendaMedicoSoloDeSusPacientes(int idMedico, LocalDate desde, LocalDate hasta);
+
+    @Query("""
+  SELECT MAX(ci.fecha)
+  FROM Citas ci
+  WHERE ci.usuario.id_usuario = :usuarioId
+""")
+    java.time.LocalDateTime findUltimaConsultaByUsuarioId(Integer usuarioId);
+    @Query("""
+    SELECT ci
+    FROM Citas ci
+    WHERE ci.usuario.id_usuario = :usuarioId
+    ORDER BY ci.fecha DESC, ci.hora DESC
+""")
+    List<Citas> findTopByUsuarioOrderByFechaHoraDesc(Integer usuarioId);
 
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pacientes — Panel Médico</title>
+    <link rel="stylesheet" href="/css/style2.css" />
+    <style>
+        /* —— AÑADIDOS LOCALES (no tocan tu CSS global) —— */
+        #main-pacientes { width: 100%; background: var(--fondo-body); padding: 20px 0; }
+        .pacientes-wrap { width: min(100%, 1100px); margin: 0 auto; background: var(--color_blanco); border: 1px solid #e6ebf1; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .pacientes-head { padding: 16px 18px; border-bottom: 1px solid #eef2f6; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .pacientes-title { color: var(--color_primario); font-size: clamp(1.1rem, 2.2vw, 1.5rem); margin: 0; }
+        .pacientes-tools { display: grid; grid-template-columns: 1.2fr .9fr .9fr auto; gap: 8px; width: 100%; }
+        .pacientes-tools input, .pacientes-tools select { border: 1px solid #dfe7f0; background: var(--color_blanco); border-radius: 10px; padding: 10px 12px; outline: none; }
+        .pacientes-tools button { border: none; border-radius: 10px; padding: 10px 14px; cursor: pointer; background: var(--color_primario); color: #fff; }
+        .pacientes-body { padding: 12px 18px 6px; overflow-x: auto; }
+        .tabla-pacientes { width: 100%; border-collapse: collapse; }
+        .tabla-pacientes th, .tabla-pacientes td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #eef2f6; white-space: nowrap; }
+        .tabla-pacientes th { font-weight: 600; color: #425466; background: var(--fondo-body); position: sticky; top: 0; z-index: 1; }
+        .badge { padding: 4px 8px; border-radius: 999px; font-size: .78rem; }
+        .badge.activo { color: #0f5132; background: #d1e7dd; border: 1px solid #badbcc; }
+        .badge.inactivo { color: #664d03; background: #fff3cd; border: 1px solid #ffecb5; }
+        .acciones { display: flex; gap: 6px; flex-wrap: wrap; }
+        .acciones .btn { font-size: .86rem; padding: 6px 10px; border-radius: 8px; border: 1px solid #dfe7f0; background: #fff; cursor: pointer; }
+        .acciones .btn.primary { background: var(--color_primario); color: #fff; border-color: var(--color_primario); }
+        .pacientes-foot { padding: 10px 18px 16px; display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid #eef2f6; }
+        .paginacion { display: flex; gap: 6px; align-items: center; }
+        .paginacion button { padding: 8px 10px; border-radius: 8px; border: 1px solid #dfe7f0; background: #fff; cursor: pointer; }
+        .paginacion button[disabled] { opacity: .5; cursor: not-allowed; }
+        .resumen { font-size: .92rem; color: #425466; }
+        @media (max-width: 768px){
+            .pacientes-tools{ grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<section id="main-pacientes">
+    <div class="pacientes-wrap">
+        <div class="pacientes-head">
+            <h2 class="pacientes-title">
+                Pacientes vinculados
+                <span id="badgeTotal" class="badge activo" style="margin-left:8px">0</span>
+            </h2>
+            <div class="pacientes-tools" role="search">
+                <input id="q" type="search" placeholder="Buscar por nombre, tarjeta, email…" aria-label="Buscar" />
+                <select id="estado" aria-label="Estado">
+                    <option value="">Todos los estados</option>
+                    <option value="ACTIVO">Activos</option>
+                    <option value="INACTIVO">Inactivos</option>
+                </select>
+                <select id="orden" aria-label="Ordenar por">
+                    <option value="nombre,asc">Nombre (A→Z)</option>
+                    <option value="nombre,desc">Nombre (Z→A)</option>
+                    <option value="ultimaConsulta,desc">Última consulta (recientes)</option>
+                    <option value="ultimaConsulta,asc">Última consulta (antiguas)</option>
+                </select>
+                <button id="btnBuscar" title="Aplicar filtros">Filtrar</button>
+            </div>
+        </div>
+
+        <div class="pacientes-body">
+            <table class="tabla-pacientes" aria-describedby="resumenTabla">
+                <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Tarjeta Sanitaria</th>
+                    <th>Contacto</th>
+                    <th>Edad</th>
+                    <th>Estado</th>
+                    <th>Última consulta</th>
+                    <th style="text-align:right;">Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyPacientes">
+                <!-- filas renderizadas por JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pacientes-foot">
+            <div class="resumen" id="resumenTabla">Mostrando <span id="countPage">0</span> de <span id="countTotal">0</span> pacientes</div>
+            <div class="paginacion">
+                <button id="prev" aria-label="Página anterior">«</button>
+                <span id="pageInfo">1 / 1</span>
+                <button id="next" aria-label="Página siguiente">»</button>
+                <select id="size" aria-label="Resultados por página">
+                    <option>10</option><option>20</option><option>50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/pacientesMedico.js}"></script>
+</body>
+</html>

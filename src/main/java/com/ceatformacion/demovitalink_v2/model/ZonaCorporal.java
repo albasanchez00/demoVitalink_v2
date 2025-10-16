@@ -14,6 +14,8 @@ public enum ZonaCorporal {
     BRAZO,
     PIERNA,
     GENERAL,
-    OTRA
+    OTRA,
+    NINGUNA,
+    GENERALIDAD
 }
 

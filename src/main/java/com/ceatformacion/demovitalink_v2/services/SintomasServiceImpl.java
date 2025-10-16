@@ -1,11 +1,16 @@
 package com.ceatformacion.demovitalink_v2.services;
 
 import com.ceatformacion.demovitalink_v2.model.Sintomas;
+import com.ceatformacion.demovitalink_v2.model.TipoSintoma;
+import com.ceatformacion.demovitalink_v2.model.ZonaCorporal;
 import com.ceatformacion.demovitalink_v2.repository.SintomasRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,5 +67,17 @@ public class SintomasServiceImpl implements SintomasService {
             throw new EntityNotFoundException("Síntoma no encontrado con id_sintoma=" + id_sintoma);
         }
         sintomasRepository.deleteById(id_sintoma);
+    }
+
+    //SINTOMAS MEDICOS
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Sintomas> listarPaginadoConFiltros(Integer idUsuario,
+                                                   TipoSintoma tipo,
+                                                   ZonaCorporal zona,
+                                                   LocalDateTime desde,
+                                                   LocalDateTime hasta,
+                                                   Pageable pageable) {
+        return sintomasRepository.buscarConFiltros(idUsuario, tipo, zona, desde, hasta, pageable);
     }
 }

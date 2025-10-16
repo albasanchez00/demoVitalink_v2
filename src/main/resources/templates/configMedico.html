@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Configuración del médico</title>
+    <!-- tus estilos globales -->
+    <link rel="stylesheet" href="/css/style2.css"/>
+</head>
+<body>
+
+<section class="contenedor">
+
+    <!-- Header (si lo tienes como fragmento) -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <section id="main-configMedico" class="section_config" aria-labelledby="titulo-config">
+        <header class="config-header">
+            <h2 id="titulo-config">Configuración del médico</h2>
+            <button id="btnGuardar" class="btn btn-primario" disabled>Guardar cambios</button>
+        </header>
+
+        <nav class="tabs" role="tablist" aria-label="Secciones de configuración">
+            <button role="tab" aria-selected="true"
+                    id="tab-btn-perfil"
+                    aria-controls="tab-perfil"
+                    data-tab="perfil">Perfil</button>
+            <button role="tab" id="tab-btn-ui" aria-controls="tab-ui" data-tab="ui">Preferencias</button>
+            <button role="tab" id="tab-btn-agenda" aria-controls="tab-agenda" data-tab="agenda">Agenda</button>
+            <button role="tab" id="tab-btn-notis" aria-controls="tab-notis" data-tab="notis">Notificaciones</button>
+            <button role="tab" id="tab-btn-chat" aria-controls="tab-chat" data-tab="chat">Mensajería</button>
+            <button role="tab" id="tab-btn-plantillas" aria-controls="tab-plantillas" data-tab="plantillas">Plantillas</button>
+            <button role="tab" id="tab-btn-integraciones" aria-controls="tab-integraciones" data-tab="integraciones">Integraciones</button>
+            <button role="tab" id="tab-btn-seguridad" aria-controls="tab-seguridad" data-tab="seguridad">Seguridad</button>
+            <button role="tab" id="tab-btn-privacidad" aria-controls="tab-privacidad" data-tab="privacidad">Privacidad</button>
+            <button role="tab" id="tab-btn-centro" aria-controls="tab-centro" data-tab="centro">Centro</button>
+        </nav>
+
+        <main class="tab-panels">
+            <!-- PERFIL -->
+            <section id="tab-perfil" role="tabpanel" aria-labelledby="tab-btn-perfil">
+                <form id="form-perfil" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="nombreMostrar">Nombre a mostrar</label>
+                        <input id="nombreMostrar" name="perfil.nombreMostrar" type="text" />
+                        <small class="help">Se mostrará en informes y agenda.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad</label>
+                        <input id="especialidad" name="perfil.especialidad" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label for="colegiado">Nº colegiado</label>
+                        <input id="colegiado" name="perfil.colegiado" type="text" inputmode="numeric" />
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">Presentación</label>
+                        <textarea id="bio" name="perfil.bio" rows="3" maxlength="280"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="firmaTexto">Firma (texto)</label>
+                        <input id="firmaTexto" name="perfil.firma.texto" type="text" placeholder="Dr./Dra. …" />
+                    </div>
+                    <div class="form-group">
+                        <label for="firmaImg">Firma (imagen)</label>
+                        <input id="firmaImg" name="perfil.firma.imagen" type="file" accept="image/*" />
+                        <div id="firmaPreview" class="preview" aria-live="polite"></div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- UI -->
+            <section id="tab-ui" role="tabpanel" aria-labelledby="tab-btn-ui" hidden>
+                <form id="form-ui" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="tema">Tema</label>
+                        <select id="tema" name="ui.tema">
+                            <option value="auto">Automático</option>
+                            <option value="light">Claro</option>
+                            <option value="dark">Oscuro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="idioma">Idioma</label>
+                        <select id="idioma" name="ui.idioma">
+                            <option value="es">Español</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="zona">Zona horaria</label>
+                        <input id="zona" name="ui.zonaHoraria" type="text" value="Europe/Madrid" />
+                    </div>
+                    <div class="form-group">
+                        <label for="home">Página de inicio</label>
+                        <select id="home" name="ui.home">
+                            <option value="dashboard">Dashboard</option>
+                            <option value="agenda">Agenda</option>
+                            <option value="mensajes">Mensajería</option>
+                        </select>
+                    </div>
+                </form>
+            </section>
+
+            <!-- …resto de tabs con el mismo patrón… -->
+
+        </main>
+
+        <footer class="config-footer">
+            <span id="estadoGuardado" aria-live="polite"></span>
+        </footer>
+    </section>
+
+    <!-- Un solo footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</section>
+
+<!-- Tu JS (gestión de tabs, dirty state, PUT/GET) -->
+<script src="/js/configMedico.js" defer></script>
+</body>
+</html>

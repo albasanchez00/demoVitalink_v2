@@ -2,12 +2,17 @@ package com.ceatformacion.demovitalink_v2.repository;
 
 
 import com.ceatformacion.demovitalink_v2.model.Sintomas;
+import com.ceatformacion.demovitalink_v2.model.TipoSintoma;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
+import com.ceatformacion.demovitalink_v2.model.ZonaCorporal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SintomasRepository extends JpaRepository<Sintomas, Integer> {
@@ -58,5 +63,23 @@ public interface SintomasRepository extends JpaRepository<Sintomas, Integer> {
     @Query(value = "SELECT MAX(DATE(fecha_registro)) FROM sintomas WHERE id_usuario = :id_usuario", nativeQuery = true)
     LocalDate maxFecha(@Param("id_usuario") int id_usuario);
 
+
+    //Medico sintomas
+    @Query("""
+   SELECT s FROM Sintomas s
+   WHERE (:idUsuario IS NULL OR s.usuario.id_usuario = :idUsuario)
+     AND (:tipo IS NULL OR s.tipo = :tipo)
+     AND (:zona IS NULL OR s.zona = :zona)
+     AND (:desde IS NULL OR s.fechaRegistro >= :desde)
+     AND (:hasta IS NULL OR s.fechaRegistro <= :hasta)
+""")
+    Page<Sintomas> buscarConFiltros(
+            @Param("idUsuario") Integer idUsuario,
+            @Param("tipo") TipoSintoma tipo,
+            @Param("zona") ZonaCorporal zona,
+            @Param("desde") LocalDateTime desde,
+            @Param("hasta") LocalDateTime hasta,
+            Pageable pageable
+    );
 }
 

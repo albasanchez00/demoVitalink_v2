@@ -29,12 +29,11 @@ public class SecurityConfiguration {
                 // Públicos + estáticos
                 .requestMatchers(HttpMethod.GET,"/","/index",
                         "/politicaPrivacidad", "/terminoCondiciones",
-                        "/politicaCookies", "/baseLegal", "/api/**","/webjars/**","/usuarios/**","/usuarios/registroUsuario","/media/**","/css/**","/js/**").permitAll()
+                        "/politicaCookies", "/baseLegal", "/webjars/**","/media/**","/css/**","/js/**","/favicon.ico", "/fonts/**").permitAll()
 
-                // LOGIN (liberar ambos métodos para evitar el bucle)
+                // LOGIN
                 .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/sintomas/mios").permitAll() // <- temporal para ver datos
                 .requestMatchers("/error").permitAll()
 
 
@@ -50,7 +49,6 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST,"/recordatorios").permitAll()
                 .requestMatchers(HttpMethod.POST,"/historialPaciente").permitAll()
                 .requestMatchers(HttpMethod.POST,"/registroSintomas").permitAll()
-                .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
                 .requestMatchers(HttpMethod.GET,"/contacto").permitAll()
 
                 //Formulario de Gestión de Usuarios: solo rol 'admin'
@@ -72,10 +70,11 @@ public class SecurityConfiguration {
                         "/clientes/**",
                         "/medico/**"
                 ).hasAnyRole("MEDICO","ADMIN")
+                .requestMatchers("/api/medico/**").hasAnyRole("MEDICO","ADMIN")
 
-                .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")
                 .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("USER")
-                .requestMatchers(HttpMethod.POST,"/tratamientos/**").permitAll() // exige ROLE_USER o ROLE_ADMIN
+                .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasAnyRole("USER","MEDICO") // exige ROLE_USER o ROLE_MEDICO
 
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/usuario/historial").authenticated()
