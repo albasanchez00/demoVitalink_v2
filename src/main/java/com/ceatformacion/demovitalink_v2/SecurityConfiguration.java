@@ -23,7 +23,7 @@ public class SecurityConfiguration {
                                            AuthenticationProvider authenticationProvider) throws Exception {
         //Configurar las páginas que según el rol mostrará o negará
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/ws-chat/**"))
                 .authorizeHttpRequests(auth->auth
 
                 // Públicos + estáticos
@@ -36,6 +36,9 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").permitAll()
                 .requestMatchers("/error").permitAll()
 
+                // Chat (solo personal interno)
+                .requestMatchers("/ws-chat/**").hasAnyRole("MEDICO","ADMIN") // handshake WS
+                .requestMatchers("/api/chat/**").hasAnyRole("MEDICO","ADMIN") // REST histórico/adjuntos
 
                 // Vistas protegidas (usa AUTHORITIES si tus valores son "Admin"/"User")
                 .requestMatchers(HttpMethod.GET, "/usuarios/panelUsuario").permitAll()
@@ -135,5 +138,6 @@ public class SecurityConfiguration {
         dao.setPasswordEncoder(encoder); // <-- usa tu CompositePasswordEncoder
         return dao;
     }
+
 
 }

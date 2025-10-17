@@ -1604,6 +1604,266 @@ fieldset legend {
 }
 /* ===== MEDICO — Fin Configuracion ===== */
 
+/* ===== MEDICO — Inicio Chat Conversacional ===== */
+#chat-wrap{
+    height: calc(100vh - var(--altura_header) - var(--altura_footer));
+    max-height: calc(100vh - var(--altura_header) - var(--altura_footer));
+}
+
+/* Lateral de conversaciones */
+#chat-list { border-right: 1px solid #e6ebf1; }
+#chat-list h3{
+    text-align: left;
+    padding: .9rem 1rem;
+    margin: 0;
+    color: var(--color_texto);
+    border-bottom: 1px solid #e6ebf1;
+    font-size: 1rem;
+}
+#chat-list ul li{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: .5rem;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #f1f3f6;
+    transition: background .15s ease;
+}
+#chat-list ul li:hover{ background: #f7fafb; }
+#chat-list ul li.is-active{
+    background: #eef9fa;
+    border-left: 3px solid var(--color_primario);
+    padding-left: calc(1rem - 3px);
+    font-weight: 700;
+    color: var(--color_texto);
+}
+.conv-title{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge{
+    justify-self: end;
+    font-size: .75rem;
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    background: #e8f4ff;
+    color:#0b5ed7;
+    border:1px solid #cfe6ff;
+}
+
+/* Panel principal */
+#chat-panel{ background: var(--fondo-body); }
+#mensajes{
+    padding: 1rem;
+    position: relative;
+}
+.empty-state{
+    margin: auto;
+    text-align: center;
+    color: var(--texto_secundario);
+    opacity: .85;
+    padding: 2rem 1rem;
+}
+
+/* Burbujas */
+.msg{
+    background: var(--color_blanco);
+    border: 1px solid #e6ebf1;
+    max-width: min(72%, 680px);
+}
+.msg .meta{
+    display:block; font-size:.75rem; opacity:.7; margin-top:.25rem;
+}
+.msg.me{
+    background: #e9fbfc;
+    border-color: #cbf2f6;
+}
+.msg {
+    background: var(--color_blanco);
+    border-radius: 12px;
+    padding: .8rem 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    max-width: 70%;
+}
+.msg.me {
+    align-self: flex-end;
+    background: var(--color_primario);
+    color: #fff;
+}
+/* Composer pegado abajo */
+#form-msg{
+    position: sticky; bottom: 0; left: 0; right: 0;
+    border-top: 1px solid #e6ebf1;
+}
+#form-msg input{
+    background: #fff;
+    border-left: 1px solid #e6ebf1;
+}
+#form-msg button{ min-width: 92px; }
+
+/* Responsive: en pantallas pequeñas, una columna */
+@media (max-width: 900px){
+    #chat-wrap{
+        grid-template-columns: 1fr;
+        height: calc(100vh - var(--altura_header)); /* el footer queda fuera de viewport en móvil */
+        max-height: calc(100vh - var(--altura_header));
+    }
+    #chat-list{ height: 42vh; }
+    #chat-panel{ height: 58vh; }
+}
+/* ===== CHAT MÉDICO — Crear conversación directa ===== */
+.crear-conv {
+    display: grid;
+    gap: .4rem;
+    padding: .75rem;
+    border-bottom: 1px solid #e6ebf1;
+    background: var(--color_blanco);
+}
+
+.crear-conv__form {
+    display: flex;
+    gap: .5rem;
+}
+
+.crear-conv__form input {
+    flex: 1;
+    padding: .55rem .75rem;
+    border: 1px solid #d9e1ea;
+    border-radius: 8px;
+    background: #f7f9fb;
+    font-size: .95rem;
+}
+
+.crear-conv__form button {
+    background: var(--color_primario);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: .55rem .9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color .2s ease, transform .1s ease;
+}
+.crear-conv__form button:hover {
+    background: var(--color_secundario);
+    transform: translateY(-1px);
+}
+
+.crear-conv__help {
+    font-size: .85rem;
+    color: var(--texto_secundario);
+}
+
+/* Dark theme */
+body.dark-theme .crear-conv {
+    background: #2c2c2c;
+    border-color: #444;
+}
+body.dark-theme .crear-conv__form input {
+    background: #333;
+    color: #fff;
+    border-color: #555;
+}
+body.dark-theme .crear-conv__help {
+    color: #bbb;
+}
+/* === Chat v2 – layout y look moderno === */
+.chatv2{
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: calc(100vh - var(--altura_header));
+    background: var(--fondo-body);
+}
+
+/* Lateral */
+.chatv2 #chat-list{
+    background:#fff;
+    border-right:1px solid #e7eef5;
+    display:flex; flex-direction:column; overflow:hidden;
+}
+.chatv2__sidehead{
+    position:sticky; top:0; z-index:1;
+    background:#fff; border-bottom:1px solid #e7eef5;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.85rem 1rem;
+}
+.chatv2 #listaConversaciones{
+    overflow:auto; padding:.25rem 0;
+}
+.chatv2 #listaConversaciones li{
+    display:grid; grid-template-columns:1fr auto; align-items:center;
+    gap:.5rem; padding:.7rem 1rem; border-bottom:1px solid #f3f6fb;
+    cursor:pointer; transition:background .15s ease;
+}
+.chatv2 #listaConversaciones li:hover{ background:#f8fbfd; }
+.chatv2 #listaConversaciones li.is-active{
+    background:#eef9fa; border-left:3px solid var(--color_primario); padding-left:calc(1rem - 3px);
+    font-weight:700;
+}
+.pill{display:inline-flex; align-items:center; gap:.35rem; padding:.2rem .55rem; border-radius:999px; font-size:.72rem;}
+.pill--muted{background:#f1f5f9; color:#334155; border:1px solid #e5e9f0}
+
+/* Panel principal */
+#chat-panel{display:grid; grid-template-rows:auto 1fr auto; overflow:hidden;}
+.chatv2__head{
+    background:#fff; border-bottom:1px solid #e7eef5; padding:.7rem 1rem;
+    display:flex; align-items:center; justify-content:space-between;
+}
+.chatv2__head .title{display:flex; gap:.6rem; align-items:center}
+.chatv2__head .status{font-size:.85rem; color:#64748b;}
+.chatv2__head .dot{width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;margin-right:.35rem}
+
+.chatv2__messages{
+    padding:1rem; overflow:auto; display:flex; flex-direction:column; gap:.5rem;
+    background: linear-gradient(180deg, #f9fbff 0%, #f6f9fc 100%);
+}
+
+/* Burbujas */
+.msg{
+    max-width:min(70%,680px);
+    border-radius:16px; padding:.75rem .95rem; line-height:1.35;
+    background:#fff; color:var(--color_texto);
+    border:1px solid #e7eef5; box-shadow:0 2px 6px rgba(15,23,42,.06);
+}
+.msg .meta{display:block; margin-top:.25rem; font-size:.75rem; opacity:.65;}
+.msg.me{
+    margin-left:auto;
+    background: linear-gradient(180deg, var(--color_primario) 0%, var(--color_secundario) 100%);
+    color:#fff; border-color:transparent; box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+.msg.me .meta{opacity:.85;}
+
+/* Composer */
+.chatv2__composer{
+    display:grid; grid-template-columns:1fr auto; gap:.6rem;
+    background:#fff; border-top:1px solid #e7eef5; padding:.7rem 1rem;
+}
+.chatv2__composer textarea{
+    resize:none; max-height:28vh;
+    border:1px solid #dbe4ee; border-radius:12px; padding:.7rem .85rem;
+    background:#f8fbff; outline:none; transition:border-color .15s, box-shadow .15s, background .15s;
+}
+.chatv2__composer textarea:focus{
+    border-color:#b9d6ff; background:#fff; box-shadow:0 0 0 3px rgba(79, 140, 255, .15);
+}
+.chatv2__composer .send{
+    min-width:108px; border:0; border-radius:12px; font-weight:700;
+    background:linear-gradient(180deg, var(--color_secundario) 0%, var(--color_primario) 100%);
+    color:#fff; cursor:pointer; transition:transform .08s ease, filter .15s ease;
+}
+.chatv2__composer .send:hover{ filter:brightness(1.03); transform:translateY(-1px); }
+.chatv2__composer .send:active{ transform:translateY(0); }
+
+/* Estados vacíos */
+.empty-state{ color:#6b7280; }
+
+/* Dark mode */
+body.dark-theme .chatv2 #chat-list,
+body.dark-theme .chatv2__head,
+body.dark-theme .chatv2__composer{ background:#1f2937; border-color:#334155; }
+body.dark-theme .chatv2__messages{ background: linear-gradient(180deg, #0b1220 0%, #0f1a2b 100%); }
+body.dark-theme .msg{ background:#0f172a; color:#e5e7eb; border-color:#334155; }
+body.dark-theme .msg.me{ background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%); }
+body.dark-theme .chatv2__composer textarea{ background:#0b1220; color:#e5e7eb; border-color:#334155; }
+body.dark-theme .chatv2__composer textarea:focus{ border-color:#44618a; box-shadow:0 0 0 3px rgba(2,132,199,.25); }
+/* ===== MEDICO — Fin Chat Conversacional ===== */
 
 /* ===== MEDICO — Inicio Sintomas ===== */
 /* ===== Síntomas Médico (prefijo sm-) ===== */

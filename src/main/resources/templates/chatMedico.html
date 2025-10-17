@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat interno</title>
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body>
+<!-- Header global -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<!-- Chat -->
+<section id="chat-wrap" class="chatv2">
+    <aside id="chat-list">
+        <div class="chatv2__sidehead">
+            <h3>Conversaciones</h3>
+            <span class="pill pill--muted" id="convCount" style="display:none"></span>
+        </div>
+
+        <!-- Crear conversación directa -->
+        <div class="crear-conv">
+            <div class="crear-conv__form">
+                <input id="nuevo-usuario" type="text" placeholder="Username del usuario…">
+                <button id="btn-crear" type="button">Nueva</button>
+            </div>
+            <small class="crear-conv__help">Crea o reabre una conversación DIRECT con el usuario indicado.</small>
+        </div>
+
+        <ul id="listaConversaciones">
+            <li class="empty-state">Cargando conversaciones…</li>
+        </ul>
+    </aside>
+
+    <main id="chat-panel">
+        <!-- Cabecera de la conversación -->
+        <header class="chatv2__head">
+            <div class="title">
+                <strong id="convTitle">CHAT</strong>
+                <span class="status"><span class="dot"></span> en línea</span>
+            </div>
+            <div class="actions">
+                <button class="ghost" title="Buscar">🔍</button>
+                <button class="ghost" title="Opciones">⋯</button>
+            </div>
+        </header>
+
+        <!-- Mensajes -->
+        <div id="mensajes" class="chatv2__messages">
+            <div class="empty-state">Selecciona una conversación para ver los mensajes.</div>
+        </div>
+
+        <!-- Composer -->
+        <form id="form-msg" class="chatv2__composer" autocomplete="off">
+            <textarea id="txt" rows="1" placeholder="Escribe un mensaje… (Enter para enviar)"></textarea>
+            <button type="submit" class="send">Enviar</button>
+        </form>
+    </main>
+</section>
+
+<!-- Footer global -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Librerías -->
+<script defer src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script defer src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        initChat();
+    });
+
+    function initChat(){
+        var stomp = null;
+        var currentConvId = null;
+        var currentSubscription = null;
+
+        function $lista(){ return document.getElementById('listaConversaciones'); }
+        function $msgs(){ return document.getElementById('mensajes'); }
+
+        function renderEmptyMensajes(texto){
+            $msgs().innerHTML = '<div class="empty-state">' + escapeHTML(texto) + '</div>';
+        }
+
+        function conectarChat() {
+            var sock = new SockJS('/ws-chat');
+            stomp = Stomp.over(sock);
+            //stomp.debug = function(){};
+            stomp.reconnect_delay = 3000;
+
+            stomp.connect({}, function () {
+                console.log('Conectado al chat interno');
+                if (currentConvId) { suscribirA(currentConvId); }
+            }, function (err) {
+                console.warn('Reintentando conexión WS…', err);
+            });
+        }
+
+        function fetchJSON(url, options){
+            return fetch(url, options).then(function(resp){
+                if (resp.status === 401) { window.location.href = '/inicioSesion'; throw new Error('401'); }
+                if (resp.status === 403) { alert('No tienes permiso.'); throw new Error('403'); }
+                if (!resp.ok) { throw new Error('HTTP ' + resp.status); }
+                return resp.json();
+            });
+        }
+
+        function cargarConversaciones() {
+            fetchJSON('/api/chat/conversaciones').then(function(data){
+                var ul = $lista();
+                ul.innerHTML = '';
+
+                if (!data || !data.length){
+                    ul.innerHTML = '<li class="empty-state">No tienes conversaciones todavía.</li>';
+                    renderEmptyMensajes('Selecciona o crea una conversación.');
+                    return;
+                }
+
+                data.forEach(function(c){
+                    var li = document.createElement('li');
+                    li.dataset.id = c.id;
+
+                    var titulo = c.servicio ? escapeHTML(c.servicio) : ('Conversación #' + c.id);
+                    var badge = (c.miembrosCount && c.miembrosCount > 1)
+                        ? '<span class="badge">' + c.miembrosCount + '</span>'
+                        : '';
+
+                    li.innerHTML =
+                        '<span class="conv-title">' + titulo + '</span>' +
+                        badge;
+
+                    li.onclick = function(){ abrirConversacion(c.id); };
+                    ul.appendChild(li);
+                });
+
+                if (!currentConvId){ abrirConversacion(data[0].id); }
+            }).catch(function(e){
+                console.error(e);
+                $lista().innerHTML = '<li class="empty-state">No se pudieron cargar las conversaciones.</li>';
+                renderEmptyMensajes('No se pudieron cargar los mensajes.');
+            });
+        }
+
+        function abrirConversacion(id){
+            if (currentConvId === id) return;
+
+            var items = $lista().children;
+            for (var i=0; i<items.length; i++){
+                var li = items[i];
+                li.classList.toggle('is-active', Number(li.dataset.id) === id);
+            }
+
+            currentConvId = id;
+
+            if (currentSubscription){
+                try { currentSubscription.unsubscribe(); } catch(e){}
+                currentSubscription = null;
+            }
+
+            fetchJSON('/api/chat/conversaciones/' + id + '/mensajes').then(function(page){
+                var mensajes = (page.content || []).slice().reverse();
+                var cont = $msgs();
+                cont.innerHTML = '';
+
+                if (!mensajes.length){
+                    renderEmptyMensajes('Aún no hay mensajes en esta conversación.');
+                } else {
+                    mensajes.forEach(function(m){
+                        cont.appendChild(crearBurbuja(m.remitente + ': ' + m.contenido));
+                    });
+                    cont.scrollTop = cont.scrollHeight;
+                }
+
+                if (stomp && stomp.connected){ suscribirA(id); }
+            }).catch(function(e){
+                console.error(e);
+                renderEmptyMensajes('No se pudieron cargar los mensajes.');
+            });
+        }
+
+        function suscribirA(convId){
+            if (currentSubscription){
+                try { currentSubscription.unsubscribe(); } catch(e){}
+                currentSubscription = null;
+            }
+            currentSubscription = stomp.subscribe('/topic/conversaciones.' + convId, function(e){
+                var m = JSON.parse(e.body);
+                var div = crearBurbuja(m.remitenteNombre + ': ' + m.contenido);
+                $msgs().appendChild(div);
+                div.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        function crearBurbuja(texto, esMio){
+            var div = document.createElement('div');
+            div.className = 'msg' + (esMio ? ' me' : '');
+            div.innerHTML = escapeHTML(texto);
+            return div;
+        }
+
+        document.getElementById('form-msg').addEventListener('submit', function(e){
+            e.preventDefault();
+            var txt = document.getElementById('txt');
+            var contenido = txt.value.trim();
+            if (!contenido || !currentConvId) return;
+
+            if (!stomp || !stomp.connected){
+                alert('Sin conexión al chat. Intentando reconectar…');
+                conectarChat();
+                return;
+            }
+
+            var payload = JSON.stringify({ convId: currentConvId, texto: contenido });
+            stomp.send('/app/chat.send', {}, payload);
+
+            var div = crearBurbuja(contenido, true);
+            $msgs().appendChild(div);
+            txt.value = '';
+            div.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('btn-crear').addEventListener('click', function(){
+            var user = document.getElementById('nuevo-usuario').value.trim();
+            if (!user) { alert('Introduce un nombre de usuario'); return; }
+
+            fetchJSON('/api/chat/conversaciones/directa?username=' + encodeURIComponent(user), { method: 'POST' })
+                .then(function(){
+                    return cargarConversaciones();
+                })
+                .then(function(){
+                    alert('Conversación creada o reabierta correctamente.');
+                })
+                .catch(function(e){
+                    console.error(e);
+                    alert('Error al crear conversación.');
+                });
+        });
+
+        function escapeHTML(s){
+            return String(s).replace(/[&<>"']/g, function(c){
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
+            });
+        }
+
+        conectarChat();
+        cargarConversaciones();
+    }
+</script>
+</body>
+</html>
