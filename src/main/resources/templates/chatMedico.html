@@ -6,7 +6,7 @@
     <title>Chat interno</title>
     <link rel="stylesheet" href="/css/style2.css">
 </head>
-<body>
+<body data-user="${#authentication.name}">
 <!-- Header global -->
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -71,6 +71,7 @@
     });
 
     function initChat(){
+        const yo = document.body.dataset.user || '';
         var stomp = null;
         var currentConvId = null;
         var currentSubscription = null;
@@ -166,7 +167,8 @@
                     renderEmptyMensajes('Aún no hay mensajes en esta conversación.');
                 } else {
                     mensajes.forEach(function(m){
-                        cont.appendChild(crearBurbuja(m.remitente + ': ' + m.contenido));
+                        const esMio = (m.remitente === yo || m.remitenteNombre === yo);
+                        cont.appendChild(crearBurbuja(m.remitente || m.remitenteNombre, m.contenido, esMio));
                     });
                     cont.scrollTop = cont.scrollHeight;
                 }
@@ -184,17 +186,24 @@
                 currentSubscription = null;
             }
             currentSubscription = stomp.subscribe('/topic/conversaciones.' + convId, function(e){
-                var m = JSON.parse(e.body);
-                var div = crearBurbuja(m.remitenteNombre + ': ' + m.contenido);
+                const m = JSON.parse(e.body);
+
+                // Si el servidor reemite mi propio mensaje, lo ignoro (ya hicimos eco optimista)
+                if (m.remitenteNombre === yo) return;
+
+                const div = crearBurbuja(m.remitenteNombre, m.contenido, false);
                 $msgs().appendChild(div);
                 div.scrollIntoView({ behavior: 'smooth' });
             });
         }
 
-        function crearBurbuja(texto, esMio){
-            var div = document.createElement('div');
+        function crearBurbuja(remitente, texto, esMio){
+            const div = document.createElement('div');
             div.className = 'msg' + (esMio ? ' me' : '');
-            div.innerHTML = escapeHTML(texto);
+            // En mis mensajes no repito el nombre; en los ajenos, sí.
+            div.innerHTML = esMio
+                ? escapeHTML(texto)
+                : '<strong>' + escapeHTML(remitente) + ':</strong> ' + escapeHTML(texto);
             return div;
         }
 
@@ -213,12 +222,17 @@
             var payload = JSON.stringify({ convId: currentConvId, texto: contenido });
             stomp.send('/app/chat.send', {}, payload);
 
-            var div = crearBurbuja(contenido, true);
+            var div = crearBurbuja(yo, contenido, true);
             $msgs().appendChild(div);
             txt.value = '';
             div.scrollIntoView({ behavior: 'smooth' });
         });
-
+        document.getElementById('txt').addEventListener('keydown', function(e){
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('form-msg').dispatchEvent(new Event('submit', {cancelable: true}));
+            }
+        });
         document.getElementById('btn-crear').addEventListener('click', function(){
             var user = document.getElementById('nuevo-usuario').value.trim();
             if (!user) { alert('Introduce un nombre de usuario'); return; }
