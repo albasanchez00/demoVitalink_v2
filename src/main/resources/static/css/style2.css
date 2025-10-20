@@ -21,8 +21,11 @@ ul{ list-style: none; }
     --altura_footer:10vh;
     --color-primary-button:#006380;
     --color-secundary-button:#008d95;
-    --color_texto:#1B3A57;
+    --color_texto:#161616;
     --texto_secundario: #434343;
+    --texto: #434343;
+    --borde-suave: #00b3bd;
+
 }
 
 /* Asegura que `html` y `body` ocupen toda la altura */
@@ -670,6 +673,162 @@ body.dark-theme .btn-logout{
 
 
 /* INICIO PAGINAS ADMIN */
+/* =========================================================================
+   ADMIN — Módulo Usuarios (Médicos / Pacientes)
+   Complemento visual no intrusivo sobre style2.css
+   ======================================================================= */
+
+/* --------- Secciones y cabeceras ---------- */
+.section_head {
+    margin: 8px 0 14px;
+}
+.section_head h2, .section_head h3 {
+    color: var(--color_primario);
+    margin: 0 0 4px;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+}
+.section_head .muted { opacity: .8; }
+
+/* --------- Cards ---------- */
+.card {
+    background: var(--color_blanco);
+    border: 1px solid var(--borde-suave, #e6ebf1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    padding: 14px;
+}
+.card--soft { background: color-mix(in srgb, var(--color_blanco), transparent 10%); }
+.card__head { margin-bottom: 8px; }
+.card__head h3 { margin: 0; color: var(--color_primario); }
+
+/* --------- Tabs internas (Médicos / Pacientes) ---------- */
+.nav_panelUser ul { gap: .5rem; }
+.nav_panelUser a {
+    display: inline-block;
+    padding: .45rem .8rem;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color_primario), transparent 90%);
+    color: var(--texto, #222);
+    transition: background .2s ease, color .2s ease, box-shadow .2s;
+}
+.nav_panelUser a:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.nav_panelUser a.is-active {
+    background: var(--color_primario);
+    color: #fff;
+}
+
+/* --------- Input group + formularios inline ---------- */
+.input-group {
+    display: flex; gap: 8px; align-items: center; width: 100%;
+}
+.input-group input[type="search"],
+.input-group input[type="text"],
+.input-group input[type="password"]{
+    flex: 1 1 auto;
+    background: var(--color_blanco);
+    border: 1px solid var(--borde-suave, #e6ebf1);
+    border-radius: 10px;
+    padding: .55rem .7rem;
+    outline: none;
+}
+.input-group input:focus { border-color: var(--color_primario); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color_primario), transparent 80%); }
+
+.form-inline .input-group button,
+.input-group button {
+    border: none;
+    border-radius: 10px;
+    padding: .55rem .9rem;
+    background: var(--color_primario);
+    color: #fff;
+    cursor: pointer;
+}
+.form-inline .input-group button:hover { filter: brightness(1.05); }
+
+/* --------- Tabla ---------- */
+.table-wrap { width: 100%; overflow: auto; border-radius: 10px; }
+.table {
+    width: 100%; border-collapse: collapse; font-size: .95rem;
+    background: var(--color_blanco);
+}
+.table thead th {
+    text-align: left; font-weight: 600;
+    padding: .7rem .8rem;
+    background: color-mix(in srgb, var(--color_primario), transparent 90%);
+    color: var(--texto, #222);
+    border-bottom: 1px solid var(--borde-suave, #e6ebf1);
+}
+.table tbody td {
+    padding: .65rem .8rem;
+    border-bottom: 1px solid var(--borde-suave, #e6ebf1);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color_primario), transparent 94%); }
+
+/* Estados y textos suaves */
+.muted { opacity: .7; }
+.pill {
+    display: inline-block; padding: .2rem .5rem; border-radius: 999px; font-size: .85rem;
+    background: color-mix(in srgb, var(--color_primario), transparent 88%);
+}
+.pill--muted { background: #edf2f7; color: #475569; }
+
+/* --------- Botones de acción ---------- */
+button.danger {
+    background: #e5484d; color: #fff; border: none; border-radius: 10px;
+    padding: .45rem .7rem; cursor: pointer;
+}
+button.danger:hover { filter: brightness(1.05); }
+button.muted {
+    background: #eaeef3; color: #344; border: none; border-radius: 10px;
+    padding: .45rem .7rem; cursor: pointer;
+}
+
+/* --------- Pager ---------- */
+.pager {
+    margin-top: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.pager button {
+    background: var(--color_blanco); color: var(--texto, #222);
+    border: 1px solid var(--borde-suave, #e6ebf1);
+    border-radius: 10px; padding: .4rem .6rem; cursor: pointer;
+}
+.pager button:disabled { opacity: .5; cursor: not-allowed; }
+.pager select {
+    border: 1px solid var(--borde-suave, #e6ebf1);
+    border-radius: 10px; padding: .35rem .5rem; background: var(--color_blanco);
+}
+
+/* --------- Selector inline de asignación (Pacientes) ---------- */
+.inline-assign {
+    background: color-mix(in srgb, var(--color_primario), transparent 93%);
+    border: 1px dashed color-mix(in srgb, var(--color_primario), transparent 60%);
+    border-radius: 12px;
+    padding: 8px;
+}
+.inline-assign select {
+    min-width: 180px;
+    border: 1px solid var(--borde-suave, #e6ebf1);
+    border-radius: 10px; padding: .4rem .5rem;
+    background: var(--color_blanco);
+}
+
+/* --------- Grids rápidos ---------- */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .input-group { flex-wrap: wrap; }
+    .input-group input { min-width: 200px; }
+    .pager { justify-content: space-between; }
+}
+
+/* --------- Ajustes suaves para dark si usas data-theme ---------- */
+body[data-theme="dark"] .pill--muted { background: #2a2f36; color: #cbd5e1; }
+body[data-theme="dark"] .table thead th { color: #e5e7eb; }
+body[data-theme="dark"] .inline-assign {
+    background: color-mix(in srgb, var(--color_primario), black 75%);
+    border-color: color-mix(in srgb, var(--color_primario), black 55%);
+}
+/* FIN PANEL ADMIN */
+
 /* Inicio Lista Usuario */
 #main_listaUser{ width: 100%; min-height: 80vh; background-color: var(--fondo-body); padding: 20px 0;}
 /* === Estilo para la tabla de clientes (admin) === */

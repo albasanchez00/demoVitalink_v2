@@ -34,4 +34,8 @@ public interface ClientesRepository extends JpaRepository<Clientes, Integer> {
                                     @Param("q") String q,
                                     @Param("estado") String estado,
                                     Pageable pageable);
+
+    //Panel Admin
+    Page<Clientes> findAll(Pageable pageable);
+    Page<Clientes> findByNombreContainingIgnoreCaseOrApellidosContainingIgnoreCase(String n, String a, Pageable pageable);
 }
