@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin · Usuarios</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+    <!-- CSRF por si haces POST/DELETE -->
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body sec:authorize="hasRole('ADMIN')">
+<section class="contenedor">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="section_main">
+        <section class="section_panelUser">
+            <nav class="nav_panelUser">
+                <ul>
+                    <li><a th:href="@{/usuarios/panelUsuario}" class="btn btn-volver">← Volver</a></li>
+                    <li><a href="#" class="us-tab is-active" data-tab="medicos">Médicos</a></li>
+                    <li><a href="#" class="us-tab" data-tab="pacientes">Pacientes</a></li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- ====== MEDICOS ====== -->
+        <section id="usuarios-medicos" class="card card--soft" style="display:block;">
+            <header class="card__head"><h3>Gestión de Médicos</h3></header>
+
+            <div class="grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                <div>
+                    <label for="qMed"><small>Buscar:</small></label>
+                    <div class="input-group">
+                        <input id="qMed" type="search" placeholder="username del médico…">
+                        <button id="btnMedBuscar" type="button">Buscar</button>
+                    </div>
+                </div>
+
+                <form id="formMedCrear" class="form-inline" autocomplete="off">
+                    <div class="input-group">
+                        <input name="username" required minlength="3" placeholder="nuevo médico (username)">
+                        <input name="password" required minlength="8" placeholder="password temporal">
+                        <button type="submit">Crear médico</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-wrap" style="margin-top:12px;">
+                <table class="table">
+                    <thead>
+                    <tr><th>ID</th><th>Username</th><th style="width:120px">Acciones</th></tr>
+                    </thead>
+                    <tbody id="tbodyMedicos"></tbody>
+                </table>
+            </div>
+
+            <div class="pager">
+                <button id="medPrev">«</button>
+                <span id="medPageInfo" class="pill pill--muted">—</span>
+                <button id="medNext">»</button>
+                <select id="medSize" style="margin-left:auto;">
+                    <option value="10">10</option><option value="20">20</option><option value="50">50</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- ====== PACIENTES ====== -->
+        <section id="usuarios-pacientes" class="card card--soft" style="display:none;">
+            <header class="card__head"><h3>Gestión de Pacientes</h3></header>
+
+            <div class="grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+                <div>
+                    <label for="qPac"><small>Buscar:</small></label>
+                    <div class="input-group">
+                        <input id="qPac" type="search" placeholder="nombre o apellidos…">
+                        <button id="btnPacBuscar" type="button">Buscar</button>
+                    </div>
+                </div>
+                <div class="inline-help muted" style="display:flex; align-items:center;">
+                    <small>Selecciona un paciente y asigna un médico desde Acciones.</small>
+                </div>
+            </div>
+
+            <div class="table-wrap" style="margin-top:12px;">
+                <table class="table">
+                    <thead>
+                    <tr><th>ID</th><th>Paciente</th><th>Médico asignado</th><th style="width:240px">Acciones</th></tr>
+                    </thead>
+                    <tbody id="tbodyPacientes"></tbody>
+                </table>
+            </div>
+
+            <div class="pager">
+                <button id="pacPrev">«</button>
+                <span id="pacPageInfo" class="pill pill--muted">—</span>
+                <button id="pacNext">»</button>
+                <select id="pacSize" style="margin-left:auto;">
+                    <option value="10">10</option><option value="20">20</option><option value="50">50</option>
+                </select>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+
+<!-- Scripts necesarios SOLO para esta página -->
+<script th:src="@{/js/admin-common.js}"></script>
+<script th:src="@{/js/admin-panel.js}"></script>     <!-- maneja los tabs .us-tab -->
+<script th:src="@{/js/admin-medicos.js}"></script>   <!-- carga y CRUD de médicos -->
+<script th:src="@{/js/admin-pacientes.js}"></script> <!-- lista y asigna médico a paciente -->
+<script th:src="@{/js/sccript.js}"></script> <!-- lista y asigna médico a paciente -->
+</body>
+</html>

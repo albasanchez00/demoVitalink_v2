@@ -1,6 +1,7 @@
 package com.ceatformacion.demovitalink_v2.repository;
 
 import com.ceatformacion.demovitalink_v2.model.Rol;
+import com.ceatformacion.demovitalink_v2.model.Tratamientos;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,15 @@ public interface UsuariosRepository extends JpaRepository<Usuarios, Integer> {
            order by u.id_usuario desc
            """)
     Page<Usuarios> findMedicosOrdenFijo(@Param("rol") Rol rol, Pageable pageable);
+
+    // 👇 NUEVO: búsqueda ligera para autocompletado (nombre, apellidos o username)
+    @Query("""
+        SELECT u FROM Usuarios u
+        LEFT JOIN u.cliente c
+        WHERE (:q IS NULL OR :q = ''
+               OR LOWER(u.username)  LIKE LOWER(CONCAT('%', :q, '%'))
+               OR LOWER(c.nombre)    LIKE LOWER(CONCAT('%', :q, '%'))
+               OR LOWER(c.apellidos) LIKE LOWER(CONCAT('%', :q, '%')))
+    """)
+    Page<Usuarios> buscarLigeroAdmin(@Param("q") String q, Pageable pageable);
 }

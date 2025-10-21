@@ -37,13 +37,29 @@ public class AdminPacientesService {
     }
 
     @Transactional
-    public void asignarMedico(Integer idCliente, Integer idUsuarioMedico) {
+    public PacienteListDTO asignarMedico(Integer idCliente, Integer idUsuarioMedico) {
         Clientes cli = clientesRepo.findById(idCliente)
                 .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado"));
         Usuarios med = usuariosRepo.findById(idUsuarioMedico)
                 .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
-        if (med.getRol() != Rol.MEDICO) throw new IllegalArgumentException("El usuario indicado no es médico");
+
+        if (med.getRol() != Rol.MEDICO) {
+            throw new IllegalArgumentException("El usuario indicado no es médico");
+        }
+
         cli.setMedicoReferencia(med);
-        audit.log("ASSIGN_MEDICO", "Clientes", String.valueOf(idCliente), "medicoId=" + idUsuarioMedico);
+        clientesRepo.save(cli); // 👈 explícito
+
+        audit.log("ASSIGN_MEDICO", "Clientes",
+                String.valueOf(idCliente), "medicoId=" + idUsuarioMedico);
+
+        // Devolver DTO actualizado
+        return new PacienteListDTO(
+                cli.getIdCliente(),
+                cli.getNombre(),
+                cli.getApellidos(),
+                med.getId_usuario(),
+                med.getUsername()
+        );
     }
 }

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Admin · Tratamientos</title>
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section id="admin-tratamientos" class="section-admin">
+    <h2>Gestión de Tratamientos</h2>
+
+    <!-- Filtros en “card” compacta -->
+    <div class="card filtros filtros-trat">
+        <div class="input-group">
+            <input id="q" type="search" placeholder="Buscar por diagnóstico…" />
+            <select id="estado" title="Estado">
+                <option value="">Todos</option>
+                <option value="Activo">Activos</option>
+                <option value="Finalizado">Finalizados</option>
+                <option value="Inactivo">Inactivos</option>
+            </select>
+
+            <!-- Autocomplete usuario -->
+            <div class="usuario-autocomplete">
+                <input id="usuarioInput" type="text" placeholder="Buscar usuario…" autocomplete="off" />
+                <input id="idUsuario" type="hidden" />
+                <button id="usuarioClear" type="button" title="Limpiar">✕</button>
+                <ul id="usuarioSugg" class="sugg"></ul>
+            </div>
+
+            <button id="btnBuscar" type="button" class="btn_primario">Buscar</button>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrap">
+        <table class="table tabla-trat-admin">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Tratamiento</th>
+                <th>Estado</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tbodyTrat"></tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pager">
+        <button id="prev">«</button>
+        <span id="pageInfo">—</span>
+        <button id="next">»</button>
+        <select id="size">
+            <option>10</option><option>20</option><option>50</option>
+        </select>
+        <select id="orden">
+            <option value="id_tratamiento,desc">Recientes</option>
+            <option value="id_tratamiento,asc">Antiguos</option>
+            <option value="fecha_inicio,desc">Inicio (desc)</option>
+            <option value="fecha_inicio,asc">Inicio (asc)</option>
+        </select>
+    </div>
+</section>
+
+<script src="/js/admin-tratamientos.js" defer></script>
+</body>
+</html>

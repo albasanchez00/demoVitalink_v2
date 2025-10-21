@@ -673,6 +673,61 @@ body.dark-theme .btn-logout{
 
 
 /* INICIO PAGINAS ADMIN */
+/* === ADMIN · Tratamientos (parche visual) === */
+#admin-tratamientos h2{ margin:12px auto 10px; color: var(--color_primario); }
+
+#admin-tratamientos .filtros-trat{
+    max-width: 1100px; margin: 8px auto 14px; padding: 10px 12px;
+}
+#admin-tratamientos .filtros-trat .input-group{
+    display:grid; grid-template-columns: 1.4fr .9fr 1.2fr auto; gap:.5rem; align-items:center;
+}
+@media (max-width: 900px){
+    #admin-tratamientos .filtros-trat .input-group{ grid-template-columns: 1fr; }
+}
+
+/* Autocomplete */
+.usuario-autocomplete{ position:relative; }
+#usuarioClear{
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    border:0; background:#f1f5f9; color:#0f172a; width:28px; height:28px; border-radius:999px; cursor:pointer;
+}
+#usuarioClear:hover{ background:#e2e8f0; }
+#usuarioSugg{
+    position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:10;
+    list-style:none; margin:0; padding:0;
+    max-height:240px; overflow:auto; display:none;
+    background:#fff; border:1px solid #e3e7ee; border-radius:10px; box-shadow:0 10px 26px rgba(15,23,42,.12);
+}
+#usuarioSugg li{ padding:8px 10px; cursor:pointer; border-bottom:1px solid #f2f4f7; }
+#usuarioSugg li:hover{ background:#f7fafc; }
+
+/* Tabla */
+.tabla-trat-admin th:nth-child(1){ width:64px; }
+.tabla-trat-admin th:nth-child(4){ width:120px; text-align:center; }
+.tabla-trat-admin td:nth-child(4){ text-align:center; }
+.tabla-trat-admin td:nth-child(5),
+.tabla-trat-admin td:nth-child(6){ white-space:nowrap; }
+
+/* Estado como “pill” */
+.pill-estado{ display:inline-block; padding:.25rem .55rem; border-radius:999px; font-size:.82rem; font-weight:700; }
+.pill--activo{ background:#e8fff6; color:#1d7a50; border:1px solid #c9f3e3; }
+.pill--finalizado{ background:#fff6e6; color:#8a5a00; border:1px solid #ffe4bd; }
+.pill--inactivo{ background:#ffe9e9; color:#8a1f1f; border:1px solid #ffd2d2; }
+
+/* Acciones compactas coherentes */
+.tabla-trat-admin td:last-child{
+    display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;
+}
+.tabla-trat-admin .btn-sec{ background:#f7f9fb; border:1px solid #dfe3eb; border-radius:8px; padding:6px 10px; font-weight:600; cursor:pointer; }
+.tabla-trat-admin .btn-sec:hover{ background:#eef2ff; }
+.tabla-trat-admin .btn-danger{ background:#fee2e2; border:1px solid #fecaca; color:#991b1b; }
+.tabla-trat-admin .btn-danger:hover{ background:#fbd5d5; }
+
+body.dark-theme #usuarioSugg{ background:#2c2c2c; border-color:#444; }
+body.dark-theme #usuarioSugg li{ border-color:#3a3a3a; color:#fff; }
+body.dark-theme #usuarioClear{ background:#333; color:#fff; border:1px solid #555; }
+
 /* =========================================================================
    ADMIN — Módulo Usuarios (Médicos / Pacientes)
    Complemento visual no intrusivo sobre style2.css
@@ -963,6 +1018,47 @@ thead { background-color: #f5f5f5;}
 
 @media (max-width: 640px) {  .grid label:nth-child(4) { grid-column: 1 / -1; }   }
 
+/* === ADMIN · Tratamientos · filtros compactos === */
+#admin-tratamientos .card.filtros-trat{
+    /* Anula el min-height global de .card */
+    min-height: auto; /* o: unset */
+    padding: 10px 12px;
+    margin: 8px auto 14px;
+    max-width: 1100px;
+}
+
+/* Densidad y alineación en una sola línea */
+#admin-tratamientos .filtros-trat .input-group{
+    display: grid;
+    grid-template-columns: minmax(240px,1.2fr) 140px minmax(240px,1.2fr) auto;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Campos bajitos y consistentes */
+#admin-tratamientos .filtros-trat input,
+#admin-tratamientos .filtros-trat select,
+#admin-tratamientos .filtros-trat button{
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 10px;
+}
+
+/* Autocomplete: botón limpiar más pequeño y pegado al input */
+#admin-tratamientos #usuarioClear{
+    width: 26px; height: 26px;
+    right: 6px; top: 50%; transform: translateY(-50%);
+}
+
+/* Evita que el dropdown “empuje” el layout (ya es position:absolute) */
+#admin-tratamientos #usuarioSugg{ max-height: 220px; }
+
+/* Responsive: apila en móvil, sin huecos grandes */
+@media (max-width: 900px){
+    #admin-tratamientos .filtros-trat .input-group{
+        grid-template-columns: 1fr;
+    }
+}
 
 /* ===========================
    RECORDATORIOS — Bloque actualizado

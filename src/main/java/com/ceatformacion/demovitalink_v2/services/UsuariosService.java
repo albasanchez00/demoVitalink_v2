@@ -1,13 +1,20 @@
 package com.ceatformacion.demovitalink_v2.services;
 
+import com.ceatformacion.demovitalink_v2.dto.UsuarioLiteDTO;
+import com.ceatformacion.demovitalink_v2.mapper.UsuarioLiteMapper;
 import com.ceatformacion.demovitalink_v2.model.Clientes;
 import com.ceatformacion.demovitalink_v2.model.Rol;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.utils.PasswordGenerator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class UsuariosService {
     private final UsuariosRepository usuariosRepository;
     private final PasswordEncoder passwordEncoder;
@@ -52,5 +59,14 @@ public class UsuariosService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
         u.setRol(nuevoRol);
         usuariosRepository.save(u);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UsuarioLiteDTO> buscarLigero(String q, int page, int size) {
+        String term = (q == null || q.isBlank()) ? null : q.trim();
+        Page<Usuarios> p = usuariosRepository.buscarLigeroAdmin(
+                term, PageRequest.of(page, size, Sort.by(Sort.Order.desc("id_usuario")))
+        );
+        return p.map(UsuarioLiteMapper::toDTO);
     }
 }

@@ -4,6 +4,8 @@ import com.ceatformacion.demovitalink_v2.model.Tratamientos;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.TratamientosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -58,5 +60,13 @@ public class TratamientoServiceImpl implements TratamientoService{
     @Override
     public void eliminar(int id_tratamiento) {
         repo.deleteById(id_tratamiento);
+    }
+
+    // 🆕 ADMIN
+    @Override
+    public Page<Tratamientos> buscarAdmin(String q, String estado, Integer idUsuario, Pageable pageable) {
+        String qNorm = (q==null || q.isBlank()) ? null : q.trim();
+        String estNorm = (estado==null || estado.isBlank()) ? null : estado.trim();
+        return repo.buscarAdmin(qNorm, estNorm, idUsuario, pageable);
     }
 }

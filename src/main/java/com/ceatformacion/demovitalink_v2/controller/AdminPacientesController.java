@@ -34,23 +34,14 @@ public class AdminPacientesController {
         return ResponseEntity.ok(service.listarPacientesDTO(q, pageable));
     }
 
+    // ⬇️ devolver el DTO actualizado (en lugar de 204 vacío)
     @PatchMapping("/{idCliente}/asignar-medico/{idUsuarioMedico}")
-    public ResponseEntity<Void> asignar(@PathVariable Integer idCliente, @PathVariable Integer idUsuarioMedico) {
-        service.asignarMedico(idCliente, idUsuarioMedico);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PacienteListDTO> asignar(
+            @PathVariable Integer idCliente,
+            @PathVariable Integer idUsuarioMedico
+    ) {
+        PacienteListDTO dto = service.asignarMedico(idCliente, idUsuarioMedico);
+        return ResponseEntity.ok(dto);
     }
-    @Transactional(readOnly = true)
-    public Page<PacienteListDTO> listarPacientesDTO(String q, Pageable pageable) {
-        Page<Clientes> page = (q == null || q.isBlank())
-                ? clientesRepo.findAll(pageable)
-                : clientesRepo.findByNombreContainingIgnoreCaseOrApellidosContainingIgnoreCase(q, q, pageable);
 
-        return page.map(c -> new PacienteListDTO(
-                c.getIdCliente(),
-                c.getNombre(),
-                c.getApellidos(),
-                c.getMedicoReferencia() != null ? c.getMedicoReferencia().getId_usuario() : null,
-                c.getMedicoReferencia() != null ? c.getMedicoReferencia().getUsername() : null
-        ));
-    }
 }

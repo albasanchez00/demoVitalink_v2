@@ -55,4 +55,19 @@ public class AdminMedicosController {
             return Sort.by("username").ascending();
         }
     }
+    // ✅ POST: crear médico (lo que te falta → causa del 405)
+    @PostMapping
+    public ResponseEntity<Integer> crear(
+            @RequestParam String username,
+            @RequestParam String password
+    ) {
+        Integer id = service.crearMedico(username, password);
+        return ResponseEntity.ok(id); // JSON válido: 123
+    }
+    // (opcional) DELETE si lo usas desde la tabla
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+        service.eliminarMedico(id);
+        return ResponseEntity.noContent().build();
+    }
 }

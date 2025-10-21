@@ -7,6 +7,7 @@
     <title>Panel de Usuario</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/style2.css}" type="text/css">
+
 </head>
 <body>
 <section class="contenedor">
@@ -64,8 +65,8 @@
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
-                        <li><a href="#" id="navAdminUsuarios">Usuarios</a></li>
-                        <li><a href="#">Tratamientos</a></li>
+                        <li><a th:href="@{/admin/usuarios}">Usuarios</a></li>
+                        <li><a th:href="@{/admin/tratamientos}">Tratamientos</a></li>
                         <li><a href="#">Citas</a></li>
                         <li><a href="./adminReportes.html">Reportes</a></li>
                         <li><a href="./adminMensajes.html">Mensajes</a></li>
@@ -89,102 +90,6 @@
                 <div class="card">📬 Sistema Mensajería</div>
                 <div class="card wide-card">🛠️ Configuraciones Generales</div>
             </section>
-            <!-- ===== ADMIN: USUARIOS (Médicos / Pacientes) ===== -->
-            <section id="admin-usuarios" class="section_panelUser" style="display:none;">
-                <header class="section_head">
-                    <h2>Usuarios</h2>
-                    <p class="muted">Administra médicos y vincula pacientes a su médico de referencia.</p>
-                </header>
-
-                <!-- Sub-tabs -->
-                <nav class="nav_panelUser" style="margin-bottom:1rem;">
-                    <ul>
-                        <li><a href="#" class="us-tab is-active" data-tab="medicos">Médicos</a></li>
-                        <li><a href="#" class="us-tab" data-tab="pacientes">Pacientes</a></li>
-                    </ul>
-                </nav>
-
-                <!-- ====== MEDICOS ====== -->
-                <section id="usuarios-medicos" class="card card--soft" style="display:block;">
-                    <header class="card__head"><h3>Gestión de Médicos</h3></header>
-
-                    <div class="grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
-                        <div>
-                            <label for="qMed"><small>Buscar:</small></label>
-                            <div class="input-group">
-                                <input id="qMed" type="search" placeholder="username del médico…">
-                                <button id="btnMedBuscar" type="button">Buscar</button>
-                            </div>
-                        </div>
-
-                        <form id="formMedCrear" class="form-inline" autocomplete="off">
-                            <div class="input-group">
-                                <input name="username" required minlength="3" placeholder="nuevo médico (username)">
-                                <input name="password" required minlength="8" placeholder="password temporal">
-                                <button type="submit">Crear médico</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="table-wrap" style="margin-top:12px;">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>ID</th><th>Username</th><th style="width:120px">Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tbodyMedicos"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="pager">
-                        <button id="medPrev">«</button>
-                        <span id="medPageInfo" class="pill pill--muted">—</span>
-                        <button id="medNext">»</button>
-                        <select id="medSize" style="margin-left:auto;">
-                            <option value="10">10</option><option value="20">20</option><option value="50">50</option>
-                        </select>
-                    </div>
-                </section>
-
-                <!-- ====== PACIENTES ====== -->
-                <section id="usuarios-pacientes" class="card card--soft" style="display:none;">
-                    <header class="card__head"><h3>Gestión de Pacientes</h3></header>
-
-                    <div class="grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
-                        <div>
-                            <label for="qPac"><small>Buscar:</small></label>
-                            <div class="input-group">
-                                <input id="qPac" type="search" placeholder="nombre o apellidos…">
-                                <button id="btnPacBuscar" type="button">Buscar</button>
-                            </div>
-                        </div>
-                        <div class="inline-help muted" style="display:flex; align-items:center;">
-                            <small>Selecciona un paciente y asigna un médico desde Acciones.</small>
-                        </div>
-                    </div>
-
-                    <div class="table-wrap" style="margin-top:12px;">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>ID</th><th>Paciente</th><th>Médico asignado</th><th style="width:240px">Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tbodyPacientes"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="pager">
-                        <button id="pacPrev">«</button>
-                        <span id="pacPageInfo" class="pill pill--muted">—</span>
-                        <button id="pacNext">»</button>
-                        <select id="pacSize" style="margin-left:auto;">
-                            <option value="10">10</option><option value="20">20</option><option value="50">50</option>
-                        </select>
-                    </div>
-                </section>
-            </section>
             <div id="chat-toggle2" onclick="toggleChat()">💬</div>
             <!-- Ventana de chat -->
             <div id="chat-box2">
@@ -205,7 +110,7 @@
                         <li><a th:href="@{/medico/citas}">Citas</a></li>
                         <li><a th:href="@{/medico/tratamientos}">Tratamientos</a></li>
                         <li><a th:href="@{/medico/sintomas}">Sintomas</a></li>
-                        <li><a th:href="@{/medico/chat}">Mensajes</a></li>z
+                        <li><a th:href="@{/medico/chat}">Mensajes</a></li>
                         <li><a th:href="@{/medico/configMedico}">Configuración</a></li>
                     </ul>
                 </nav>
@@ -252,9 +157,6 @@
         el.addEventListener('click', handler);
     });
 </script>
-<script th:src="@{/js/admin-common.js}" src="/js/admin-common.js"></script>
-<script th:src="@{/js/admin-medicos.js}" src="/js/admin-medicos.js"></script>
-<script th:src="@{/js/admin-pacientes.js}" src="/js/admin-pacientes.js"></script>
 <script th:src="@{/js/admin-panel.js}" src="/js/admin-panel.js"></script>
 <script th:src="@{/js/panelUsuario.js}" src="/js/panelUsuario.js"></script>
 <script th:src="@{/js/darkTheme.js}" src="/js/darkTheme.js"></script>
