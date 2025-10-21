@@ -15,4 +15,7 @@ public class AdminViewController {
     }
     @GetMapping("/admin/tratamientos")
     public String pagina(){ return "tratamientosAdmin"; }
+
+    @GetMapping("/admin/citas")
+    public String paginaCita(){ return "citasAdmin"; }
 }

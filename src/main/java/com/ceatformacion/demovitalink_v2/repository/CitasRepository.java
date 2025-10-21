@@ -3,6 +3,8 @@ package com.ceatformacion.demovitalink_v2.repository;
 import com.ceatformacion.demovitalink_v2.model.Citas;
 import com.ceatformacion.demovitalink_v2.model.EstadoCita;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -113,5 +115,27 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
     ORDER BY ci.fecha DESC, ci.hora DESC
 """)
     List<Citas> findTopByUsuarioOrderByFechaHoraDesc(Integer usuarioId);
+
+    // ADMIN
+    @Query("""
+   SELECT c FROM Citas c
+   WHERE (:q IS NULL OR :q = '' OR
+          LOWER(c.titulo) LIKE LOWER(CONCAT('%', :q, '%')) OR
+          LOWER(c.descripcion) LIKE LOWER(CONCAT('%', :q, '%')))
+     AND (:estado IS NULL OR c.estado = :estado)
+     AND (:desde IS NULL OR c.fecha >= :desde)
+     AND (:hasta IS NULL OR c.fecha <= :hasta)
+     AND (:idPaciente IS NULL OR c.usuario.id_usuario = :idPaciente)
+     AND (:idMedico  IS NULL OR c.medico.id_usuario  = :idMedico)
+""")
+    Page<Citas> buscarAdmin(
+            @Param("q") String q,
+            @Param("estado") EstadoCita estado,
+            @Param("desde") java.time.LocalDate desde,
+            @Param("hasta") java.time.LocalDate hasta,
+            @Param("idPaciente") Integer idPaciente,
+            @Param("idMedico") Integer idMedico,
+            Pageable pageable
+    );
 
 }

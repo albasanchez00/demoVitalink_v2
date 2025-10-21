@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Admin · Citas</title>
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section id="admin-citas" class="section-admin">
+    <h2>Gestión de Citas</h2>
+
+    <div class="card filtros filtros-trat filtros-compact">
+        <div class="row">
+            <input id="q" type="search" placeholder="Buscar por título o descripción…">
+            <select id="estado">
+                <option value="">Todas</option>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="CONFIRMADA">Confirmada</option>
+                <option value="ATENDIDA">Atendida</option>
+                <option value="CANCELADA">Cancelada</option>
+            </select>
+            <input id="desde" type="date">
+            <input id="hasta" type="date">
+        </div>
+
+        <div class="row">
+            <div class="usuario-autocomplete">
+                <input id="pacienteInput" type="search" placeholder="Paciente…">
+                <input id="idPaciente" type="hidden">
+                <ul id="pacienteSugg" class="sugg"></ul>
+            </div>
+
+            <div class="usuario-autocomplete">
+                <input id="medicoInput" type="search" placeholder="Médico…">
+                <input id="idMedico" type="hidden">
+                <ul id="medicoSugg" class="sugg"></ul>
+            </div>
+
+            <button id="btnBuscar" type="button" class="btn_primario">Buscar</button>
+        </div>
+    </div>
+
+    <div class="tabla-wrap">
+        <table class="tabla">
+            <thead>
+            <tr>
+                <th>ID</th><th>Paciente</th><th>Médico</th>
+                <th>Título</th><th>Estado</th><th>Fecha</th><th>Hora</th><th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tbodyCitas"></tbody>
+        </table>
+    </div>
+
+    <div class="paginacion">
+        <button id="prev">«</button>
+        <span id="pageInfo">—</span>
+        <button id="next">»</button>
+        <select id="size"><option>10</option><option>20</option><option>50</option></select>
+        <select id="orden">
+            <option value="fecha,desc">Fecha (desc)</option>
+            <option value="fecha,asc">Fecha (asc)</option>
+        </select>
+    </div>
+</section>
+
+<script src="/js/admin-citas.js"></script>
+</body>
+</html>
