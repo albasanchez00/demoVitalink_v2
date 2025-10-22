@@ -80,6 +80,10 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.POST,"/guardarCitas").hasRole("USER")
                 .requestMatchers(HttpMethod.POST,"/tratamientos/**").hasAnyRole("USER","MEDICO") // exige ROLE_USER o ROLE_MEDICO
 
+
+                .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN","ROLE_ADMIN")
+
+
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/usuario/historial").authenticated()
                 // Rutas de dominio funcional (si son vistas)

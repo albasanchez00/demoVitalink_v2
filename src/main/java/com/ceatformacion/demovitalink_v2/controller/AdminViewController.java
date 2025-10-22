@@ -18,4 +18,10 @@ public class AdminViewController {
 
     @GetMapping("/admin/citas")
     public String paginaCita(){ return "citasAdmin"; }
+
+    @GetMapping("/admin/estadisticas")
+    public String paginaReportes(){ return "reportesAdmin"; }
+
+    @GetMapping("/admin/chat")
+    public String paginaMensajesA(){ return "chatAdmin"; }
 }

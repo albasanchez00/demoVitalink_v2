@@ -1,6 +1,8 @@
 package com.ceatformacion.demovitalink_v2.repository;
 
 import com.ceatformacion.demovitalink_v2.model.Conversacion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +46,22 @@ public interface ConversacionRepository extends JpaRepository<Conversacion, Inte
            """)
     Optional<Conversacion> findDirectaEntre(@Param("a") Integer a,
                                             @Param("b") Integer b);
+
+    @Query("""
+       select distinct c
+       from Conversacion c
+       left join c.miembros m
+       left join m.cliente cli
+       where (:tipo is null or :tipo = '' or c.tipo = :tipo)
+         and (
+            :q is null or :q = '' or
+            lower(coalesce(c.servicio, '')) like lower(concat('%', :q, '%')) or
+            lower(coalesce(m.username, '')) like lower(concat('%', :q, '%')) or
+            lower(concat(coalesce(cli.nombre,''), ' ', coalesce(cli.apellidos,''))) like lower(concat('%', :q, '%'))
+         )
+       order by c.creadoEn desc
+       """)
+    Page<Conversacion> buscarGlobal(@Param("q") String q,
+                                    @Param("tipo") String tipo,
+                                    Pageable pageable);
 }

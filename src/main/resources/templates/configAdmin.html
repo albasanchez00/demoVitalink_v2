@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <section id="admin-config" class="section-config">
+        <header class="config__head">
+            <h2>Configuraciones Generales</h2>
+            <div class="config__actions">
+                <button id="btnGuardar" class="btn btn--primary" disabled>Guardar cambios</button>
+                <button id="btnRevertir" class="btn btn--muted" disabled>Revertir</button>
+                <span id="dirtyBadge" class="pill pill--warn" style="display:none">Sin guardar</span>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <nav class="tabs" role="tablist" aria-label="Config Admin">
+            <button role="tab" aria-selected="true" aria-controls="tab-identidad" id="tab-identidad-btn">Identidad</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-centro" id="tab-centro-btn">Centro & TZ</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-legales" id="tab-legales-btn">Legales</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-notifs" id="tab-notifs-btn">Notificaciones</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-seguridad" id="tab-seguridad-btn">Seguridad</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-citas" id="tab-citas-btn">Citas</button>
+            <button role="tab" aria-selected="false" aria-controls="tab-integraciones" id="tab-integraciones-btn">Integraciones</button>
+        </nav>
+
+        <!-- Panels -->
+        <div class="tab-panels">
+
+            <!-- Identidad -->
+            <section id="tab-identidad" role="tabpanel" aria-labelledby="tab-identidad-btn">
+                <div class="form-grid">
+                    <label>Nombre del sistema
+                        <input id="cfg_nombreSistema" type="text" placeholder="VitaLink">
+                    </label>
+                    <label>URL logo (cabecera)
+                        <input id="cfg_logoUrl" type="url" placeholder="https://.../logo.svg">
+                    </label>
+                    <label>Color primario
+                        <input id="cfg_colorPrimario" type="color" value="#1b5bff">
+                    </label>
+                    <label>Color secundario
+                        <input id="cfg_colorSecundario" type="color" value="#00b894">
+                    </label>
+                    <div class="preview">
+                        <small>Previsualización</small>
+                        <div id="brandPreview" class="brand-preview">
+                            <img id="brandPreviewImg" alt="logo" style="height:32px">
+                            <span id="brandPreviewName">VitaLink</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Centro & TZ -->
+            <section id="tab-centro" role="tabpanel" hidden aria-labelledby="tab-centro-btn">
+                <div class="form-grid">
+                    <label>Nombre del centro
+                        <input id="cfg_centroNombre" type="text" placeholder="Hospital General">
+                    </label>
+                    <label>Ciudad
+                        <input id="cfg_centroCiudad" type="text" placeholder="Madrid">
+                    </label>
+                    <label>Zona horaria (IANA)
+                        <input id="cfg_timezone" type="text" placeholder="Europe/Madrid">
+                    </label>
+                </div>
+            </section>
+
+            <!-- Legales -->
+            <section id="tab-legales" role="tabpanel" hidden aria-labelledby="tab-legales-btn">
+                <div class="form-grid">
+                    <label>URL Política de Privacidad
+                        <input id="cfg_privacidadUrl" type="url" placeholder="/politicasPrivacidad">
+                    </label>
+                    <label>URL Términos y Condiciones
+                        <input id="cfg_terminosUrl" type="url" placeholder="/terminosCondiciones">
+                    </label>
+                    <label>URL Política de Cookies
+                        <input id="cfg_cookiesUrl" type="url" placeholder="/politicaCookies">
+                    </label>
+                </div>
+            </section>
+
+            <!-- Notificaciones -->
+            <section id="tab-notifs" role="tabpanel" hidden aria-labelledby="tab-notifs-btn">
+                <div class="form-grid">
+                    <label>Email remitente (from)
+                        <input id="cfg_mailFrom" type="email" placeholder="no-reply@tudominio.com">
+                    </label>
+                    <label class="switch">
+                        <input id="cfg_notifCitas" type="checkbox"> Recordatorios de citas
+                    </label>
+                    <label class="switch">
+                        <input id="cfg_notifMedicacion" type="checkbox"> Recordatorios de medicación
+                    </label>
+                    <label class="switch">
+                        <input id="cfg_notifSintomas" type="checkbox"> Recordatorios de registro de síntomas
+                    </label>
+                </div>
+            </section>
+
+            <!-- Seguridad -->
+            <section id="tab-seguridad" role="tabpanel" hidden aria-labelledby="tab-seguridad-btn">
+                <div class="form-grid">
+                    <label>Longitud mínima contraseña
+                        <input id="cfg_pwdMinLen" type="number" min="6" max="128" value="10">
+                    </label>
+                    <label>Días caducidad contraseña
+                        <input id="cfg_pwdExpireDays" type="number" min="0" value="0">
+                    </label>
+                    <label class="switch">
+                        <input id="cfg_2faEnabled" type="checkbox"> Habilitar 2FA (marcador futuro)
+                    </label>
+                </div>
+            </section>
+
+            <!-- Citas -->
+            <section id="tab-citas" role="tabpanel" hidden aria-labelledby="tab-citas-btn">
+                <div class="form-grid">
+                    <label>Duración por defecto (min)
+                        <input id="cfg_citaDuracion" type="number" min="5" step="5" value="30">
+                    </label>
+                    <label>Horario laboral inicio (HH:mm)
+                        <input id="cfg_horarioInicio" type="time" value="08:00">
+                    </label>
+                    <label>Horario laboral fin (HH:mm)
+                        <input id="cfg_horarioFin" type="time" value="17:00">
+                    </label>
+                    <label>Días no laborables (CSV)
+                        <input id="cfg_diasNoLaborables" type="text" placeholder="2025-12-25,2026-01-01">
+                    </label>
+                </div>
+            </section>
+
+            <!-- Integraciones -->
+            <section id="tab-integraciones" role="tabpanel" hidden aria-labelledby="tab-integraciones-btn">
+                <div class="form-grid">
+                    <label>SMTP host
+                        <input id="cfg_smtpHost" type="text" placeholder="smtp.mailserver.com">
+                    </label>
+                    <label>SMTP puerto
+                        <input id="cfg_smtpPort" type="number" min="1" max="65535" value="587">
+                    </label>
+                    <label>SMTP usuario
+                        <input id="cfg_smtpUser" type="text" placeholder="apikey / usuario">
+                    </label>
+                    <small class="muted">* La contraseña SMTP no se gestiona en cliente. Añádela como secreto en servidor.</small>
+                    <label>Webhook Base URL (futuro)
+                        <input id="cfg_webhookBase" type="url" placeholder="https://api.tudominio.com/hooks/">
+                    </label>
+                </div>
+            </section>
+
+        </div>
+    </section>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+<script th:src="@{/js/admin-config.js}"></script>
+</body>
+</html>

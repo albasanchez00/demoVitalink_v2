@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<section id="admin-estadisticas" class="section-dashboard">
+    <header class="dash__head">
+        <h2>Estadísticas y Reportes (ADMIN)</h2>
+        <div class="dash__filters" id="filtros">
+            <input type="date" id="fDesde">
+            <input type="date" id="fHasta">
+            <select id="groupBy">
+                <option value="day">Día</option>
+                <option value="week">Semana</option>
+                <option value="month">Mes</option>
+            </select>
+            <select id="medicoSel"><option value="">Todos los médicos</option></select>
+            <button id="btnAplicar">Aplicar</button>
+            <button id="btnLimpiar" class="btn--muted">Limpiar</button>
+            <button id="btnExportCSV" class="btn--ghost">Exportar CSV</button>
+        </div>
+    </header>
+
+    <!-- KPIs -->
+    <div class="kpis-grid" id="kpis">
+        <article class="kpi"><h4>Pacientes activos</h4><strong id="kpiPacAct">—</strong></article>
+        <article class="kpi"><h4>Médicos activos</h4><strong id="kpiMedAct">—</strong></article>
+        <article class="kpi"><h4>Tratamientos en curso</h4><strong id="kpiTratAct">—</strong></article>
+        <article class="kpi"><h4>Adherencia media</h4><strong id="kpiAdh">—</strong></article>
+        <article class="kpi"><h4>Citas (semana)</h4><strong id="kpiCitasW">—</strong></article>
+        <article class="kpi"><h4>Espera media</h4><strong id="kpiEspera">—</strong></article>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <div class="card"><h3>Adherencia</h3><canvas id="chAdherencia" height="120"></canvas></div>
+        <div class="card"><h3>Citas</h3><canvas id="chCitas" height="120"></canvas></div>
+        <div class="card"><h3>Top Síntomas</h3><canvas id="chSintomas" height="120"></canvas></div>
+        <div class="card"><h3>Tratamientos</h3><canvas id="chTratamientos" height="120"></canvas></div>
+        <div class="card"><h3>Especialidades</h3><canvas id="chEspecialidades" height="120"></canvas></div>
+        <div class="card"><h3>Evolución Usuarios</h3><canvas id="chUsuarios" height="120"></canvas></div>
+    </div>
+
+    <!-- Reportes -->
+    <section class="reports">
+        <header class="rep__head">
+            <h3>Reportes</h3>
+            <div class="rep__tabs" role="tablist">
+                <button role="tab" aria-selected="true" data-tab="repCitas">Citas</button>
+                <button role="tab" data-tab="repAdh">Adherencia</button>
+                <button role="tab" data-tab="repSintomas">Síntomas</button>
+                <button role="tab" data-tab="repTrat">Tratamientos</button>
+            </div>
+        </header>
+
+        <div class="rep__panel" id="repCitas" role="tabpanel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Fecha</th><th>Paciente</th><th>Médico</th><th>Estado</th><th>Motivo</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbCitas"></tbody>
+                </table>
+            </div>
+            <div class="pager">
+                <button id="citasPrev">Anterior</button>
+                <span id="citasInfo">—</span>
+                <button id="citasNext">Siguiente</button>
+            </div>
+        </div>
+
+        <div class="rep__panel is-hidden" id="repAdh" role="tabpanel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Paciente</th><th>Tratamiento</th><th>Adherencia %</th><th>Dosis omitidas</th></tr>
+                    </thead>
+                    <tbody id="tbAdh"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="rep__panel is-hidden" id="repSintomas" role="tabpanel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Fecha</th><th>Paciente</th><th>Tipo</th><th>Severidad</th><th>Zona</th></tr>
+                    </thead>
+                    <tbody id="tbSint"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="rep__panel is-hidden" id="repTrat" role="tabpanel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr><th>Inicio</th><th>Fin</th><th>Paciente</th><th>Médico</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody id="tbTrat"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</section>
+<div th:replace="fragments/footer :: footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script th:src="@{/js/admin-estadisticas.js}" defer></script>
+</body>
+</html>

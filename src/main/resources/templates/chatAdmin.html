@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensajería</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}" type="text/css">
+    <meta name="user-display" content="admin">
+</head>
+<body data-currentuser="admin">
+<section class="contenedor">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <section id="admin-mensajeria" class="chatv2">
+        <!-- LATERAL -->
+        <aside id="chat-list">
+            <div class="chatv2__sidehead">
+                <strong>Conversaciones</strong>
+            </div>
+
+            <!-- Crear DIRECT (opcional para admin, puedes ocultarlo si no lo usarás) -->
+            <div class="crear-conv" style="display:none">
+                <div class="crear-conv__form">
+                    <input type="text" id="nuevoUser" placeholder="Username del usuario…">
+                    <button id="btnNueva" type="button">Nueva</button>
+                </div>
+                <small class="crear-conv__help">Crea o reabre una conversación DIRECT con el usuario indicado.</small>
+            </div>
+
+            <ul id="listaConversations" style="display:none"></ul> <!-- compat viejo -->
+
+            <ul id="listaConversaciones"><!-- listado dinámico --></ul>
+
+            <div class="pager" style="padding:.5rem .6rem">
+                <button id="prev">«</button>
+                <span id="pageInfo"></span>
+                <button id="next">»</button>
+                <select id="size"><option>10</option><option selected>20</option><option>50</option></select>
+            </div>
+        </aside>
+
+        <!-- PANEL -->
+        <section id="chat-panel">
+            <header class="chatv2__head">
+                <div class="title">
+                    <h3 id="convTitle" style="margin:0;color:var(--color_primario)">Selecciona una conversación</h3>
+                    <span id="convStatus" class="status"><span class="dot"></span><span>en línea</span></span>
+                </div>
+                <small id="convMeta" class="status"></small>
+            </header>
+
+            <div id="mensajes" class="chatv2__messages" aria-live="polite">
+                <div class="empty-state">No hay mensajes aún…</div>
+            </div>
+
+            <form id="form-msg" class="chatv2__composer" autocomplete="off">
+                <textarea id="msg" rows="2" placeholder="Escribe un mensaje…  (Enter para enviar)"></textarea>
+                <button type="submit" class="send">Enviar</button>
+            </form>
+        </section>
+    </section>
+
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</section>
+
+<script th:src="@{/js/admin-mensajeria.js}"></script>
+</body>
+</html>
