@@ -1320,79 +1320,222 @@ body.dark-theme #admin-mensajeria .msg.me{
     #admin-mensajeria .mensajeria__chat{ min-height: 60vh; }
 }
 
-/* ===== Admin Config — utilidades mínimas ===== */
+/* ===== Admin Config: refinado visual ===== */
+
+/* Layout base del panel */
 .section-config{
     width: min(100%, 1100px);
     margin: 24px auto;
     background: var(--color_blanco, #fff);
-    border: 1px solid #e8eef2;
+    border: 1px solid #e6ebf1;
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0,0,0,.06);
-    padding: 18px 16px 22px;
+    padding: 0 16px 22px;
 }
-.config__head{
-    display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;
+.section-config .config__head{
+    margin: 0 -16px 14px;
+    padding: 18px 18px;
+    background: #15384c; /* tu barra */
+    color: #fff;
+    border-radius: 12px 12px 0 0;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
 }
-.config__actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.section-config .config__actions{ display:flex; gap:10px; flex-wrap:wrap; }
 
-/* Tabs accesibles */
-.tabs{
-    display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;
+/* Tabs */
+.section-config .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin: 6px 0 10px; }
+.section-config .tabs [role="tab"]{
+    border: 1px solid #d8e2ea; background:#f6f9fc;
+    padding:.5rem .75rem; border-radius: 10px; font-weight:600; cursor:pointer;
 }
-.tabs [role="tab"]{
-    border: 1px solid #dde5ec; background:#f7f9fb; padding:.5rem .75rem;
-    border-radius: 10px; cursor:pointer; font-weight:600;
-}
-.tabs [role="tab"][aria-selected="true"]{
-    background: var(--color_primario, #1b5bff);
-    color:#fff; border-color: transparent;
+.section-config .tabs [role="tab"][aria-selected="true"]{
+    background: var(--color_primario, #1b5bff); color:#fff; border-color: transparent;
 }
 
-/* Paneles */
-.tab-panels > section{ padding: 12px 4px; }
-
-/* Grid de formularios */
-.form-grid{
+/* Grid de formularios – responsive sólido */
+.section-config .form-grid{
     display:grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap:12px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap:14px 18px;
+    align-items:start;
 }
-.form-grid label{ display:flex; flex-direction:column; gap:6px; font-weight:600; }
-.form-grid input[type="text"],
-.form-grid input[type="email"],
-.form-grid input[type="url"],
-.form-grid input[type="number"],
-.form-grid input[type="time"]{
-    border:1px solid #d9e4ec; border-radius:10px; padding:.55rem .7rem;
-    background:#fff; font-weight:500;
+.section-config .form-grid label{
+    display:flex; flex-direction:column; gap:6px; font-weight:600;
+}
+.section-config .form-grid input[type="text"],
+.section-config .form-grid input[type="email"],
+.section-config .form-grid input[type="url"],
+.section-config .form-grid input[type="number"],
+.section-config .form-grid input[type="time"]{
+    border:1px solid #d9e4ec; border-radius:10px; padding:.6rem .75rem; background:#fff;
+    font-weight:500; width:100%;
 }
 
-/* Switch sencillo */
-.switch{ display:flex; align-items:center; gap:8px; font-weight:600; }
-.switch input[type="checkbox"]{ transform: scale(1.15); }
-
-/* Badges & botones */
-.pill{ display:inline-flex; align-items:center; gap:6px; padding:.2rem .5rem; border-radius:999px; font-size:.85rem; }
-.pill--warn{ background:#fff3cd; color:#664d03; border:1px solid #ffec99; }
-.pill--muted{ background:#f1f3f5; color:#64748b; border:1px solid #e9ecef; }
-
-.btn{ border-radius:10px; padding:.5rem .9rem; border:1px solid transparent; cursor:pointer; font-weight:700; }
-.btn--primary{ background:var(--color_primario, #1b5bff); color:#fff; }
-.btn--muted{ background:#f1f3f5; color:#111827; border-color:#e5e7eb; }
-.btn:disabled{ opacity:.6; cursor:not-allowed; }
-
-/* Preview de marca */
-.preview{ margin-top:6px; }
-.brand-preview{
-    display:inline-flex; align-items:center; gap:.6rem; padding:.45rem .65rem;
-    border:1px solid #dde5ec; border-radius:12px; background:linear-gradient(90deg, #eef4ff 10%, transparent 10%);
+/* Colores: tamaño coherente y borde redondeado */
+.section-config .form-grid input[type="color"]{
+    width: 68px; height: 38px; padding:0; border:1px solid #b9c7d3; border-radius:8px; cursor:pointer;
 }
-.brand-preview img{ display:block; }
 
-/* Responsive */
-@media (max-width: 768px){
-    .form-grid{ grid-template-columns: 1fr; }
-    .config__head{ flex-direction:column; align-items:flex-start; gap:10px; }
+/* Switch/checkbox presentables (Notificaciones y Seguridad) */
+.section-config .switch{
+    display:flex; align-items:center; gap:10px;
+    font-weight:600; line-height:1.25; white-space:normal;
+    border:1px solid #e6ebf1; background:#fbfdff; border-radius:12px; padding:12px 14px;
+}
+.section-config .switch input[type="checkbox"]{ transform: scale(1.12); }
+
+/* Identidad: preview a ancho completo */
+#tab-identidad .preview{ grid-column: 1 / -1; margin-top:2px; }
+#tab-identidad .brand-preview{
+    display:inline-flex;
+    align-items:center;
+    padding:.5rem .7rem;
+    border:1px solid #d8e2ea;
+    border-radius:12px;
+    background: linear-gradient(90deg, var(--color_primario, #1b5bff) 10%, transparent 10%);
+}
+
+/* Notificaciones: poner los 3 switches en 2 columnas */
+#tab-notifs .form-grid{
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+}
+#tab-notifs .form-grid > label.switch{ margin-top: 4px; }
+
+/* Seguridad: dos números arriba y 2FA a ancho completo */
+#tab-seguridad .form-grid{ grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
+#tab-seguridad .switch{ grid-column: 1 / -1; }
+
+/* Botones */
+.section-config .btn{ border-radius:10px; padding:.55rem .95rem; border:1px solid transparent; font-weight:700; }
+.section-config .btn--primary{ background:rgba(27,91,255,.9); color:#fff; }
+.section-config .btn--muted{ background:#eff3f6; color:#0f172a; border-color:#e2e8f0; }
+.section-config .btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* Pequeñas mejoras de tipografía */
+.section-config h2{ font-size: clamp(1.2rem, 2.2vw, 1.6rem); margin:0; }
+.section-config small.muted{ color:#6b7a88; }
+/* ====== ARREGLOS PANEL CONFIG ADMIN ====== */
+#admin-config .form-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    column-gap: 22px;
+    row-gap: 14px;
+    align-items: start;
+    grid-auto-rows: minmax(48px, auto);
+}
+
+/* ---------- Notificaciones ---------- */
+#tab-notifs .form-grid{
+    grid-template-columns: repeat(2, minmax(360px, 1fr)); /* 2 col sólidas en desktop */
+    align-items: stretch;
+}
+
+/* Email en una fila completa */
+#tab-notifs .form-grid > label:first-child{
+    grid-column: 1 / -1;
+}
+
+/* Tarjetas para cada switch */
+#admin-config .switch{
+    display: flex;
+    align-items: center;
+    padding: 14px;
+    text-align: center;
+    border: 1px solid #e6ebf1;
+    background: #fbfdff;
+    border-radius: 12px;
+    min-height: 75px;
+    width: 150px;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    justify-content: center;
+}
+
+/* Check visible y consistente */
+#admin-config .switch input[type="checkbox"]{
+    transform: scale(1.12);
+    margin:0 2px 0 0;
+}
+
+/* En móviles: 1 columna */
+@media (max-width: 760px){
+    #tab-notifs .form-grid{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Colores (Identidad) ---------- */
+#admin-config input[type="color"]{
+    width: 70px; height: 38px;
+    padding:0; border:1px solid #b9c7d3; border-radius:8px; cursor:pointer;
+}
+
+/* Preview a ancho de grid */
+#tab-identidad .preview{ grid-column: 1 / -1; margin-top: 2px; }
+#tab-identidad .brand-preview{
+    display:inline-flex; align-items:center;
+    gap: 5px;
+    width: 100px;
+    padding:10px;
+    justify-content: center;border:1px solid #d8e2ea; border-radius:12px;
+    background: linear-gradient(90deg, var(--color_primario, #1b5bff) 10%, transparent 10%);
+}
+#contPreviewImg{
+    width: 34px;
+    height: auto;
+}
+
+.brandPreviewImg{
+    width: 100%;
+    height: auto;
+}
+
+/* ---------- Integraciones ---------- */
+#tab-integraciones .form-grid{
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+}
+
+/* Nota (small) en fila completa */
+#tab-integraciones .form-grid small.muted{
+    grid-column: 1 / -1;
+    margin-top: -4px;
+    display:block;
+}
+
+/* Forzar que el campo Webhook ocupe ancho completo (usa :has, soportado en tu Chrome) */
+#tab-integraciones .form-grid label:has(#cfg_webhookBase){
+    grid-column: 1 / -1;
+}
+
+/* En tablets estrechas: 2 columnas; móvil: 1 */
+@media (max-width: 1024px){
+    #tab-integraciones .form-grid{ grid-template-columns: repeat(2, minmax(260px, 1fr)); }
+}
+@media (max-width: 640px){
+    #tab-integraciones .form-grid{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Cabecera y tabs (coherencia) ---------- */
+#admin-config.section-config{
+    width: min(100%, 1100px);
+    margin: 24px auto;
+    background: var(--color_blanco, #fff);
+    border: 1px solid #e6ebf1;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    padding: 0 16px 22px;
+}
+#admin-config .config__head{
+    margin: 0 -16px 14px; padding: 18px;
+    background: #15384c; color:#fff; border-radius: 12px 12px 0 0;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+}
+#admin-config .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin: 6px 0 10px; }
+#admin-config .tabs [role="tab"]{
+    border: 1px solid #d8e2ea; background:#f6f9fc;
+    padding:.5rem .75rem; border-radius: 10px; font-weight:600; cursor:pointer;
+}
+#admin-config .tabs [role="tab"][aria-selected="true"]{
+    background: var(--color_primario, #1b5bff); color:#fff; border-color: transparent;
 }
 
 

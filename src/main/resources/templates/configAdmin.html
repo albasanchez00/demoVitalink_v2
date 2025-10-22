@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html >
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Configuración</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" href="/css/style2.css">
 </head>
@@ -14,6 +15,7 @@
         <header class="config__head">
             <h2>Configuraciones Generales</h2>
             <div class="config__actions">
+                <a id="btnVolver" class="bbtn btn--primary" th:href="@{/usuarios/panelUsuario}">⬅ Volver</a>
                 <button id="btnGuardar" class="btn btn--primary" disabled>Guardar cambios</button>
                 <button id="btnRevertir" class="btn btn--muted" disabled>Revertir</button>
                 <span id="dirtyBadge" class="pill pill--warn" style="display:none">Sin guardar</span>
@@ -38,21 +40,21 @@
             <section id="tab-identidad" role="tabpanel" aria-labelledby="tab-identidad-btn">
                 <div class="form-grid">
                     <label>Nombre del sistema
-                        <input id="cfg_nombreSistema" type="text" placeholder="VitaLink">
+                        <input id="cfg_nombreSistema" type="text" placeholder="VitaLink" autocomplete="off">
                     </label>
                     <label>URL logo (cabecera)
-                        <input id="cfg_logoUrl" type="url" placeholder="https://.../logo.svg">
+                        <input id="cfg_logoUrl" type="url" placeholder="https://.../logo.svg" autocomplete="off">
                     </label>
                     <label>Color primario
-                        <input id="cfg_colorPrimario" type="color" value="#1b5bff">
+                        <input id="cfg_colorPrimario" type="color" value="#1b5bff" aria-label="Color primario">
                     </label>
                     <label>Color secundario
-                        <input id="cfg_colorSecundario" type="color" value="#00b894">
+                        <input id="cfg_colorSecundario" type="color" value="#00b894" aria-label="Color secundario">
                     </label>
                     <div class="preview">
-                        <small>Previsualización</small>
+                        <small>Previsualización logo/icono</small>
                         <div id="brandPreview" class="brand-preview">
-                            <img id="brandPreviewImg" alt="logo" style="height:32px">
+                            <picture class="contPreviewImg"><img class="brandPreviewImg" src="/media/logo_IA_Medica.svg" alt="Logo"></picture>
                             <span id="brandPreviewName">VitaLink</span>
                         </div>
                     </div>
@@ -63,13 +65,13 @@
             <section id="tab-centro" role="tabpanel" hidden aria-labelledby="tab-centro-btn">
                 <div class="form-grid">
                     <label>Nombre del centro
-                        <input id="cfg_centroNombre" type="text" placeholder="Hospital General">
+                        <input id="cfg_centroNombre" type="text" placeholder="Hospital General" autocomplete="off">
                     </label>
                     <label>Ciudad
-                        <input id="cfg_centroCiudad" type="text" placeholder="Madrid">
+                        <input id="cfg_centroCiudad" type="text" placeholder="Madrid" autocomplete="off">
                     </label>
                     <label>Zona horaria (IANA)
-                        <input id="cfg_timezone" type="text" placeholder="Europe/Madrid">
+                        <input id="cfg_timezone" type="text" placeholder="Europe/Madrid" autocomplete="off">
                     </label>
                 </div>
             </section>
@@ -93,7 +95,7 @@
             <section id="tab-notifs" role="tabpanel" hidden aria-labelledby="tab-notifs-btn">
                 <div class="form-grid">
                     <label>Email remitente (from)
-                        <input id="cfg_mailFrom" type="email" placeholder="no-reply@tudominio.com">
+                        <input id="cfg_mailFrom" type="email" placeholder="no-reply@tudominio.com" autocomplete="off">
                     </label>
                     <label class="switch">
                         <input id="cfg_notifCitas" type="checkbox"> Recordatorios de citas
@@ -111,10 +113,10 @@
             <section id="tab-seguridad" role="tabpanel" hidden aria-labelledby="tab-seguridad-btn">
                 <div class="form-grid">
                     <label>Longitud mínima contraseña
-                        <input id="cfg_pwdMinLen" type="number" min="6" max="128" value="10">
+                        <input id="cfg_pwdMinLen" type="number" min="6" max="128" value="10" inputmode="numeric">
                     </label>
                     <label>Días caducidad contraseña
-                        <input id="cfg_pwdExpireDays" type="number" min="0" value="0">
+                        <input id="cfg_pwdExpireDays" type="number" min="0" value="0" inputmode="numeric">
                     </label>
                     <label class="switch">
                         <input id="cfg_2faEnabled" type="checkbox"> Habilitar 2FA (marcador futuro)
@@ -126,7 +128,7 @@
             <section id="tab-citas" role="tabpanel" hidden aria-labelledby="tab-citas-btn">
                 <div class="form-grid">
                     <label>Duración por defecto (min)
-                        <input id="cfg_citaDuracion" type="number" min="5" step="5" value="30">
+                        <input id="cfg_citaDuracion" type="number" min="5" step="5" value="30" inputmode="numeric">
                     </label>
                     <label>Horario laboral inicio (HH:mm)
                         <input id="cfg_horarioInicio" type="time" value="08:00">
@@ -135,7 +137,7 @@
                         <input id="cfg_horarioFin" type="time" value="17:00">
                     </label>
                     <label>Días no laborables (CSV)
-                        <input id="cfg_diasNoLaborables" type="text" placeholder="2025-12-25,2026-01-01">
+                        <input id="cfg_diasNoLaborables" type="text" placeholder="2025-12-25,2026-01-01" autocomplete="off">
                     </label>
                 </div>
             </section>
@@ -144,13 +146,13 @@
             <section id="tab-integraciones" role="tabpanel" hidden aria-labelledby="tab-integraciones-btn">
                 <div class="form-grid">
                     <label>SMTP host
-                        <input id="cfg_smtpHost" type="text" placeholder="smtp.mailserver.com">
+                        <input id="cfg_smtpHost" type="text" placeholder="smtp.mailserver.com" autocomplete="off">
                     </label>
                     <label>SMTP puerto
-                        <input id="cfg_smtpPort" type="number" min="1" max="65535" value="587">
+                        <input id="cfg_smtpPort" type="number" min="1" max="65535" value="587" inputmode="numeric">
                     </label>
                     <label>SMTP usuario
-                        <input id="cfg_smtpUser" type="text" placeholder="apikey / usuario">
+                        <input id="cfg_smtpUser" type="text" placeholder="apikey / usuario" autocomplete="off">
                     </label>
                     <small class="muted">* La contraseña SMTP no se gestiona en cliente. Añádela como secreto en servidor.</small>
                     <label>Webhook Base URL (futuro)
