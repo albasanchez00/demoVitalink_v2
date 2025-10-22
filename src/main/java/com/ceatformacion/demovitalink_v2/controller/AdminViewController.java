@@ -24,4 +24,7 @@ public class AdminViewController {
 
     @GetMapping("/admin/chat")
     public String paginaMensajesA(){ return "chatAdmin"; }
+
+    @GetMapping("/admin/config")
+    public String paginaConfigAdmin(){ return "configAdmin"; }
 }
