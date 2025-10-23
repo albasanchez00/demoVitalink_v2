@@ -1,18 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
     const menuToggle = document.getElementById("menu-toggle");
     const navLinks = document.getElementById("nav-links");
-
-    menuToggle.addEventListener("click", () => {
-        navLinks.classList.toggle("show");
-        menuToggle.classList.toggle("active");
-    });
-
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("show");
+            menuToggle.classList.toggle("active");
+        });
+    }
 });
 
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("formulario").addEventListener("submit", validarFormulario);
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("formulario");
+    if (!form) return;
+    form.addEventListener("submit", validarFormulario);
 });
+
 
 function validarFormulario(event) {
     event.preventDefault(); // Evita el envío del formulario si hay errores

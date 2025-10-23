@@ -15,7 +15,7 @@
 
     <main id="main_panelUser">
 
-        <section class="section_main" sec:authorize="hasRole('USER')">
+        <section class="section_main" sec:authorize="hasRole('USER')" data-role="user">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
@@ -48,7 +48,7 @@
             </section>
 
             <!-- Botón flotante -->
-            <div id="chat-toggle" onclick="toggleChat()">💬</div>
+            <div id="chat-toggle"  onclick="toggleChatById('chat-box')">💬</div>
             <!-- Ventana de chat -->
             <div id="chat-box">
                 <div id="chat-header">Asistente Virtual <span onclick="toggleChat()">X</span></div>
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </section>
-        <section class="section_main" sec:authorize="hasRole('ADMIN')">
+        <section class="section_main" sec:authorize="hasRole('ADMIN')" data-role="admin">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
@@ -88,7 +88,7 @@
                 <div class="card">📬 Sistema Mensajería</div>
                 <div class="card wide-card">🛠️ Configuraciones Generales</div>
             </section>
-            <div id="chat-toggle2" onclick="toggleChat()">💬</div>
+            <div id="chat-toggle2" onclick="toggleChatById('chat-box2')">💬</div>
             <!-- Ventana de chat -->
             <div id="chat-box2">
                 <div id="chat-header2">Asistente Virtual <span onclick="toggleChat()">X</span></div>
@@ -100,7 +100,7 @@
             </div>
         </section>
 
-        <section class="section_main" sec:authorize="hasRole('MEDICO')">
+        <section class="section_main" sec:authorize="hasRole('MEDICO')" data-role="medico">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
                     <ul>
@@ -130,7 +130,7 @@
                 <div class="card wide-card">🛠️ Configuraciones Generales</div>
             </section>
 
-            <div id="chat-toggle3" onclick="toggleChat()">💬</div>
+            <div id="chat-toggle3" onclick="toggleChatById('chat-box3')">💬</div>
             <!-- Ventana de chat -->
             <div id="chat-box3">
                 <div id="chat-header3">Asistente Virtual <span onclick="toggleChat()">X</span></div>
@@ -145,21 +145,21 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
 <script>
-    function toggleChat() {
-        const chatBox = document.getElementById("chat-box");
-        chatBox.classList.toggle("open");
-    }
     document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById('ID');
         if (!el) return;
         el.addEventListener('click', handler);
     });
 </script>
-<script th:src="@{/js/admin-panel.js}" src="/js/admin-panel.js"></script>
+<script>
+    function toggleChatById(id){
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle("open");
+    }
+</script>
 <script th:src="@{/js/panelUsuario.js}" src="/js/panelUsuario.js"></script>
 <script th:src="@{/js/darkTheme.js}" src="/js/darkTheme.js"></script>
-<script th:src="@{/js/asistente.js}" src="/js/asistente.js"></script>
-<script th:src="@{/js/asistente-admin.js}" src="/js/asistente-admin.js"></script>
+<script th:src="@{/js/asistentes-panel.js}" src="/js/asistentes-panel.js"></script>
 <script th:src="@{/js/sccript.js}" src="/js/sccript.js"></script>
 </body>
 </html>
