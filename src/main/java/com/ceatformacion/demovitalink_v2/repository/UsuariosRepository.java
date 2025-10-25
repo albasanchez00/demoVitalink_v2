@@ -50,4 +50,12 @@ public interface UsuariosRepository extends JpaRepository<Usuarios, Integer> {
                OR LOWER(c.apellidos) LIKE LOWER(CONCAT('%', :q, '%')))
     """)
     Page<Usuarios> buscarLigeroAdmin(@Param("q") String q, Pageable pageable);
+
+    @Query("""
+   SELECT u FROM Usuarios u
+   WHERE u.rol = :nombreRol
+   ORDER BY u.id_usuario ASC
+""")
+    List<Usuarios> findByRolNombre(@Param("nombreRol") String nombreRol);
+
 }

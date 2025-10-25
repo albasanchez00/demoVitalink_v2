@@ -70,12 +70,14 @@ public class ConfigMedicoMapper {
             cm.setZonaHoraria(nullSafe(ui.zonaHoraria(), cm.getZonaHoraria()));
             cm.setHome(nullSafe(ui.home(), cm.getHome()));
         }
+
     }
 
     public static void merge(ConfigAgenda ca, AgendaDTO dto) {
         if (dto == null) return;
         if (dto.duracionGeneralMin() != null) ca.setDuracionGeneralMin(dto.duracionGeneralMin());
         if (dto.bufferMin() != null) ca.setBufferMin(dto.bufferMin());
+
         writeIfNotNull(() -> dto.reglas(), v -> ca.setReglasJson(write(v)));
         writeIfNotNull(() -> dto.disponibilidad(), v -> ca.setDisponibilidadJson(write(v)));
         writeIfNotNull(() -> dto.instruccionesPorTipo(), v -> ca.setInstruccionesPorTipoJson(write(v)));

@@ -15,23 +15,42 @@
 </head>
 <body>
     <section class="contenedor">
-        <div th:replace="fragments/header :: header"></div>
+        <div th:replace="~{fragments/header :: header}"></div>
     
         <main id="main-calendar">
             <section id="formulario">
                 <h2>Reservar Nueva Cita</h2>
+
+
+                <!-- Mensajes flash -->
+                <div th:if="${ok}" class="alert alert-success" th:text="${ok}"></div>
+                <div th:if="${err}" class="alert alert-danger" th:text="${err}"></div>
+
                 <form id="form-cita" th:action="@{/guardarCitas}" method="POST" th:object="${citas}">
-                    <label for="paciente">Nombre del Paciente:</label>
-                    <input type="text" id="paciente" name="paciente" th:field="*{titulo}" required>
+                    <!-- Médico -->
+                    <label for="medico">Médico</label>
+                    <select id="medico" th:field="*{medico.id_usuario}" required>
+                        <option th:value="0">— Selecciona médico —</option>
+                        <option th:each="m : ${medicos}"
+                                th:value="${m.id_usuario}"
+                                th:text="${m.username}"></option>
+                    </select>
 
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" id="fecha" name="fecha" th:field="*{fecha}" required>
+                    <!-- Fecha -->
+                    <label for="fecha">Fecha</label>
+                    <input id="fecha" type="date" th:field="*{fecha}"
+                           required>
 
-                    <label for="hora">Hora:</label>
-                    <input type="time" id="hora" name="hora" th:field="*{hora}" required>
+                    <!-- Hora (dinámica según disponibilidad) -->
+                    <label for="hora">Hora</label>
+                    <select id="hora" th:field="*{hora}" required>
+                        <option value="">— Selecciona fecha y médico —</option>
+                    </select>
 
-                    <label for="tipo">Tipo de Atención Médica:</label>
-                    <select id="tipo" name="tipo" th:field="*{descripcion}" required>
+
+                    <!-- Tipo / Motivo (usa tu campo descripcion) -->
+                    <label for="tipo">Tipo de Atención/Motivo</label>
+                    <select id="tipo" th:field="*{descripcion}" required>
                         <optgroup label="Citas Médicas">
                             <option value="Cita Médica Presencial">Cita Presencial</option>
                             <option value="Teleconsulta Médica">Teleconsulta</option>
@@ -41,8 +60,15 @@
                             <option value="Teleconsulta Enfermería">Teleconsulta</option>
                         </optgroup>
                     </select>
+
+                    <!-- Duración por defecto -->
+                    <input type="hidden" th:field="*{duracionMinutos}" value="30"/>
+
                     <button type="submit" id="btn-citas">Reservar Cita</button>
+                    <!-- Si usas CSRF: -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 </form>
+
                 <a href="https://calendar.google.com/calendar/render?..." target="_blank" class="btn-google-calendar gcal-btn">
                     Agregar a Google Calendar
                 </a>
@@ -52,8 +78,80 @@
             </section>
         </main>
 
-        <div th:replace="fragments/footer :: footer"></div>
+        <div th:replace="~{fragments/footer :: footer}"></div>
     </section>
+    <script>
+        const BASE = '';
+        const baseUrl = (typeof BASE !== 'undefined') ? BASE : '';
+        const url = `${baseUrl}/api/agenda/horas-disponibles?idMedico=${encodeURIComponent(idMedico)}&fecha=${encodeURIComponent(fechaISO)}`;
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const selMedico = document.querySelector('select[name="medico.id_usuario"], #medico');
+            const inputFecha = document.querySelector('input[name="fecha"], #fecha');            // <input type="date">
+            const selHora = document.querySelector('select[name="hora"], #hora');
+
+            function toISODate(value) {
+                // Si el input es <input type="date"> el value YA viene como yyyy-MM-dd.
+                // Si por tema de máscara llega dd/MM/yyyy, lo convertimos aquí.
+                if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;          // ya es ISO
+                const m = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
+            }
+
+            async function cargarHoras() {
+                selHora.innerHTML = '<option value="">— Selecciona fecha y médico —</option>';
+
+                const idMedico = selMedico?.value;
+                const fechaRaw = inputFecha?.value;
+                const fechaISO = toISODate(fechaRaw);
+                if (!idMedico || !fechaISO) return;
+
+                try {
+                    const url = `${BASE}/api/agenda/horas-disponibles?idMedico=${encodeURIComponent(idMedico)}&fecha=${encodeURIComponent(fechaISO)}`;
+                    console.log('[cargarHoras] GET', url);
+
+                    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                    console.log('[cargarHoras] status', res.status);
+
+                    const text = await res.text();
+                    console.log('[cargarHoras] body', text);
+
+                    let horas;
+                    try { horas = JSON.parse(text); }
+                    catch {
+                        console.error('Respuesta no JSON (¿redirigido a login o error HTML?).');
+                        selHora.innerHTML = '<option value="">— Error cargando horas —</option>';
+                        return;
+                    }
+
+                    if (!Array.isArray(horas) || horas.length === 0) {
+                        selHora.innerHTML = '<option value="">— Sin disponibilidad —</option>';
+                        return;
+                    }
+
+                    const frag = document.createDocumentFragment();
+                    horas.forEach(h => {
+                        const opt = document.createElement('option');
+                        opt.value = h; opt.textContent = h;
+                        frag.appendChild(opt);
+                    });
+                    selHora.innerHTML = '';
+                    selHora.appendChild(frag);
+                } catch (e) {
+                    console.error('Error cargando horas:', e);
+                    selHora.innerHTML = '<option value="">— Error cargando horas —</option>';
+                }
+            }
+
+            selMedico?.addEventListener('change', cargarHoras);
+            inputFecha?.addEventListener('change', cargarHoras);
+
+            // Si ya vienen con valor (p.ej. al volver con errores), recarga:
+            if (selMedico?.value && inputFecha?.value) cargarHoras();
+        });
+    </script>
     <script src="/js/calendario.js" defer></script>
 </body>
 </html>

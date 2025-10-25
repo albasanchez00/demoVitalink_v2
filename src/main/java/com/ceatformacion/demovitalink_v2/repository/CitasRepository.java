@@ -138,4 +138,12 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
             Pageable pageable
     );
 
+    // horas ocupadas de un médico en una fecha:
+    @Query("""
+           select c
+             from Citas c
+            where c.medico.id_usuario = :medicoId
+              and c.fecha = :fecha
+           """)
+    List<Citas> findByMedicoAndFecha(int medicoId, LocalDate fecha);
 }

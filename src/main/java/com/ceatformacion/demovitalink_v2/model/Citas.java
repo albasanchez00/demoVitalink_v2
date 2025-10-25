@@ -41,7 +41,18 @@ public class Citas {
     @JoinColumn(name = "id_medico", referencedColumnName = "id_usuario")
     private Usuarios medico;  // profesional
 
-
+    @PrePersist
+    public void prePersist() {
+        if (titulo == null || titulo.isBlank()) {
+            titulo = "Cita";
+        }
+        if (duracionMinutos <= 0) {
+            duracionMinutos = 30;
+        }
+        if (estado == null) {
+            estado = EstadoCita.PENDIENTE;
+        }
+    }
     // getters/setters...
     public Usuarios getMedico() { return medico; }
     public void setMedico(Usuarios medico) { this.medico = medico; }

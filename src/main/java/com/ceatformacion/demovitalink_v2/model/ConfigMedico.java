@@ -33,7 +33,6 @@ public class ConfigMedico {
     private String idioma;      // es | en
     private String zonaHoraria; // Europe/Madrid
     private String home;        // dashboard | agenda | mensajes
-
     @Version
     private Integer version;
 
@@ -153,7 +152,4 @@ public class ConfigMedico {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    // getters/setters
-    // ...
 }
