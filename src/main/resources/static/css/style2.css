@@ -320,6 +320,222 @@ header{ min-height: var(--altura_header); max-width: 100vw; background-color: va
 .tabla_Registros th, .tabla_Registros td { border: 1px solid #ccc; padding: 8px; text-align: center;}
 /* Gráfico de evolución */
 #graficos { width:  70%; margin-top: 30px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd;}
+.modal-contenido .grid select{
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    background-image:none;
+    line-height:1.2;
+    display:block;
+}
+.modal-contenido .grid select:focus{
+    outline:none;
+    text-decoration:none;
+}
+/* === PÁGINA REGISTRO DE SÍNTOMAS (versión mejorada) === */
+#main_registroSintomas {
+    width: 100%;
+    background: var(--fondo-body);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 60px;
+}
+
+/* Encabezado */
+.section_header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.section_header h1 {
+    color: var(--color_primario);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: 0.5px;
+    border-bottom: 3px solid var(--color_primario);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Filtros superiores */
+.filtros {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+.filtros .form-inline {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--color_blanco);
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.filtros input {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--color_secundario);
+    font-size: 0.95rem;
+    width: 180px;
+}
+.filtros .btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.filtros .btn-primario {
+    background: var(--color-primary-button);
+    color: var(--color_blanco);
+    font-weight: 500;
+}
+.filtros .btn-primario:hover {
+    background: var(--color-secundary-button);
+}
+
+/* Tabla de síntomas */
+.tabla-responsive {
+    width: 90%;
+    max-width: 1000px;
+    background: var(--color_blanco);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.tabla-tratamientos {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabla-tratamientos th {
+    background: var(--color_primario);
+    color: var(--color_blanco);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    padding: 12px;
+}
+.tabla-tratamientos td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #e6ebf1;
+    color: var(--color_secundario);
+    background: #fff;
+}
+.tabla-tratamientos tr:hover td {
+    background: #f9f9f9;
+}
+.tabla-tratamientos td:last-child {
+    white-space: nowrap;
+}
+
+/* Botones de acciones */
+.acciones .btn {
+    margin: 0 4px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+.btn-sec {
+    background-color: var(--color_secundario);
+    color: var(--color_blanco);
+    border: none;
+}
+.btn-sec:hover {
+    background-color: var(--color_primario);
+}
+.btn-sec.danger {
+    background-color: #e74c3c;
+}
+.btn-sec.danger:hover {
+    background-color: #c0392b;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-contenido {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px 30px;
+    width: min(90%, 520px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    animation: fadeIn 0.25s ease;
+}
+.modal-contenido h2 {
+    color: var(--color_primario);
+    text-align: center;
+    margin-bottom: 20px;
+}
+.modal-contenido .grid {
+    display: grid;
+    gap: 12px;
+}
+.modal-contenido label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: var(--color_secundario);
+}
+.modal-contenido select,
+.modal-contenido textarea,
+.modal-contenido input {
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+}
+.modal-contenido select:focus,
+.modal-contenido textarea:focus,
+.modal-contenido input:focus {
+    border-color: var(--color_primario);
+    outline: none;
+}
+.modal-contenido .acciones {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+.modal-contenido .acciones .btn {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+.btn-cerrar-x {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.btn-cerrar-x:hover { color: var(--color_primario); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filtros .form-inline { flex-direction: column; gap: 8px; }
+    .tabla-responsive { width: 100%; }
+    .modal-contenido { width: 95%; padding: 20px; }
+}
+
 /* FIN PAGINA REGISTRO SINTOMAS */
 
 
@@ -335,24 +551,92 @@ header{ min-height: var(--altura_header); max-width: 100vw; background-color: va
         input{ width: 50px; height: 100%;}
     }
 }
-.section_tabla_tratamientos { max-width: 95%; margin: auto; padding: 2rem;}
-.section_tabla_tratamientos h2 { text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem; color: #222;}
-.tabla-tratamientos { width: 100%; border-collapse: separate; border-spacing: 0; background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); font-size: 0.95rem; table-layout: fixed;}
-.tabla-tratamientos th,
-.tabla-tratamientos td { padding: 14px 10px; text-align: center; border-bottom: 1px solid #e6e6e6; word-wrap: break-word;}
-.tabla-tratamientos th { background-color: var(--color-primary-button); color: var(--color_blanco); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-.tabla-tratamientos tbody tr:hover { background-color: #f9f9f9; transition: background-color 0.2s ease-in-out;}
-.tabla-tratamientos td.estado-activo { background-color: #e0f7e9; color: #2e7d32; font-weight: bold; border-radius: 5px;}
-.tabla-tratamientos td.estado-finalizado { background-color: #fff3cd; color: #856404; font-weight: bold; border-radius: 5px;}
-.tabla-tratamientos td.estado-cancelado { background-color: #f8d7da; color: #721c24; font-weight: bold; border-radius: 5px;}
-/* Responsive para móviles */
-@media screen and (max-width: 768px) {
-    .tabla-tratamientos thead { display: none;}
-    .tabla-tratamientos, .tabla-tratamientos tbody, .tabla-tratamientos tr, .tabla-tratamientos td { display: block; width: 100%;}
-    .tabla-tratamientos tr { margin-bottom: 1rem; background-color: #fff; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);}
-    .tabla-tratamientos td { text-align: left; padding: 0.5rem 0; position: relative; font-size: 0.95rem;}
-    .tabla-tratamientos td::before { content: attr(data-label); font-weight: bold; display: block; color: var(--color_primario); margin-bottom: 4px;}
+.section_tabla_tratamientos{max-width:95%;margin:auto;padding:2rem}
+.section_tabla_tratamientos h2{ text-align:center;margin-bottom:1.25rem;font-size:clamp(1.2rem,2.2vw,1.6rem);color:var(--color_primario)}
+
+.tabla-tratamientos{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+    font-size:.95rem;
+    table-layout:fixed;
 }
+
+.tabla-tratamientos thead th{
+    position:sticky; top:0; z-index:1;
+    background:linear-gradient(0deg,var(--color-primary-button),var(--color_secundario));
+    color:var(--color_blanco);
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    font-weight:600;
+    padding:14px 10px;
+    border-bottom:1px solid rgba(255,255,255,.2);
+}
+
+.tabla-tratamientos td{
+    padding:12px 10px;
+    border-bottom:1px solid #eef1f4;
+    text-align:center;
+    word-wrap:break-word;
+}
+
+/* Zebra + hover */
+.tabla-tratamientos tbody tr:nth-child(odd){ background:#fbfcfe}
+.tabla-tratamientos tbody tr:hover{ background:#f2f6ff; transition:.15s ease}
+
+/* Cols mínimas para evitar saltos feos */
+.tabla-tratamientos td:nth-child(1){ width:64px }   /* ID */
+.tabla-tratamientos td:nth-child(2){ min-width:150px} /* Medicamento */
+.tabla-tratamientos td:nth-child(8){ min-width:220px} /* Observaciones */
+
+/* Truncado elegante para textos largos */
+.td-ellipsis{
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Pills (estado y booleanos) */
+.pill{
+    display:inline-block; padding:.35rem .6rem; border-radius:999px;
+    font-size:.82rem; font-weight:600; line-height:1; border:1px solid transparent;
+}
+.pill--ok{ background:#e8f8ef; color:#1b7a49; border-color:#c6eedb}
+.pill--warn{ background:#fff6e0; color:#8a6a00; border-color:#f3e3b0}
+.pill--danger{ background:#fde8ea; color:#8f2d3a; border-color:#f6c3cb}
+.pill--muted{ background:#eef2f7; color:#415269; border-color:#dde3ec}
+
+/* Estado específico */
+.estado--activo{ background:#e8f8ef; color:#1b7a49; border-color:#c6eedb}
+.estado--finalizado{ background:#fff6e0; color:#8a6a00; border-color:#f3e3b0}
+.estado--cancelado{ background:#fde8ea; color:#8f2d3a; border-color:#f6c3cb}
+
+/* Responsive móvil tipo "cards" */
+@media (max-width: 768px){
+    .tabla-tratamientos thead{ display:none }
+    .tabla-tratamientos, .tabla-tratamientos tbody, .tabla-tratamientos tr, .tabla-tratamientos td{ display:block; width:100%}
+    .tabla-tratamientos tr{
+        margin:0 0 1rem; background:#fff; border:1px solid #e9edf3; border-radius:10px;
+        box-shadow:0 2px 8px rgba(0,0,0,.05); padding:.5rem .9rem;
+    }
+    .tabla-tratamientos td{
+        text-align:left; padding:.55rem 0; border:none;
+    }
+    .tabla-tratamientos td::before{
+        content:attr(data-label);
+        display:block; font-weight:700; color:var(--color_primario);
+        margin-bottom:2px; font-size:.85rem;
+    }
+}
+
+/* Dark mode friendly (si tienes body[data-theme="dark"]) */
+body[data-theme="dark"] .tabla-tratamientos{ background:var(--color_fondo,#16222f); box-shadow:none; border:1px solid rgba(255,255,255,.06)}
+body[data-theme="dark"] .tabla-tratamientos td{ border-bottom:1px solid rgba(255,255,255,.06)}
+body[data-theme="dark"] .tabla-tratamientos tbody tr:nth-child(odd){ background:rgba(255,255,255,.02)}
+body[data-theme="dark"] .tabla-tratamientos tbody tr:hover{ background:rgba(255,255,255,.06)}
+
 /* FIN PÁGINA REGISTRO DE TRATAMIENTOS */
 
 

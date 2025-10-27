@@ -18,72 +18,48 @@
         <section class="section_header">
             <h1>Registro de Síntomas</h1>
         </section>
-        <!-- Modal Crear/Editar -->
-
 
         <div id="modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
-                <div class="modal-contenido">
-                    <button type="button" class="btn-cerrar-x" id="btn-cerrar" aria-label="Cerrar">✕</button>
-                    <h2 id="titulo-modal">Registrar síntoma</h2>
-                    <form id="form-sintoma">
-                        <!-- Obtenemos el id_usuario del usuario autenticado -->
-                        <input type="hidden" id="id_usuario"
-                               th:value="${#authentication?.principal?.usuario?.id_usuario}">
-                        <input type="hidden" id="id_sintoma">
+            <div class="modal-contenido">
+                <button type="button" class="btn-cerrar-x" id="btn-cerrar" aria-label="Cerrar">✕</button>
+                <h2 id="titulo-modal">Registrar síntoma</h2>
 
-                        <div class="grid">
-                            <label>Tipo
-                                <select id="tipo" required>
-                                    <option value="">— Selecciona —</option>
-                                    <option value="DOLOR_CABEZA">DOLOR_CABEZA</option>
-                                    <option value="FIEBRE">FIEBRE</option>
-                                    <option value="NAUSEAS">NAUSEAS</option>
-                                    <option value="VOMITOS">VOMITOS</option>
-                                    <option value="FATIGA">FATIGA</option>
-                                    <option value="DOLOR_ABDOMINAL">DOLOR_ABDOMINAL</option>
-                                    <option value="TOS">TOS</option>
-                                    <option value="OTRO">OTRO</option>
-                                </select>
-                            </label>
+                <form id="form-sintoma">
+                    <input type="hidden" id="id_usuario" th:value="${#authentication?.principal?.usuario?.id_usuario}">
+                    <input type="hidden" id="id_sintoma">
 
-                            <label>Zona
-                                <select id="zona">
-                                    <option value="">—</option>
-                                    <option value="CABEZA">CABEZA</option>
-                                    <option value="GARGANTA">GARGANTA</option>
-                                    <option value="PECHO">PECHO</option>
-                                    <option value="ABDOMEN">ABDOMEN</option>
-                                    <option value="ESPALDA">ESPALDA</option>
-                                    <option value="BRAZO">BRAZO</option>
-                                    <option value="PIERNA">PIERNA</option>
-                                    <option value="GENERAL">GENERAL</option>
-                                    <option value="OTRA">OTRA</option>
-                                </select>
-                            </label>
+                    <div class="grid">
+                        <label>Tipo
+                            <select id="tipo" required>…</select>
+                        </label>
 
-                            <label>Descripción
-                                <textarea id="descripcion" maxlength="300" placeholder="Máx. 300 caracteres"></textarea>
-                            </label>
+                        <label>Zona
+                            <select id="zona">…</select>
+                        </label>
 
-                            <label>Fecha y hora
-                                <input type="datetime-local" id="fechaRegistro">
-                            </label>
-                        </div>
+                        <label>Descripción
+                            <textarea id="descripcion" maxlength="300" placeholder="Máx. 300 caracteres"></textarea>
+                        </label>
 
-                        <div class="acciones">
-                            <button type="submit" class="btn btn-primario">Guardar</button>
-                            <button type="button" id="btn-cancelar" class="btn">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
+                        <label>Fecha y hora
+                            <input type="datetime-local" id="fechaRegistro">
+                        </label>
+                    </div>
+
+                    <div class="acciones">
+                        <button type="submit" class="btn btn-primario">Guardar</button>
+                        <button type="button" id="btn-cancelar" class="btn">Cancelar</button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-        <section class="filtros" aria-label="Filtros de búsqueda">
-            <h3>Buscar Sintomas</h3>
-            <form id="form-filtros" class="form-inline" onsubmit="return false;">
-                <input type="text" id="filtro-tipo" placeholder="Tipo (ej. DOLOR_CABEZA)">
-                <button class="btn">Aplicar</button>
-                <button id="btn-abrir" class="btn btn-primario">Añadir síntoma</button>
+
+        <section class="filtros">
+            <form class="form-inline" onsubmit="return false;">
+                <input id="filtro-tipo" type="text" placeholder="Tipo (ej. DOLOR_CABEZA)">
+                <button id="btn-aplicar" type="button" class="btn">Aplicar</button>
+                <button id="btn-abrir" type="button" class="btn btn-primario">Añadir síntoma</button>
             </form>
         </section>
 
@@ -99,9 +75,7 @@
                     <th>Acciones</th>
                 </tr>
                 </thead>
-                <tbody id="tbody-sintomas">
-                <!-- registros -->
-                </tbody>
+                <tbody id="tbody-sintomas"></tbody>
             </table>
         </section>
     </main>
