@@ -1,6 +1,7 @@
 package com.ceatformacion.demovitalink_v2.services;
 
 import com.ceatformacion.demovitalink_v2.dto.MensajeDTO;
+import com.ceatformacion.demovitalink_v2.model.Conversacion;
 import com.ceatformacion.demovitalink_v2.model.Lectura;
 import com.ceatformacion.demovitalink_v2.model.Mensaje;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
@@ -11,8 +12,14 @@ import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ChatService {
@@ -40,6 +47,52 @@ public class ChatService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No existe usuario con username=" + principalName));
     }
+
+    public List<String> obtenerUsernamesMiembros(Integer convId) {
+        return convRepo.findById(convId)
+                .map(conv -> conv.getMiembros()
+                        .stream()
+                        .map(Usuarios::getUsername)
+                        .toList())
+                .orElse(List.of());
+    }
+    @Transactional
+    public Conversacion getOrCreateDirectConversation(Usuarios a, Usuarios b) {
+        int idA = a.getId_usuario();
+        int idB = b.getId_usuario();
+
+        // Clave determinística: menorID-mayorID
+        String key = (idA < idB)
+                ? idA + "-" + idB
+                : idB + "-" + idA;
+
+        return convRepo.findByTipoAndDirectKey("DIRECT", key)
+                .orElseGet(() -> {
+                    Conversacion c = new Conversacion();
+                    c.setTipo("DIRECT");
+                    c.setDirectKey(key);
+                    c.setServicio("CHAT");
+                    c.setCreadoPor(a);
+
+                    Set<Usuarios> miembros = new HashSet<>();
+                    miembros.add(a);
+                    miembros.add(b);
+                    c.setMiembros(miembros);
+
+                    return convRepo.save(c);
+                });
+    }
+
+    @Transactional
+    public void eliminarConversacion(Integer id, Integer userId) {
+        // Verificamos que el usuario sea miembro
+        boolean pertenece = convRepo.existsByIdAndMiembro(id, userId);
+        if (!pertenece)
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes eliminar una conversación ajena");
+
+        convRepo.deleteByIdHard(id);
+    }
+
 
     /** Publica el mensaje y devuelve DTO ya mapeado con nombre listo. */
     @Transactional

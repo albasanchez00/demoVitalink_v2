@@ -146,4 +146,16 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
               and c.fecha = :fecha
            """)
     List<Citas> findByMedicoAndFecha(int medicoId, LocalDate fecha);
+    @Query("select count(c) from Citas c where c.usuario.id_usuario = :usuarioId")
+    long countByUsuarioId(@Param("usuarioId") int usuarioId);
+
+    // Próxima cita (si tu campo de fecha en Citas es LocalDate llamado "fecha")
+    @Query("""
+           select min(c.fecha)
+           from Citas c
+           where c.usuario.id_usuario = :usuarioId
+             and c.fecha >= current date
+           """)
+    LocalDate findProximaFecha(@Param("usuarioId") int usuarioId);
+
 }

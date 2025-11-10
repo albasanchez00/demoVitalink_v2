@@ -23,7 +23,19 @@ public class ChatStompController {
     public void enviar(ChatMessageDTO dto, Principal principal) {
         Integer remitenteId = chat.obtenerIdDesdePrincipal(principal.getName());
         MensajeDTO out = chat.publicarYMapear(dto.convId(), remitenteId, dto.texto());
-        template.convertAndSend("/topic/conversaciones." + out.convId(), out);
+
+        // 🔹 Enviar a todos los usuarios suscritos a la conversación EXCEPTO al remitente
+        for (String username : chat.obtenerUsernamesMiembros(out.convId())) {
+            if (!username.equalsIgnoreCase(principal.getName())) {
+                template.convertAndSendToUser(
+                        username,
+                        "/topic/conversaciones." + out.convId(),
+                        out
+                );
+            }
+        }
+
+        // 🔹 Confirmación individual opcional (ACK)
         template.convertAndSendToUser(principal.getName(), "/queue/ack", "DELIVERED");
     }
 }

@@ -40,4 +40,5 @@ public interface RecordatoriosRepository extends JpaRepository<Recordatorios, In
     List<Recordatorios> findAllByUsuarioIdAndTipo(
             @Param("id_usuario") int id_usuario,
             @Param("tipo") TipoRecordatorio tipo);
+
 }

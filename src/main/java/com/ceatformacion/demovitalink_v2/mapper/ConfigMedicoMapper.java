@@ -85,12 +85,16 @@ public class ConfigMedicoMapper {
 
     public static void merge(ConfigNotificaciones cn, NotificacionesDTO dto) {
         if (dto == null) return;
-        writeIfNotNull(() -> dto.canales(), v -> cn.setCanalesJson(write(v)));
-        writeIfNotNull(() -> dto.eventos(), v -> cn.setEventosJson(write(v)));
-        if (dto.silencioDesde() != null) cn.setSilencioDesde(dto.silencioDesde());
-        if (dto.silencioHasta() != null) cn.setSilencioHasta(dto.silencioHasta());
-        writeIfNotNull(() -> dto.plantillas(), v -> cn.setPlantillasJson(write(v)));
+
+        // Siempre reescribe los JSON, aunque haya valores false o cambios mínimos
+        cn.setCanalesJson(write(dto.canales()));
+        cn.setEventosJson(write(dto.eventos()));
+        cn.setPlantillasJson(write(dto.plantillas()));
+
+        cn.setSilencioDesde(dto.silencioDesde());
+        cn.setSilencioHasta(dto.silencioHasta());
     }
+
 
     /* ====== JSON helpers ====== */
     private static <T> T read(String json, Class<T> type, T def) {

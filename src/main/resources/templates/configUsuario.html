@@ -149,6 +149,46 @@
         input.value = orden[(idx + 1) % orden.length];
         document.documentElement.setAttribute('data-theme', input.value);
     }
+    (() => {
+        const KEY = 'theme';
+
+        function applyTheme(mode) {
+            if (mode === 'auto') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.classList.toggle('dark-theme', prefersDark);
+            } else {
+                document.body.classList.toggle('dark-theme', mode === 'dark');
+            }
+        }
+
+        function init() {
+            const saved = localStorage.getItem(KEY) || 'auto';
+            applyTheme(saved);
+
+            // Sincroniza radios
+            const r = document.querySelector(`input[name="tema"][value="${saved}"]`);
+            if (r) r.checked = true;
+
+            // Reacciona a cambios del sistema si está en "auto"
+            const mql = window.matchMedia('(prefers-color-scheme: dark)');
+            const onSystemChange = () => {
+                if ((localStorage.getItem(KEY) || 'auto') === 'auto') applyTheme('auto');
+            };
+            mql.addEventListener ? mql.addEventListener('change', onSystemChange)
+                : mql.addListener(onSystemChange);
+
+            // Cambios desde el control segmentado
+            document.querySelectorAll('input[name="tema"]').forEach(el => {
+                el.addEventListener('change', (e) => {
+                    const v = e.target.value;       // 'auto' | 'light' | 'dark'
+                    localStorage.setItem(KEY, v);
+                    applyTheme(v);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    })();
 </script>
 <script th:src="@{/js/evolucionUsuario.js}"></script>
 <script th:src="@{/js/darkTheme.js}"></script>

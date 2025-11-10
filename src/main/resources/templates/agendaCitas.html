@@ -1,92 +1,255 @@
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Agenda de Citas</title>
+    <title>Agenda del Médico</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
-    <meta name="description" content="Agenda médica">
-    <link rel="stylesheet" href="/css/style2.css">
-    <script type="text/javascript" defer src="/js/admin-panel.js"></script>
-    <script type="text/javascript" defer src="/js/asistente.js"></script>
-    <script src="/js/darkTheme.js" defer></script>
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script th:src="@{/js/darkTheme.js}" defer></script>
 </head>
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
+
+<div th:replace="fragments/header :: header"></div>
 
 <main>
-    <section class="section_main" sec:authorize="hasAnyRole('ADMIN','MEDICO')">
-        <header class="titulo_seccion">
-            <h2 th:text="'📅 Agenda de ' + ${medicoNombre}">Agenda</h2>
-        </header>
-
-        <!-- Mensajes opcionales -->
-        <div th:if="${mensaje != null}" class="alert alert-info" th:text="${mensaje}"></div>
-        <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
-
-        <!-- Tabla de citas -->
-        <section class="tabla_citas" th:if="${citas != null}">
-            <p class="mensaje-vacio" th:if="${#lists.isEmpty(citas)}">
-                No hay citas para mostrar.
-            </p>
-
-            <table th:if="${!#lists.isEmpty(citas)}">
-                <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Paciente</th>
-                    <th>Estado</th>
-                    <th>Motivo</th>
-                    <!-- <th>Acciones</th> -->
-                </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="cita : ${citas}">
-                        <td th:text="${#temporals.format(cita.fecha, 'dd/MM/yyyy')}">01/01/2025</td>
-                        <td th:text="${#temporals.format(cita.hora, 'HH:mm')}">09:30</td>
-
-                        <!-- Paciente: seguro ante nulos (usuario o cliente pueden ser null) -->
-                        <td th:text="${cita.usuario != null ? cita.usuario.username : '—'}">Paciente</td>
-
-                        <td th:text="${cita.estado}">PENDIENTE</td>
-                        <td th:text="${cita.descripcion}">Motivo</td>
-
-                        <!-- Acciones futuras (cuando tengas endpoints):
-                        <td>
-                          <form th:action="@{|/medico/citas/${cita.id_cita}/confirmar|}" method="post" style="display:inline">
-                            <button type="submit" class="btn-editar">✔ Confirmar</button>
-                          </form>
-                          <form th:action="@{|/medico/citas/${cita.id_cita}/cancelar|}" method="post" style="display:inline">
-                            <button type="submit" class="btn-cancelar">❌ Cancelar</button>
-                          </form>
-                        </td>
-                        -->
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="acciones-listado" style="margin-top: 1rem;">
-                <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver al panel</a>
+    <h2 th:text="'📅 Agenda de: ' + ${medicoNombre}" class="title-cita"></h2>
+    <div id="estadoModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="cerrarModal" class="close">&times;</span>
+            <h3>📋 Cambiar estado de la cita</h3>
+            <p><strong>Paciente:</strong> <span id="modalPaciente"></span></p>
+            <p><strong>Estado actual:</strong> <span id="modalEstado"></span></p>
+            <div class="botones-estado">
+                <button data-estado="CONFIRMADA">✅ Confirmar</button>
+                <button data-estado="CANCELADA">❌ Cancelar</button>
+                <button data-estado="ATENDIDA">👨‍⚕️ Atendida</button>
             </div>
-        </section>
+        </div>
+    </div>
+    <!-- Filtro por estado -->
+    <div class="filtro-citas">
+        <form method="get" th:action="@{/medico/citas}">
+            <label for="estado">Filtrar por estado:</label>
+            <select name="estado" id="estado" th:value="${estado}">
+                <option value="">Todas</option>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="CONFIRMADA">Confirmada</option>
+                <option value="FINALIZADA">Finalizada</option>
+                <option value="CANCELADA">Cancelada</option>
+            </select>
+            <button type="submit">Filtrar</button>
+        </form>
+    </div>
 
-        <!-- Si el controlador aún no mete 'citas' en el modelo -->
-        <section class="tabla_citas" th:if="${citas == null}">
-            <p class="mensaje-vacio">No se recibieron datos de citas.</p>
-            <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver al panel</a>
-        </section>
-    </section>
+    <!-- Calendario -->
+    <div id="calendar"></div>
 
-    <!-- Si alguien sin rol intenta entrar -->
-    <section class="section_main" sec:authorize="!hasAnyRole('ADMIN','MEDICO')">
-        <div class="alert alert-danger">No tienes permisos para ver esta página.</div>
-        <a th:href="@{/usuarios/panelUsuario}" class="btn-volver">🔙 Volver</a>
-    </section>
+    <!-- Modal de Acciones -->
+    <div id="modalAcciones" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalAcciones()">&times;</span>
+            <h3>📋 Acciones sobre la cita</h3>
+            <p><strong>Paciente:</strong> <span id="accionPaciente"></span></p>
+            <p><strong>Estado actual:</strong> <span id="accionEstado"></span></p>
+            <div class="botones-estado">
+                <button id="btnEditar">✏️ Editar</button>
+                <button id="btnAtender">✅ Marcar como atendida</button>
+                <button id="btnEliminar">🗑️ Eliminar</button>
+                <button onclick="cerrarModalAcciones()">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de edición -->
+    <div id="modalEditar" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="cerrarEditar" class="close">&times;</span>
+            <h3>✏️ Editar Cita</h3>
+            <form id="formEditarCita">
+                <input type="hidden" id="editId">
+                <label>Fecha: <input type="date" id="editFecha" required></label><br>
+                <label>Hora: <input type="time" id="editHora" required></label><br>
+                <label>Motivo: <textarea id="editDescripcion" required></textarea></label><br>
+                <button type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modalEliminar" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="cerrarEliminar" class="close">&times;</span>
+            <h3>🗑️ Confirmar eliminación de cita</h3>
+            <p><strong>Paciente:</strong> <span id="eliminarPaciente"></span></p>
+            <p><strong>Motivo:</strong> <span id="eliminarDescripcion"></span></p>
+            <div class="botones-estado">
+                <button id="btnConfirmarEliminar" class="btn btn-danger">🗑️ Eliminar</button>
+                <button id="btnCancelarEliminar" class="btn btn-secundario">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
 </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="fragments/footer :: footer"></div>
+
+<script th:inline="javascript">
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
+    const eventos = /*[[${eventos}]]*/ [];
+
+    let citaSeleccionada = null;
+
+    const calendarEvents = eventos.map(e => ({
+        id: e.id,
+        title: e.title + ' (' + e.estado + ')',
+        start: e.start,
+        end: e.end,
+        extendedProps: {
+            paciente: e.pacienteNombre,
+            descripcion: e.descripcion,
+            estado: e.estado
+        },
+        color: e.estado === 'PENDIENTE' ? '#FFA726' :
+            e.estado === 'CONFIRMADA' ? '#66BB6A' :
+                e.estado === 'CANCELADA' ? '#EF5350' :
+                    e.estado === 'FINALIZADA' ? '#42A5F5' : '#90A4AE'
+    }));
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            initialView: 'timeGridWeek',
+            locale: 'es',
+            height: 'auto',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            events: calendarEvents,
+            eventClick: function (info) {
+                citaSeleccionada = info.event;
+                document.getElementById('accionPaciente').textContent = citaSeleccionada.extendedProps.paciente;
+                document.getElementById('accionEstado').textContent = citaSeleccionada.extendedProps.estado;
+                abrirModal('modalAcciones');
+            }
+        });
+
+        calendar.render();
+
+        // === ACCIONES MODAL ===
+        document.getElementById('btnEditar').onclick = () => {
+            if (!citaSeleccionada) return;
+            cerrarModal('modalAcciones');
+            document.getElementById('editId').value = citaSeleccionada.id;
+            document.getElementById('editFecha').value = citaSeleccionada.startStr.slice(0, 10);
+            document.getElementById('editHora').value = citaSeleccionada.startStr.slice(11, 16);
+            document.getElementById('editDescripcion').value = citaSeleccionada.extendedProps.descripcion;
+            abrirModal('modalEditar');
+        };
+
+        document.getElementById('btnAtender').onclick = () => {
+            if (!citaSeleccionada) return;
+            actualizarEstadoCita('ATENDIDA');
+        };
+
+        document.getElementById('btnEliminar').onclick = () => {
+            if (!citaSeleccionada) return;
+            cerrarModal('modalAcciones');
+            document.getElementById('eliminarPaciente').textContent = citaSeleccionada.extendedProps.paciente;
+            document.getElementById('eliminarDescripcion').textContent = citaSeleccionada.extendedProps.descripcion;
+            abrirModal('modalEliminar');
+        };
+
+        document.getElementById('btnConfirmarEliminar').onclick = () => {
+            if (!citaSeleccionada) return;
+            const url = `/medico/citas/${citaSeleccionada.id}/eliminar`;
+            fetch(url, {
+                method: 'POST',
+                headers: { [csrfHeader]: csrfToken }
+            }).then(res => res.ok ? location.reload() : alert("❌ Error al eliminar cita."))
+                .catch(err => alert("❌ Error: " + err));
+        };
+
+        // === FORMULARIO DE EDICIÓN ===
+        document.getElementById('formEditarCita').onsubmit = function (e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+
+            if (!id || id.trim() === "") {
+                alert("⚠️ Error: No se encontró el ID de la cita para editar.");
+                return;
+            }
+
+            const body = {
+                fecha: document.getElementById('editFecha').value,
+                hora: document.getElementById('editHora').value,
+                descripcion: document.getElementById('editDescripcion').value
+            };
+            if (!csrfToken || !csrfHeader) {
+                alert("❌ CSRF Token no disponible.");
+                return;
+            }
+
+            fetch(`/medico/citas/${id}/editar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(body)
+            }).then(res => res.ok ? location.reload() : alert("❌ Error al editar cita."))
+                .catch(err => alert("❌ Error: " + err));
+        };
+
+
+        // === CAMBIO DE ESTADO GENERAL (modal extra) ===
+        document.querySelectorAll('#estadoModal .botones-estado button').forEach(btn => {
+            btn.onclick = () => {
+                const estado = btn.getAttribute('data-estado');
+                actualizarEstadoCita(estado);
+            };
+        });
+
+        // === CIERRES MODALES
+        document.getElementById('cerrarModal').onclick = () => cerrarModal('estadoModal');
+        document.getElementById('cerrarEditar').onclick = () => cerrarModal('modalEditar');
+        document.getElementById('cerrarEliminar').onclick = () => cerrarModal('modalEliminar');
+        document.getElementById('btnCancelarEliminar').onclick = () => cerrarModal('modalEliminar');
+    });
+
+    // FUNCIONES UTILITARIAS
+    function actualizarEstadoCita(nuevoEstado) {
+        if (!citaSeleccionada) return;
+        fetch(`/medico/citas/${citaSeleccionada.id}/estado`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                [csrfHeader]: csrfToken
+            },
+            body: new URLSearchParams({
+                estado: 'ATENDIDA' // o CONFIRMADA, CANCELADA, etc.
+            })
+        }).then(res => res.ok ? location.reload() : alert("❌ Error al actualizar estado."))
+            .catch(err => alert("❌ Error: " + err));
+    }
+
+    function abrirModal(id) {
+        document.getElementById(id)?.style.setProperty('display', 'block');
+    }
+
+    function cerrarModal(id) {
+        document.getElementById(id)?.style.setProperty('display', 'none');
+    }
+
+    function cerrarModalAcciones() {
+        cerrarModal('modalAcciones');
+        citaSeleccionada = null;
+    }
+</script>
+
 </body>
 </html>

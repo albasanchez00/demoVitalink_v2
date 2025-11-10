@@ -21,6 +21,9 @@ public class Conversacion {
     @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="creado_por", nullable=false)
     private Usuarios creadoPor;
 
+    @Column(name = "direct_key", length = 100, unique = true)
+    private String directKey; // clave única calculada entre usuarios
+
     @Column(name="creado_en", nullable=false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
@@ -35,7 +38,6 @@ public class Conversacion {
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -43,7 +45,6 @@ public class Conversacion {
     public String getTipo() {
         return tipo;
     }
-
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
@@ -51,7 +52,6 @@ public class Conversacion {
     public String getServicio() {
         return servicio;
     }
-
     public void setServicio(String servicio) {
         this.servicio = servicio;
     }
@@ -59,7 +59,6 @@ public class Conversacion {
     public Usuarios getCreadoPor() {
         return creadoPor;
     }
-
     public void setCreadoPor(Usuarios creadoPor) {
         this.creadoPor = creadoPor;
     }
@@ -67,7 +66,6 @@ public class Conversacion {
     public LocalDateTime getCreadoEn() {
         return creadoEn;
     }
-
     public void setCreadoEn(LocalDateTime creadoEn) {
         this.creadoEn = creadoEn;
     }
@@ -75,8 +73,14 @@ public class Conversacion {
     public Set<Usuarios> getMiembros() {
         return miembros;
     }
-
     public void setMiembros(Set<Usuarios> miembros) {
         this.miembros = miembros;
+    }
+
+    public String getDirectKey() {
+        return directKey;
+    }
+    public void setDirectKey(String directKey) {
+        this.directKey = directKey;
     }
 }

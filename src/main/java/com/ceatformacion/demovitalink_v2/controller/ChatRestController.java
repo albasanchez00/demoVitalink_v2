@@ -74,12 +74,12 @@ public class ChatRestController {
         return new PageImpl<>(dtos, mensajes.getPageable(), mensajes.getTotalElements());
     }
 
-    /** Crea o reutiliza una conversación DIRECT entre el usuario actual y otro username */
     @PostMapping("/conversaciones/directa")
     @Transactional
     public ResponseEntity<ConversacionDTO> crearDirecta(Principal principal,
                                                         @RequestParam("username") String otroUsername) {
-        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        if (principal == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         var me = usuariosRepo.findByUsernameIgnoreCase(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario actual no encontrado"));
@@ -87,24 +87,10 @@ public class ChatRestController {
         var otro = usuariosRepo.findByUsernameIgnoreCase(otroUsername)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario destino no encontrado"));
 
-        var existente = convRepo.findDirectaEntre(me.getId_usuario(), otro.getId_usuario());
-        if (existente.isPresent()) {
-            return ResponseEntity.ok(ConversacionDTO.of(existente.get()));
-        }
-
-        var c = new Conversacion();
-        c.setTipo("DIRECT");
-        c.setServicio("CHAT");
-        c.setCreadoPor(me);
-
-        var set = new HashSet<Usuarios>();
-        set.add(me);
-        set.add(otro);
-        c.setMiembros(set);
-
-        var creada = convRepo.save(c);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ConversacionDTO.of(creada));
+        var conv = chat.getOrCreateDirectConversation(me, otro);
+        return ResponseEntity.ok(ConversacionDTO.of(conv));
     }
+
 
     // --- Mappers / DTOs internos del controlador ---
     private ConversacionRow toRow(Conversacion c) {
@@ -121,4 +107,16 @@ public class ChatRestController {
     public record ConversacionRow(Integer id, String tipo, String servicio, int miembrosCount, LocalDateTime creadoEn) {}
 
     private static String safe(String s) { return s == null ? "" : s; }
+
+    @DeleteMapping("/conversaciones/{id}")
+    @Transactional
+    public ResponseEntity<Void> eliminarConversacion(@PathVariable Integer id, Principal principal) {
+        if (principal == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+        chat.eliminarConversacion(id, userId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

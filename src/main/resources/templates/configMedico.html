@@ -174,53 +174,157 @@
             </section>
 
             <!-- MENSAJERÍA -->
+            <!-- MENSAJERÍA -->
             <section id="tab-chat" role="tabpanel" aria-labelledby="tab-btn-chat" hidden>
-                <div class="empty">
-                    <h3>Mensajería</h3>
-                    <p class="muted">Próximamente: estados de disponibilidad, respuestas rápidas y firmas de chat.</p>
-                </div>
+                <form id="form-chat" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="estadoChat">Estado</label>
+                        <select id="estadoChat" name="chat.estado">
+                            <option value="DISPONIBLE">Disponible</option>
+                            <option value="OCUPADO">Ocupado</option>
+                            <option value="AUSENTE">Ausente</option>
+                        </select>
+                        <small class="help">Tu estado visible para otros médicos y pacientes.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firmaChat">Firma de chat</label>
+                        <input id="firmaChat" name="chat.firmaChat" type="text" placeholder="Dr./Dra. {nombre}" />
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="respuestasRapidasJson">Respuestas rápidas (JSON)</label>
+                        <textarea id="respuestasRapidasJson" name="chat.respuestasRapidasJson" rows="5" spellcheck="false">
+                        {"hola":"Hola, ¿en qué puedo ayudarte?","gracias":"Gracias, que tenga un buen día."}
+                        </textarea>
+                        <small class="help">Formato JSON. Ejemplo: {"hola":"Hola, ¿cómo estás?"}</small>
+                    </div>
+                </form>
             </section>
 
             <!-- PLANTILLAS -->
+            <!-- PLANTILLAS -->
             <section id="tab-plantillas" role="tabpanel" aria-labelledby="tab-btn-plantillas" hidden>
-                <div class="empty">
-                    <h3>Plantillas</h3>
-                    <p class="muted">Gestiona plantillas de informes y mensajes desde el módulo de “Plantillas”.</p>
-                </div>
+                <form id="form-plantillas" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="tipoPlantilla">Tipo</label>
+                        <select id="tipoPlantilla" name="plantillas.tipo">
+                            <option value="INFORME">Informe médico</option>
+                            <option value="MENSAJE">Mensaje</option>
+                            <option value="OTRO">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombrePlantilla">Nombre</label>
+                        <input id="nombrePlantilla" name="plantillas.nombre" type="text" placeholder="Ej. Seguimiento mensual" />
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="contenidoPlantilla">Contenido</label>
+                        <textarea id="contenidoPlantilla" name="plantillas.contenido" rows="6" placeholder="Escribe aquí la plantilla..."></textarea>
+                        <small class="help">Puedes usar variables como {paciente}, {fecha}, {doctor}.</small>
+                    </div>
+                </form>
             </section>
 
             <!-- INTEGRACIONES -->
+            <!-- INTEGRACIONES -->
             <section id="tab-integraciones" role="tabpanel" aria-labelledby="tab-btn-integraciones" hidden>
-                <div class="empty">
-                    <h3>Integraciones</h3>
-                    <p class="muted">Calendario externo (ICS), correo y SMS llegarán aquí más adelante.</p>
-                </div>
+                <form id="form-integraciones" class="grid-2" novalidate>
+                    <fieldset class="form-group">
+                        <legend>Servicios externos</legend>
+                        <label><input type="checkbox" name="integraciones.googleCalendar" /> Google Calendar</label><br/>
+                        <label><input type="checkbox" name="integraciones.outlookCalendar" /> Outlook Calendar</label><br/>
+                        <label><input type="checkbox" name="integraciones.smsProvider" /> Proveedor SMS</label>
+                    </fieldset>
+
+                    <div class="form-group col-span-2">
+                        <label for="apiKeysJson">API Keys (JSON)</label>
+                        <textarea id="apiKeysJson" name="integraciones.apiKeysJson" rows="4" spellcheck="false">
+                        {"google":"","outlook":"","sms":""}
+                        </textarea>
+                        <small class="help">Ejemplo: {"google":"AIza...","outlook":"XXXX","sms":"key_123"}</small>
+                    </div>
+                </form>
             </section>
 
             <!-- SEGURIDAD -->
+            <!-- SEGURIDAD -->
             <section id="tab-seguridad" role="tabpanel" aria-labelledby="tab-btn-seguridad" hidden>
-                <div class="empty">
-                    <h3>Seguridad</h3>
-                    <p class="muted">Cambio de contraseña y 2FA (en roadmap).</p>
-                </div>
+                <form id="form-seguridad" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="nuevaPassword">Nueva contraseña</label>
+                        <input id="nuevaPassword" name="seguridad.nuevaPassword" type="password" minlength="6" />
+                        <small class="help">Debe tener al menos 6 caracteres.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmarPassword">Confirmar contraseña</label>
+                        <input id="confirmarPassword" name="seguridad.confirmarPassword" type="password" minlength="6" />
+                    </div>
+
+                    <fieldset class="form-group col-span-2">
+                        <legend>Autenticación en dos pasos (2FA)</legend>
+                        <label><input type="checkbox" name="seguridad.activar2FA" /> Activar verificación 2FA</label>
+                        <small class="help">Recibirás un código temporal en tu dispositivo al iniciar sesión.</small>
+                    </fieldset>
+                </form>
             </section>
+
 
             <!-- PRIVACIDAD -->
+            <!-- PRIVACIDAD -->
             <section id="tab-privacidad" role="tabpanel" aria-labelledby="tab-btn-privacidad" hidden>
-                <div class="empty">
-                    <h3>Privacidad</h3>
-                    <p class="muted">Preferencias de visibilidad y consentimiento (próximamente).</p>
-                </div>
+                <form id="form-privacidad" class="grid-2" novalidate>
+                    <fieldset class="form-group">
+                        <legend>Visibilidad del perfil</legend>
+                        <label><input type="radio" name="privacidad.visibilidad" value="PUBLICO" checked/> Público (otros médicos pueden ver tu perfil)</label><br/>
+                        <label><input type="radio" name="privacidad.visibilidad" value="LIMITADO"/> Limitado (solo pacientes asignados)</label><br/>
+                        <label><input type="radio" name="privacidad.visibilidad" value="PRIVADO"/> Privado (oculto para todos)</label>
+                    </fieldset>
+
+                    <fieldset class="form-group">
+                        <legend>Consentimientos</legend>
+                        <label><input type="checkbox" name="privacidad.usoDatos" checked/> Permitir uso de mis datos con fines estadísticos</label><br/>
+                        <label><input type="checkbox" name="privacidad.boletines"/> Aceptar recibir boletines o comunicaciones internas</label>
+                    </fieldset>
+                </form>
             </section>
+
 
             <!-- CENTRO -->
+            <!-- CENTRO -->
             <section id="tab-centro" role="tabpanel" aria-labelledby="tab-btn-centro" hidden>
-                <div class="empty">
-                    <h3>Centro</h3>
-                    <p class="muted">Datos del centro/consulta se configurarán aquí en una fase posterior.</p>
-                </div>
-            </section>
+                <form id="form-centro" class="grid-2" novalidate>
+                    <div class="form-group">
+                        <label for="nombreCentro">Nombre del centro</label>
+                        <input id="nombreCentro" name="centro.nombreCentro" type="text" placeholder="Ej. Clínica San José" />
+                    </div>
 
+                    <div class="form-group">
+                        <label for="telefonoCentro">Teléfono</label>
+                        <input id="telefonoCentro" name="centro.telefonoCentro" type="tel" placeholder="+34 900 123 456" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccionCentro">Dirección</label>
+                        <input id="direccionCentro" name="centro.direccionCentro" type="text" placeholder="Calle Mayor, 10, Madrid" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horarioCentro">Horario de atención</label>
+                        <input id="horarioCentro" name="centro.horarioCentro" type="text" placeholder="Lun-Vie 9:00–14:00" />
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="serviciosCentro">Servicios ofrecidos (JSON)</label>
+                        <textarea id="serviciosCentro" name="centro.serviciosCentroJson" rows="4" spellcheck="false">
+                        {"cardiologia":true,"pediatria":true,"psicologia":false}
+                        </textarea>
+                        <small class="help">Ejemplo: {"cardiologia":true,"pediatria":true}</small>
+                    </div>
+                </form>
+            </section>
         </main>
 
         <footer class="config-footer">

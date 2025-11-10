@@ -1,5 +1,6 @@
 package com.ceatformacion.demovitalink_v2.controller;
 
+import com.ceatformacion.demovitalink_v2.dto.EventoCalendarDTO;
 import com.ceatformacion.demovitalink_v2.model.Citas;
 import com.ceatformacion.demovitalink_v2.model.Rol;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
@@ -7,7 +8,6 @@ import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.CitasService;
 import com.ceatformacion.demovitalink_v2.services.DisponibilidadService;
 import com.ceatformacion.demovitalink_v2.services.UsuariosDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -131,26 +130,25 @@ public class CitasController {
     }
 
     // ENDPOINT JSON PARA CALENDARIO DEL USUARIO LOGUEADO
-    @PreAuthorize("hasRole('USER')")
     @GetMapping(value = "/api/citas/mias", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Map<String, Object>> citasMias(@AuthenticationPrincipal UsuariosDetails principal) {
+    public List<EventoCalendarDTO> citasMias(@AuthenticationPrincipal UsuariosDetails principal) {
         Usuarios usuario = usuariosRepository.findById(principal.getUsuario().getId_usuario())
                 .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-        var lista = citasService.obtenerCitasPorUsuario(usuario);
-        var out = new ArrayList<Map<String, Object>>(lista.size());
-        for (Citas c : lista) {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("id", c.getId_cita());
-            m.put("title", (c.getTitulo() != null && !c.getTitulo().isBlank()) ? c.getTitulo() : "Cita");
-            LocalDateTime start = LocalDateTime.of(c.getFecha(), c.getHora());
-            LocalDateTime end = start.plusMinutes(c.getDuracionMinutos());
-            m.put("start", start.toString());
-            m.put("end", end.toString());
-            if (c.getEstado() != null) m.put("estado", c.getEstado().name());
-            out.add(m);
-        }
-        return out;
+        return citasService.obtenerCitasPorUsuario(usuario).stream()
+                .map(c -> new EventoCalendarDTO(
+                        c.getId_cita(),
+                        c.getTitulo() != null ? c.getTitulo() : "Cita",
+                        c.getFecha() + "T" + c.getHora(),
+                        c.getFecha() + "T" + c.getHora().plusMinutes(c.getDuracionMinutos()),
+                        c.getEstado() != null ? c.getEstado().name() : "SIN_ESTADO",
+                        c.getMedico() != null ? c.getMedico().getId_usuario() : null,
+                        (c.getMedico() != null && c.getMedico().getCliente() != null)
+                                ? c.getMedico().getCliente().getNombre() + " " + c.getMedico().getCliente().getApellidos()
+                                : "Médico no asignado",
+                        c.getDescripcion() != null ? c.getDescripcion() : "Sin descripción"
+                ))
+                .toList();
     }
 }

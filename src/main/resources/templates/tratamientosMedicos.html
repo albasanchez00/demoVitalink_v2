@@ -18,7 +18,7 @@
                 <div class="header-right">
                     <h2>
                         <span th:if="${usuario != null}"
-                          th:text="'Tratamientos de: ' + ${usuario.username}">Tratamientos</span>
+                          th:text="'Tratamientos de: ' + ${usuario.username}">Tratamiento</span>
                         <span th:if="${usuario == null}">Tratamientos</span>
                     </h2>
 
@@ -41,8 +41,8 @@
                 <!-- Botón de volver panelUsuario -->
                 <a class="btn-sec volver-btn" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
                 <!-- Botón de nuevo tratamiento -->
-                <a class="btn" th:if="${usuario != null}" th:href="@{/medico/nuevo/{id}(id=${usuario.id_usuario})}">+ Nuevo tratamiento</a>
-                <a class="btn" th:if="${usuario == null}" th:href="@{/medico/nuevo}">+ Nuevo tratamiento</a>
+                <a class="btn volver-btn" th:if="${usuario != null}" th:href="@{/medico/nuevo/{id}(id=${usuario.id_usuario})}">+ Nuevo tratamiento</a>
+                <a class="btn volver-btn" th:if="${usuario == null}" th:href="@{/medico/nuevo}">+ Nuevo tratamiento</a>
             </div>
 
             <div class="tabla-wrap">

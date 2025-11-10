@@ -37,16 +37,96 @@
                     </button>
                 </form>
             </section>
-            <section class="dashboard-overview">
-                <div class="card">⏰ Recordatorios de Medicación</div>
-                <div class="card">📉 Evolución de Síntomas</div>
-                <div class="card">📊 Progreso del Tratamiento</div>
-                <div class="card wide-card">📣 Notificaciones y Mensajes</div>
-                <div class="card">✅ Adherencia al Tratamiento</div>
-                <div class="card">⚠️ Alertas de Dosis Olvidadas</div>
-                <div class="card">💬 Conversaciones Asistente</div>
-            </section>
+            <section class="dashboard-overview" id="panel-usuario" th:with="p=${panel}">
+                <div class="card">
+                    <h3>📊 Estadísticas</h3>
+                    <p>📉 Evolución de síntomas</p>
 
+                    <p>
+                        📊 Progreso del tratamiento
+                        <span id="trat-activos" class="mini"
+                              th:text="${p != null and p.tratamientosEnCurso != null} ? '(' + p.tratamientosEnCurso + ' activos)' : ''">
+        <!-- fallback -->
+      </span>
+                    </p>
+
+                    <p>
+                        ✅ Adherencia al tratamiento
+                        <span id="adh-porc" class="mini"
+                              th:text="${p != null and p.adherenciaPorc != null} ? ${#numbers.formatInteger(p.adherenciaPorc,0)} + '%' : '0%'">
+        0%
+      </span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📄 Historial Médico</h3>
+                    <p>
+                        📅 Citas pasadas y diagnósticos
+                        <span id="citas-pasadas" class="mini"
+                              th:text="${p != null and p.citasPasadas != null} ? '(' + p.citasPasadas + ')' : ''"></span>
+                    </p>
+                    <p>
+                        📂 Descarga de informes
+                        <span class="mini"
+                              th:text="${p != null and p.informes != null} ? '(' + p.informes + ')' : ''"></span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>⏰ Recordatorios</h3>
+                    <p>
+                        🔔 Próximos medicamentos
+                        <span id="prox-med" class="mini"
+                              th:text="${p != null and p.proximoMedicamento != null} ?
+                     '— ' + p.proximoMedicamento + (p.proximaDosisHoraFmt != null ? ' · ' + p.proximaDosisHoraFmt : '') : '—'">
+        —
+      </span>
+                    </p>
+                    <p>
+                        🏥 Próxima cita
+                        <span id="prox-cita" class="mini"
+                              th:text="${p != null and p.proximaCitaFmt != null} ? p.proximaCitaFmt : '—'">—</span>
+                    </p>
+                    <p>
+                        ⚠️ Alertas de dosis olvidadas
+                        <span id="alertas-dosis" class="mini"
+                              th:text="${p != null and p.alertasDosis != null and p.alertasDosis > 0} ? '(' + p.alertasDosis + ')' : ''"></span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📩 Mensajes</h3>
+                    <p>
+                        💬 Mensajes sin leer
+                        <span id="msgs-unread" class="pill pill--info"
+                              th:text="${p != null and p.unread != null} ? p.unread : 0">0</span>
+                    </p>
+                    <p>
+                        🔔 Notificaciones recientes
+                        <span class="pill pill--muted"
+                              th:text="${p != null and p.notifs != null} ? p.notifs : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>⚙️ Configuración</h3>
+                    <p>
+                        👤 Editar perfil
+                        <span class="pill pill--warn"
+                              th:if="${p != null and p.perfilCompleto != null and !p.perfilCompleto}">
+        incompleto
+      </span>
+                    </p>
+                    <p>🔧 Ajustes de notificaciones</p>
+                </div>
+
+                <div class="card">
+                    <h3>🤖 Asistente</h3>
+                    <p>🗣️ Consultar</p>
+                    <p>🔧 Configuración</p>
+                </div>
+            </section>
             <!-- Botón flotante -->
             <div id="chat-toggle"  onclick="toggleChatById('chat-box')">💬</div>
             <!-- Ventana de chat -->
@@ -59,6 +139,7 @@
                 </div>
             </div>
         </section>
+
         <section class="section_main" sec:authorize="hasRole('ADMIN')" data-role="admin">
             <section class="section_panelUser">
                 <nav class="nav_panelUser">
@@ -72,24 +153,97 @@
                     </ul>
                 </nav>
             </section>
+
             <section>
                 <form th:action="@{/logout}" method="post" class="logout-form">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn-logout">
-                        ⎋ Salir
-                    </button>
+                    <button type="submit" class="btn-logout">⎋ Salir</button>
                 </form>
             </section>
-            <section class="dashboard-overview">
-                <div class="card">👥 Gestion de Usuarios</div>
-                <div class="card">🩺 Gestion Tratamientos</div>
-                <div class="card">📅 Agenda y Control de Citas</div>
-                <div class="card">📈 Panel Estadísticas y Reportes Globales</div>
-                <div class="card">📬 Sistema Mensajería</div>
-                <div class="card wide-card">🛠️ Configuraciones Generales</div>
+
+            <!-- === Panel principal de administración === -->
+            <section class="dashboard-overview" id="panel-admin" th:with="a=${adminPanel}">
+
+                <div class="card">
+                    <h3>👥 Gestión de Usuarios</h3>
+                    <p>📋 Usuarios registrados
+                        <span id="admin-usuarios" class="mini"
+                              th:text="${a != null and a.totalUsuarios != null} ? '(' + a.totalUsuarios + ')' : '(0)'">(0)</span>
+                    </p>
+                    <p>🟢 Activos
+                        <span id="admin-activos" class="pill pill--info"
+                              th:text="${a != null and a.usuariosActivos != null} ? a.usuariosActivos : 0">0</span>
+                        &nbsp; 🔴 Inactivos
+                        <span id="admin-inactivos" class="pill pill--warn"
+                              th:text="${a != null and a.usuariosInactivos != null} ? a.usuariosInactivos : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🩺 Gestión de Tratamientos</h3>
+                    <p>📄 Tratamientos activos
+                        <span id="admin-trat-activos" class="mini"
+                              th:text="${a != null and a.tratActivos != null} ? '(' + a.tratActivos + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>⏳ En revisión
+                        <span id="admin-trat-revision" class="pill pill--muted"
+                              th:text="${a != null and a.tratRevision != null} ? a.tratRevision : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📅 Agenda y Citas</h3>
+                    <p>📆 Citas totales
+                        <span id="admin-citas" class="mini"
+                              th:text="${a != null and a.citasTotales != null} ? '(' + a.citasTotales + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>🕒 Próximas 24h
+                        <span id="admin-citas-hoy" class="pill pill--info"
+                              th:text="${a != null and a.citasHoy != null} ? a.citasHoy : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📈 Estadísticas Globales</h3>
+                    <p>📊 Reportes generados
+                        <span id="admin-reportes" class="mini"
+                              th:text="${a != null and a.reportesGenerados != null} ? '(' + a.reportesGenerados + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>🧩 Áreas monitoreadas
+                        <span id="admin-areas" class="pill pill--muted"
+                              th:text="${a != null and a.areasMonitoreadas != null} ? a.areasMonitoreadas : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📬 Sistema de Mensajería</h3>
+                    <p>💬 Mensajes sin leer
+                        <span id="admin-msgs" class="pill pill--info"
+                              th:text="${a != null and a.mensajesPendientes != null} ? a.mensajesPendientes : 0">0</span>
+                    </p>
+                    <p>🔔 Notificaciones enviadas
+                        <span id="admin-notifs" class="pill pill--muted"
+                              th:text="${a != null and a.notifs != null} ? a.notifs : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card wide-card">
+                    <h3>🛠️ Configuraciones Generales</h3>
+                    <p>⚙️ Parámetros del sistema
+                        <span id="admin-configs" class="mini"
+                              th:text="${a != null and a.configsTotales != null} ? '(' + a.configsTotales + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>🧾 Última actualización
+                        <span id="admin-update" class="mini"
+                              th:text="${a != null and a.ultimaActualizacion != null} ? a.ultimaActualizacion : '—'">—</span>
+                    </p>
+                </div>
+
             </section>
+
+            <!-- Chat flotante -->
             <div id="chat-toggle2" onclick="toggleChatById('chat-box2')">💬</div>
-            <!-- Ventana de chat -->
+
             <div id="chat-box2">
                 <div id="chat-header2">Asistente Virtual <span onclick="toggleChat()">X</span></div>
                 <div id="chat-body2">
@@ -107,31 +261,99 @@
                         <li><a th:href="@{/medico/pacientes}">Pacientes</a></li>
                         <li><a th:href="@{/medico/citas}">Citas</a></li>
                         <li><a th:href="@{/medico/tratamientos}">Tratamientos</a></li>
-                        <li><a th:href="@{/medico/sintomas}">Sintomas</a></li>
+                        <li><a th:href="@{/medico/sintomas}">Síntomas</a></li>
                         <li><a th:href="@{/medico/chat}">Mensajes</a></li>
                         <li><a th:href="@{/medico/configMedico}">Configuración</a></li>
                     </ul>
                 </nav>
             </section>
+
             <section>
                 <form th:action="@{/logout}" method="post" class="logout-form">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn-logout">
-                        ⎋ Salir
-                    </button>
+                    <button type="submit" class="btn-logout">⎋ Salir</button>
                 </form>
             </section>
-            <section class="dashboard-overview">
-                <div class="card">👥 Pacientes vinculados</div>
-                <div class="card">📅 Citas Programadas Hoy</div>
-                <div class="card">📈 Registro de Tratamientos</div>
-                <div class="card">🧾 Reportes Sintomáticos Recientes</div>
-                <div class="card">📬 Mensajes Pendientes</div>
-                <div class="card wide-card">🛠️ Configuraciones Generales</div>
+
+            <!-- === Panel principal del médico === -->
+            <section class="dashboard-overview" id="panel-medico" th:with="m=${medicoPanel}">
+
+                <div class="card">
+                    <h3>👥 Pacientes Vinculados</h3>
+                    <p>🧑‍⚕️ Total de pacientes
+                        <span id="med-pacientes-total" class="mini"
+                              th:text="${m != null and m.totalPacientes != null} ? '(' + m.totalPacientes + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>✅ Pacientes activos
+                        <span id="med-pacientes-activos" class="pill pill--info"
+                              th:text="${m != null and m.pacientesActivos != null} ? m.pacientesActivos : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📅 Citas Programadas</h3>
+                    <p>📆 Citas de hoy
+                        <span id="med-citas-hoy" class="mini"
+                              th:text="${m != null and m.citasHoy != null} ? '(' + m.citasHoy + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>🕒 Próxima cita
+                        <span id="med-prox-cita" class="pill pill--muted"
+                              th:text="${m != null and m.proximaCita != null} ? m.proximaCita : '—'">—</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📈 Registro de Tratamientos</h3>
+                    <p>💊 Tratamientos activos
+                        <span id="med-trat-activos" class="mini"
+                              th:text="${m != null and m.tratActivos != null} ? '(' + m.tratActivos + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>⏳ En seguimiento
+                        <span id="med-trat-seguimiento" class="pill pill--info"
+                              th:text="${m != null and m.tratSeguimiento != null} ? m.tratSeguimiento : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🧾 Reportes Sintomáticos</h3>
+                    <p>📋 Reportes recientes
+                        <span id="med-reportes" class="mini"
+                              th:text="${m != null and m.reportesRecientes != null} ? '(' + m.reportesRecientes + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>⚠️ Alertas detectadas
+                        <span id="med-alertas" class="pill pill--warn"
+                              th:text="${m != null and m.alertasDetectadas != null} ? m.alertasDetectadas : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>📬 Mensajería con Pacientes</h3>
+                    <p>💬 Mensajes pendientes
+                        <span id="med-msgs" class="pill pill--info"
+                              th:text="${m != null and m.mensajesPendientes != null} ? m.mensajesPendientes : 0">0</span>
+                    </p>
+                    <p>🔔 Notificaciones enviadas
+                        <span id="med-notifs" class="pill pill--muted"
+                              th:text="${m != null and m.notifs != null} ? m.notifs : 0">0</span>
+                    </p>
+                </div>
+
+                <div class="card wide-card">
+                    <h3>🛠️ Configuración del Médico</h3>
+                    <p>⚙️ Preferencias guardadas
+                        <span id="med-configs" class="mini"
+                              th:text="${m != null and m.configsTotales != null} ? '(' + m.configsTotales + ')' : '(—)'">(—)</span>
+                    </p>
+                    <p>🧾 Última actualización
+                        <span id="med-update" class="mini"
+                              th:text="${m != null and m.ultimaActualizacion != null} ? m.ultimaActualizacion : '—'">—</span>
+                    </p>
+                </div>
+
             </section>
 
+            <!-- Chat flotante -->
             <div id="chat-toggle3" onclick="toggleChatById('chat-box3')">💬</div>
-            <!-- Ventana de chat -->
             <div id="chat-box3">
                 <div id="chat-header3">Asistente Virtual <span onclick="toggleChat()">X</span></div>
                 <div id="chat-body3">
@@ -141,6 +363,7 @@
                 </div>
             </div>
         </section>
+
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
@@ -156,6 +379,46 @@
         const el = document.getElementById(id);
         if (el) el.classList.toggle("open");
     }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const root = document.getElementById("panel-usuario");
+        if (!root) return;
+        const $ = s => document.querySelector(s);
+
+        const $tratActivos = $("#trat-activos");
+        const $adh         = $("#adh-porc");
+        const $citasPast   = $("#citas-pasadas");
+        const $proxMed     = $("#prox-med");
+        const $proxCita    = $("#prox-cita");
+        const $alertas     = $("#alertas-dosis");
+        const $unread      = $("#msgs-unread");
+
+        fetch("/api/panel/overview", { headers: { "Accept": "application/json" }})
+            .then(r => r.ok ? r.json() : Promise.reject(r))
+            .then(p => {
+                if ($tratActivos) $tratActivos.textContent =
+                    (p.tratamientosEnCurso ?? 0) > 0 ? `(${p.tratamientosEnCurso} activos)` : "";
+
+                if ($adh) $adh.textContent = ((p.adherenciaPorc ?? 0) | 0) + "%";
+
+                if ($citasPast) $citasPast.textContent = `(${p.citasPasadas ?? 0})`;
+
+                if ($proxMed) {
+                    const med  = p.proximoMedicamento;
+                    const hora = p.proximaDosisHoraFmt;
+                    $proxMed.textContent = med ? `— ${med}${hora ? " · " + hora : ""}` : "—";
+                }
+
+                if ($proxCita) $proxCita.textContent = p.proximaCitaFmt ?? "—";
+
+                if ($alertas) $alertas.textContent =
+                    (p.alertasDosis ?? 0) > 0 ? `(${p.alertasDosis})` : "";
+
+                if ($unread) $unread.textContent = p.unread ?? 0;
+            })
+            .catch(() => {/* deja el SSR de Thymeleaf */});
+    });
 </script>
 <script th:src="@{/js/panelUsuario.js}" src="/js/panelUsuario.js"></script>
 <script th:src="@{/js/darkTheme.js}" src="/js/darkTheme.js"></script>

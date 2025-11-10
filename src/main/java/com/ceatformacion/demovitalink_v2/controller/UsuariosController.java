@@ -1,12 +1,10 @@
 package com.ceatformacion.demovitalink_v2.controller;
 
-import com.ceatformacion.demovitalink_v2.model.Citas;
-import com.ceatformacion.demovitalink_v2.model.Clientes;
-import com.ceatformacion.demovitalink_v2.model.Rol;
-import com.ceatformacion.demovitalink_v2.model.Usuarios;
+import com.ceatformacion.demovitalink_v2.model.*;
 import com.ceatformacion.demovitalink_v2.repository.CitasRepository;
 import com.ceatformacion.demovitalink_v2.repository.ClientesRepository;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
+import com.ceatformacion.demovitalink_v2.services.PanelUsuarioService;
 import com.ceatformacion.demovitalink_v2.services.UsuariosDetails;
 import com.ceatformacion.demovitalink_v2.utils.PasswordGenerator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +35,14 @@ public class UsuariosController {
     @Autowired private ClientesRepository clientesRepository;
     @Autowired private UsuariosRepository usuariosRepository;
     @Autowired private PasswordEncoder encoder;
+    @Autowired private final PanelUsuarioService panelUsuarioService;
+
+    public UsuariosController(ClientesRepository clientesRepository, UsuariosRepository usuariosRepository, PasswordEncoder encoder, PanelUsuarioService panelUsuarioService) {
+        this.clientesRepository = clientesRepository;
+        this.usuariosRepository = usuariosRepository;
+        this.encoder = encoder;
+        this.panelUsuarioService = panelUsuarioService;
+    }
 
     // Asegura que SIEMPRE exista `${usuario}` en el Model para las vistas de este controller
     @ModelAttribute("usuario")
@@ -72,6 +78,12 @@ public class UsuariosController {
     public String procesarAlgo(@ModelAttribute Usuarios usuariosForm) {
         usuariosRepository.save(usuariosForm);
         return "redirect:/usuarios/panelUsuario";
+    }
+
+    @ModelAttribute("panel")
+    public PanelUsuarioVM supplyPanel(Authentication auth) {
+        String user = (auth != null) ? auth.getName() : "anon";
+        return panelUsuarioService.cargarPanel(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

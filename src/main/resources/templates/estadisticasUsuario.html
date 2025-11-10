@@ -7,49 +7,56 @@
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/style2.css}">
     <script th:src="@{/js/darkTheme.js}" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <section class="contenedor">
         <div th:replace="fragments/header :: header"></div>
 
         <main id="main-panelEvolucion">
-            <section class="section_main" >
             <input type="hidden" id="idUsuario" th:value="${id_usuario}"/>
-                <section id="estadisticas" class="stats-wrap">
-                    <header class="stats-header">
-                        <div class="stats-title">
-                            <span class="stats-emoji">📊</span>
-                            <h1>Estadísticas del Paciente</h1>
-                        </div>
-                    </header>
-
-                    <!-- Barra de filtros compacta -->
-                    <div class="stats-filtros">
-                        <label>Desde <input type="date" id="desde"></label>
-                        <label>Hasta <input type="date" id="hasta"></label>
-                        <button id="aplicar" class="btn_primario">Aplicar</button>
+            <section id="estadisticas" class="stats-wrap">
+                <header class="stats-header">
+                    <div class="stats-title">
+                        <span class="stats-emoji">📊</span>
+                        <h1>Estadísticas del Paciente</h1>
                     </div>
-                    <div class="stats-grid">
-                        <div class="card">
-                            <div class="card-head"><h3>Tratamientos</h3></div>
+                </header>
+
+                <!-- Barra de filtros compacta -->
+                <div class="stats-filtros">
+                    <label>Desde <input type="date" id="desde"></label>
+                    <label>Hasta <input type="date" id="hasta"></label>
+                    <button id="aplicar" class="btn_primario">Aplicar</button>
+                </div>
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-head"><h3>Tratamientos</h3></div>
+                        <div class="chart-box">
                             <canvas id="chartTratamientosTipo"></canvas>
                         </div>
-                        <div class="card">
-                            <div class="card-head"><h3>Síntomas por día</h3></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head"><h3>Síntomas por día</h3></div>
+                        <div class="chart-box">
                             <canvas id="chartSintomasDia"></canvas>
                         </div>
-                        <div class="card">
-                            <div class="card-head"><h3>Citas por día</h3></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head"><h3>Citas por día</h3></div>
+                        <div class="chart-box">
                             <canvas id="chartCitasDia"></canvas>
                         </div>
                     </div>
-                </section>
+                </div>
             </section>
           </main>
 
         <div th:replace="fragments/footer :: footer"></div>
     </section>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@2.1.0/dist/chartjs-adapter-moment.bundle.min.js"></script>
     <script th:src="@{/js/estadisticas.js}"></script>
     <script>
         // pon aquí el id REAL del usuario logueado

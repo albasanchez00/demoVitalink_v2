@@ -28,7 +28,7 @@
             <small class="crear-conv__help">Crea o reabre una conversación DIRECT con el usuario indicado.</small>
         </div>
 
-        <ul id="listaConversaciones">
+        <ul id="listaConversaciones" class="chat-list">
             <li class="empty-state">Cargando conversaciones…</li>
         </ul>
     </aside>
@@ -36,6 +36,7 @@
     <main id="chat-panel">
         <!-- Cabecera de la conversación -->
         <header class="chatv2__head">
+            <button class="back-btn" type="button" aria-label="Volver">←</button>
             <div class="title">
                 <strong id="convTitle">CHAT</strong>
                 <span class="status"><span class="dot"></span> en línea</span>
@@ -73,20 +74,22 @@
 
     function initChat(){
         const yo = document.body.dataset.user || '';
-        var stomp = null;
-        var currentConvId = null;
-        var currentSubscription = null;
+        let stomp = null;
+        let currentConvId = null;
+        let currentSubscription = null;
 
-        function $lista(){ return document.getElementById('listaConversaciones'); }
-        function $msgs(){ return document.getElementById('mensajes'); }
+        const $lista = () => document.getElementById('listaConversaciones');
+        const $msgs  = () => document.getElementById('mensajes');
+        const $title = () => document.getElementById('convTitle');
 
         function renderEmptyMensajes(texto){
             $msgs().innerHTML = '<div class="empty-state">' + escapeHTML(texto) + '</div>';
         }
 
         function conectarChat() {
-            var sock = new SockJS('/ws-chat');
+            const sock = new SockJS('/ws-chat');
             stomp = Stomp.over(sock);
+            stomp.debug = () => {}; // silencia logs internos
             //stomp.debug = function(){};
             stomp.reconnect_delay = 3000;
 
@@ -109,7 +112,7 @@
 
         function cargarConversaciones() {
             fetchJSON('/api/chat/conversaciones').then(function(data){
-                var ul = $lista();
+                const ul = $lista();
                 ul.innerHTML = '';
 
                 if (!data || !data.length){
@@ -119,40 +122,73 @@
                 }
 
                 data.forEach(function(c){
-                    var li = document.createElement('li');
+                    const li = document.createElement('li');
                     li.dataset.id = c.id;
 
-                    var titulo = c.servicio ? escapeHTML(c.servicio) : ('Conversación #' + c.id);
-                    var badge = (c.miembrosCount && c.miembrosCount > 1)
+                    const titulo = c.servicio ? escapeHTML(c.servicio) : ('Conversación #' + c.id);
+                    const badge = (c.miembrosCount && c.miembrosCount > 1)
                         ? '<span class="badge">' + c.miembrosCount + '</span>'
                         : '';
 
-                    li.innerHTML =
-                        '<span class="conv-title">' + titulo + '</span>' +
-                        badge;
+                    li.innerHTML = `
+                        <div class="conv-item">
+                            <div class="info">
+                                <strong class="conv-title">${titulo}</strong>
+                                <span class="last-msg">Sin mensajes recientes</span>
+                            </div>
+                            <div class="meta">
+                                <span class="time">—</span>
+                                ${badge}
+                                <button class="delete-btn" title="Eliminar conversación">🗑️</button>
+                            </div>
+                        </div>`;
 
-                    li.onclick = function(){ abrirConversacion(c.id); };
+                    // ✅ clic para abrir conversación
+                    li.querySelector('.info').onclick = () => abrirConversacion(c.id);
+
+                    // ✅ botón eliminar conversación
+                    li.querySelector('.delete-btn').onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm('¿Seguro que deseas eliminar esta conversación?')) {
+                            fetch(`/api/chat/conversaciones/${c.id}`, { method: 'DELETE' })
+                                .then(r => {
+                                    if (!r.ok) throw new Error('Error al eliminar conversación');
+                                    return cargarConversaciones();
+                                })
+                                .catch(err => console.error('❌ Error eliminando:', err));
+                        }
+                    };
+
                     ul.appendChild(li);
                 });
 
-                if (!currentConvId){ abrirConversacion(data[0].id); }
+
+                // abrir la primera automáticamente si no hay una activa
+                if (!currentConvId && data.length > 0) abrirConversacion(data[0].id);
             }).catch(function(e){
-                console.error(e);
+                console.error('❌ Error cargando conversaciones:', e);
                 $lista().innerHTML = '<li class="empty-state">No se pudieron cargar las conversaciones.</li>';
                 renderEmptyMensajes('No se pudieron cargar los mensajes.');
             });
         }
 
+        function setConvTitleFromList(id){
+            const li = Array.from($lista().children).find(el => Number(el.dataset.id) === id);
+            const t  = li?.querySelector('.conv-title')?.textContent || 'CHAT';
+            $title().textContent = t;
+        }
+
         function abrirConversacion(id){
             if (currentConvId === id) return;
 
-            var items = $lista().children;
-            for (var i=0; i<items.length; i++){
-                var li = items[i];
+            const items = $lista().children;
+            for (let i=0; i<items.length; i++){
+                const li = items[i];
                 li.classList.toggle('is-active', Number(li.dataset.id) === id);
             }
 
             currentConvId = id;
+            setConvTitleFromList(id);
 
             if (currentSubscription){
                 try { currentSubscription.unsubscribe(); } catch(e){}
@@ -160,8 +196,8 @@
             }
 
             fetchJSON('/api/chat/conversaciones/' + id + '/mensajes').then(function(page){
-                var mensajes = (page.content || []).slice().reverse();
-                var cont = $msgs();
+                const mensajes = (page.content || []).slice().reverse();
+                const cont = $msgs();
                 cont.innerHTML = '';
 
                 if (!mensajes.length){
@@ -175,6 +211,9 @@
                 }
 
                 if (stomp && stomp.connected){ suscribirA(id); }
+
+                // 👉 activar vista "chat abierto" en móvil
+                document.body.classList.add('chat-open');
             }).catch(function(e){
                 console.error(e);
                 renderEmptyMensajes('No se pudieron cargar los mensajes.');
@@ -189,7 +228,7 @@
             currentSubscription = stomp.subscribe('/topic/conversaciones.' + convId, function(e){
                 const m = JSON.parse(e.body);
 
-                // Si el servidor reemite mi propio mensaje, lo ignoro (ya hicimos eco optimista)
+                // si es mi propio mensaje reemitido, lo ignoro (ya hicimos eco optimista)
                 if (m.remitenteNombre === yo) return;
 
                 const div = crearBurbuja(m.remitenteNombre, m.contenido, false);
@@ -201,7 +240,6 @@
         function crearBurbuja(remitente, texto, esMio){
             const div = document.createElement('div');
             div.className = 'msg' + (esMio ? ' me' : '');
-            // En mis mensajes no repito el nombre; en los ajenos, sí.
             div.innerHTML = esMio
                 ? escapeHTML(texto)
                 : '<strong>' + escapeHTML(remitente) + ':</strong> ' + escapeHTML(texto);
@@ -210,8 +248,8 @@
 
         document.getElementById('form-msg').addEventListener('submit', function(e){
             e.preventDefault();
-            var txt = document.getElementById('txt');
-            var contenido = txt.value.trim();
+            const txt = document.getElementById('txt');
+            const contenido = txt.value.trim();
             if (!contenido || !currentConvId) return;
 
             if (!stomp || !stomp.connected){
@@ -220,36 +258,43 @@
                 return;
             }
 
-            var payload = JSON.stringify({ convId: currentConvId, texto: contenido });
+            const payload = JSON.stringify({ convId: currentConvId, texto: contenido });
             stomp.send('/app/chat.send', {}, payload);
 
-            var div = crearBurbuja(yo, contenido, true);
+            const div = crearBurbuja(yo, contenido, true);
             $msgs().appendChild(div);
             txt.value = '';
             div.scrollIntoView({ behavior: 'smooth' });
         });
+
         document.getElementById('txt').addEventListener('keydown', function(e){
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 document.getElementById('form-msg').dispatchEvent(new Event('submit', {cancelable: true}));
             }
         });
+
         document.getElementById('btn-crear').addEventListener('click', function(){
-            var user = document.getElementById('nuevo-usuario').value.trim();
-            if (!user) { alert('Introduce un nombre de usuario'); return; }
+            const user = document.getElementById('nuevo-usuario').value.trim();
+            if (!user) { console.warn('Introduce un nombre de usuario');}
 
             fetchJSON('/api/chat/conversaciones/directa?username=' + encodeURIComponent(user), { method: 'POST' })
-                .then(function(){
-                    return cargarConversaciones();
-                })
-                .then(function(){
-                    alert('Conversación creada o reabierta correctamente.');
-                })
+                .then(function(){ return cargarConversaciones(); })
+                .then(function(){ alert('Conversación creada o reabierta correctamente.'); })
                 .catch(function(e){
                     console.error(e);
                     alert('Error al crear conversación.');
                 });
         });
+
+        // 👈 botón “volver” (visible en móvil) — cierra el panel y vuelve a la lista
+        document.querySelector('.back-btn')?.addEventListener('click', () => {
+            document.body.classList.remove('chat-open');
+        });
+
+        // Al pasar a escritorio, aseguramos que la clase no “bloquee” la vista
+        const mq = window.matchMedia('(min-width: 901px)');
+        mq.addEventListener?.('change', e => { if (e.matches) document.body.classList.remove('chat-open'); });
 
         function escapeHTML(s){
             return String(s).replace(/[&<>"']/g, function(c){

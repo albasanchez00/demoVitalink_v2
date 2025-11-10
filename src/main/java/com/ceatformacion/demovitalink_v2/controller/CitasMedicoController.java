@@ -11,6 +11,7 @@ import com.ceatformacion.demovitalink_v2.services.CitasService;
 import com.ceatformacion.demovitalink_v2.services.UsuariosDetails;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -39,6 +40,9 @@ public class CitasMedicoController {
         this.citasRepository = citasRepository;
     }
 
+    // ==========================================================
+    // 📅 AGENDA DEL MÉDICO (calendario FullCalendar)
+    // ==========================================================
     @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
     @GetMapping("/citas")
     @Transactional(readOnly = true)
@@ -65,13 +69,28 @@ public class CitasMedicoController {
                 medico.getId_usuario(), desde, hasta, estado
         );
 
-        // nombre “seguro” para la cabecera (evita navegar LAZY en la vista)
+        // 🔄 Convertir citas → DTO para calendario
+        List<EventoCalendarDTO> eventos = citas.stream().map(cita ->
+                new EventoCalendarDTO(
+                        cita.getId_cita(),
+                        cita.getTitulo() != null ? cita.getTitulo() : "Consulta médica",
+                        cita.getFecha() + "T" + cita.getHora(),
+                        cita.getFecha() + "T" + cita.getHora().plusMinutes(cita.getDuracionMinutos()),
+                        cita.getEstado() != null ? cita.getEstado().name() : "SIN_ESTADO",
+                        cita.getUsuario() != null ? cita.getUsuario().getId_usuario() : null,
+                        (cita.getUsuario() != null && cita.getUsuario().getCliente() != null)
+                                ? cita.getUsuario().getCliente().getNombre() + " " + cita.getUsuario().getCliente().getApellidos()
+                                : "Paciente no asignado",
+                        cita.getDescripcion()
+                )
+        ).toList();
+
+        // ✅ Nombre del médico (cabecera)
         String medicoNombre = (medico.getCliente() != null && medico.getCliente().getNombre() != null)
-                ? (medico.getCliente().getNombre() + " " +
-                (medico.getCliente().getApellidos() != null ? medico.getCliente().getApellidos() : ""))
+                ? medico.getCliente().getNombre() + " " + medico.getCliente().getApellidos()
                 : medico.getUsername();
 
-        model.addAttribute("citas", citas);
+        model.addAttribute("eventos", eventos);
         model.addAttribute("medicoActual", medico);
         model.addAttribute("medicoNombre", medicoNombre);
         model.addAttribute("desde", desde);
@@ -81,16 +100,21 @@ public class CitasMedicoController {
         return "agendaCitas";
     }
 
+    // ==========================================================
+    // 🔁 Resolver médico actual o por ID (si es admin)
+    // ==========================================================
     private Usuarios resolveMedicoConCliente(UsuariosDetails principal, Integer medicoId) {
         Usuarios yo = principal.getUsuario();
 
         if (yo.getRol() == Rol.ADMIN && medicoId != null) {
             return usuariosRepository.findByIdWithCliente(medicoId).orElse(null);
         }
-        // si es MEDICO (o ADMIN sin medicoId), cargar su propio usuario con cliente
         return usuariosRepository.findByIdWithCliente(yo.getId_usuario()).orElse(yo);
     }
 
+    // ==========================================================
+    // 🔄 Confirmar / Cancelar cita
+    // ==========================================================
     @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
     @PostMapping("/citas/{id}/confirmar")
     @Transactional
@@ -117,4 +141,57 @@ public class CitasMedicoController {
         }
         return "redirect:/medico/citas";
     }
+
+    @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
+    @PostMapping("/citas/{id}/atender")
+    @Transactional
+    public String atenderCita(@PathVariable int id, RedirectAttributes ra) {
+        return actualizarEstado(id, EstadoCita.ATENDIDA, ra);
+    }
+
+    @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
+    @PostMapping(value = "/citas/{id}/editar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> editarCita(@PathVariable int id, @RequestBody Citas citaModificada) {
+        Optional<Citas> opt = citasRepository.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Citas cita = opt.get();
+        cita.setFecha(citaModificada.getFecha());
+        cita.setHora(citaModificada.getHora());
+        cita.setDescripcion(citaModificada.getDescripcion());
+        citasRepository.save(cita);
+
+        return ResponseEntity.ok("Cita actualizada correctamente");
+    }
+
+    @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
+    @PostMapping("/citas/{id}/eliminar")
+    @Transactional
+    public String eliminarCita(@PathVariable int id, RedirectAttributes ra) {
+        citasRepository.deleteById(id);
+        ra.addFlashAttribute("ok", "Cita eliminada correctamente.");
+        return "redirect:/medico/citas";
+    }
+
+    @PreAuthorize("hasAnyRole('MEDICO','ADMIN')")
+    @PostMapping("/citas/{id}/estado")
+    @ResponseBody
+    @Transactional
+    public ResponseEntity<?> cambiarEstado(
+            @PathVariable int id,
+            @RequestParam("estado") EstadoCita nuevoEstado) {
+
+        Optional<Citas> opt = citasRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Citas cita = opt.get();
+        cita.setEstado(nuevoEstado);
+        citasRepository.save(cita);
+
+        return ResponseEntity.ok("Estado actualizado correctamente");
+    }
+
 }

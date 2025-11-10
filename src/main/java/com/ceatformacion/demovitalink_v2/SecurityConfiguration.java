@@ -41,7 +41,10 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/chat/**").hasAnyRole("MEDICO","ADMIN") // REST histórico/adjuntos
 
                 // Vistas protegidas (usa AUTHORITIES si tus valores son "Admin"/"User")
-                .requestMatchers(HttpMethod.GET, "/usuarios/panelUsuario").permitAll()
+                .requestMatchers("/usuarios/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/panel/overview").authenticated()
+
+                .requestMatchers(HttpMethod.GET, "/usuarios/panelUsuario").hasAnyRole("USER","MEDICO","ADMIN")
                 .requestMatchers("/usuarios/registroSintomas").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/usuarios/historialPaciente").permitAll()
@@ -83,6 +86,13 @@ public class SecurityConfiguration {
 
                 .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN","ROLE_ADMIN")
 
+                // ---- APIs de soporte al panel (si las usas) ----
+                .requestMatchers(HttpMethod.GET,
+                        "/api/panel/overview",
+                        "/api/mensajes/unread-count",
+                        "/api/citas/next",
+                        "/api/tratamientos/proxima-dosis"
+                ).authenticated()
 
                 .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/usuario/historial").authenticated()

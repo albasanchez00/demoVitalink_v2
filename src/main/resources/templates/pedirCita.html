@@ -81,21 +81,13 @@
         <div th:replace="~{fragments/footer :: footer}"></div>
     </section>
     <script>
-        const BASE = '';
-        const baseUrl = (typeof BASE !== 'undefined') ? BASE : '';
-        const url = `${baseUrl}/api/agenda/horas-disponibles?idMedico=${encodeURIComponent(idMedico)}&fecha=${encodeURIComponent(fechaISO)}`;
-
-    </script>
-    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const selMedico = document.querySelector('select[name="medico.id_usuario"], #medico');
-            const inputFecha = document.querySelector('input[name="fecha"], #fecha');            // <input type="date">
+            const inputFecha = document.querySelector('input[name="fecha"], #fecha');
             const selHora = document.querySelector('select[name="hora"], #hora');
 
             function toISODate(value) {
-                // Si el input es <input type="date"> el value YA viene como yyyy-MM-dd.
-                // Si por tema de máscara llega dd/MM/yyyy, lo convertimos aquí.
-                if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;          // ya es ISO
+                if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
                 const m = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
                 return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
             }
@@ -106,10 +98,11 @@
                 const idMedico = selMedico?.value;
                 const fechaRaw = inputFecha?.value;
                 const fechaISO = toISODate(fechaRaw);
+
                 if (!idMedico || !fechaISO) return;
 
                 try {
-                    const url = `${BASE}/api/agenda/horas-disponibles?idMedico=${encodeURIComponent(idMedico)}&fecha=${encodeURIComponent(fechaISO)}`;
+                    const url = `/api/agenda/horas-disponibles?idMedico=${encodeURIComponent(idMedico)}&fecha=${encodeURIComponent(fechaISO)}`;
                     console.log('[cargarHoras] GET', url);
 
                     const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
@@ -119,8 +112,9 @@
                     console.log('[cargarHoras] body', text);
 
                     let horas;
-                    try { horas = JSON.parse(text); }
-                    catch {
+                    try {
+                        horas = JSON.parse(text);
+                    } catch {
                         console.error('Respuesta no JSON (¿redirigido a login o error HTML?).');
                         selHora.innerHTML = '<option value="">— Error cargando horas —</option>';
                         return;
@@ -134,7 +128,8 @@
                     const frag = document.createDocumentFragment();
                     horas.forEach(h => {
                         const opt = document.createElement('option');
-                        opt.value = h; opt.textContent = h;
+                        opt.value = h;
+                        opt.textContent = h;
                         frag.appendChild(opt);
                     });
                     selHora.innerHTML = '';
@@ -148,10 +143,10 @@
             selMedico?.addEventListener('change', cargarHoras);
             inputFecha?.addEventListener('change', cargarHoras);
 
-            // Si ya vienen con valor (p.ej. al volver con errores), recarga:
             if (selMedico?.value && inputFecha?.value) cargarHoras();
         });
     </script>
+
     <script src="/js/calendario.js" defer></script>
 </body>
 </html>
