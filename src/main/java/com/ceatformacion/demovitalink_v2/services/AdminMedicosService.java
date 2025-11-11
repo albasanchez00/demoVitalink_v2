@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 public class AdminMedicosService {
 
@@ -69,4 +71,28 @@ public class AdminMedicosService {
         usuariosRepo.deleteById(id);
         audit.log("DELETE", "Usuarios(MEDICO)", String.valueOf(id), "");
     }
+
+    @Transactional
+    public void actualizarMedico(Integer id, Map<String, Object> datos) {
+        Usuarios medico = usuariosRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Médico no encontrado"));
+
+        if (datos.containsKey("username")) {
+            String nuevoUser = (String) datos.get("username");
+            if (nuevoUser != null && !nuevoUser.isBlank()) {
+                medico.setUsername(nuevoUser.trim());
+            }
+        }
+
+        if (datos.containsKey("password")) {
+            String raw = (String) datos.get("password");
+            if (raw != null && !raw.isBlank()) {
+                medico.setPassword(encoder.encode(raw));
+            }
+        }
+
+        usuariosRepo.save(medico);
+        audit.log("UPDATE", "Usuarios(MEDICO)", String.valueOf(id), medico.getUsername());
+    }
+
 }

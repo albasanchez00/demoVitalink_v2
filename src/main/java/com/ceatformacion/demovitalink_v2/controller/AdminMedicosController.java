@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin/medicos")
 @PreAuthorize("hasRole('ADMIN')")
@@ -70,4 +72,21 @@ public class AdminMedicosController {
         service.eliminarMedico(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> actualizarMedico(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Object> datos
+    ) {
+        try {
+            service.actualizarMedico(id, datos);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.internalServerError().body(ex.getMessage());
+        }
+    }
+
 }
