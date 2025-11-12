@@ -63,22 +63,22 @@
                     <option value="10">10</option><option value="20">20</option><option value="50">50</option>
                 </select>
             </div>
-            <!-- Modal flotante genérico -->
-            <div id="modalEditar" class="modal" style="display:none;">
-                <div class="modal-content">
-                    <h3 id="modalTitulo">Editar usuario</h3>
-                    <form id="modalForm">
-                        <div id="modalCampos"></div>
-                        <div class="modal-actions">
-                            <button type="submit" id="btnGuardar">Guardar</button>
-                            <button type="button" id="btnCancelar">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+
 
         </section>
-
+        <!-- Modal flotante genérico -->
+        <div id="modalEditar" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h3 id="modalTitulo">Editar usuario</h3>
+                <form id="modalForm" class="form-paciente">
+                    <div id="modalCampos" class="campos-pacientes"></div>
+                    <div class="modal-actions">
+                        <button type="submit" id="btnGuardar">Guardar</button>
+                        <button type="button" id="btnCancelar">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <!-- ====== PACIENTES ====== -->
         <section id="usuarios-pacientes" class="card card--soft" style="display:none;">
             <header class="card__head"><h3>Gestión de Pacientes</h3></header>

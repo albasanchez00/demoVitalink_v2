@@ -10,13 +10,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin/tratamientos")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminTratamientosApiController {
 
     private final TratamientoService service;
-    public AdminTratamientosApiController(TratamientoService service){ this.service = service; }
+    public AdminTratamientosApiController(TratamientoService service){
+        this.service = service;
+    }
 
     @GetMapping
     public Page<TratamientoAdminDTO> listar(
@@ -39,9 +43,17 @@ public class AdminTratamientosApiController {
                 .orElseThrow(() -> new IllegalArgumentException("Tratamiento no encontrado"));
     }
 
-    @DeleteMapping("/{id}")
-    public void inactivar(@PathVariable Integer id){
-        // si prefieres INACTIVO en vez de FINALIZADO, crea método service.inactivar(id)
+    @PutMapping("/{id}")
+    public void actualizar(@PathVariable Integer id, @RequestBody Map<String, Object> body) {
+        service.actualizarAdmin(id, body);
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    public void finalizar(@PathVariable Integer id) {
         service.finalizar(id);
+    }
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Integer id) {
+        service.eliminarAdmin(id);
     }
 }

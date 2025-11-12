@@ -3,11 +3,15 @@ package com.ceatformacion.demovitalink_v2.services;
 import com.ceatformacion.demovitalink_v2.model.Tratamientos;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.TratamientosRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -68,5 +72,30 @@ public class TratamientoServiceImpl implements TratamientoService{
         String qNorm = (q==null || q.isBlank()) ? null : q.trim();
         String estNorm = (estado==null || estado.isBlank()) ? null : estado.trim();
         return repo.buscarAdmin(qNorm, estNorm, idUsuario, pageable);
+    }
+
+    @Transactional
+    public void actualizarAdmin(Integer id, Map<String, Object> body) {
+        Tratamientos t = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Tratamiento no encontrado"));
+
+        if (body.containsKey("nombre_tratamiento"))
+            t.setNombre_tratamiento((String) body.get("nombre_tratamiento"));
+        if (body.containsKey("estado_tratamiento"))
+            t.setEstado_tratamiento((String) body.get("estado_tratamiento"));
+        if (body.containsKey("fecha_inicio"))
+            t.setFecha_inicio(LocalDate.parse((String) body.get("fecha_inicio")));
+        if (body.containsKey("fecha_fin"))
+            t.setFecha_fin(LocalDate.parse((String) body.get("fecha_fin")));
+
+        repo.save(t);
+    }
+
+    @Transactional
+    public void eliminarAdmin(Integer id) {
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Tratamiento no encontrado");
+        }
+        repo.deleteById(id);
     }
 }

@@ -1,69 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Mensajería</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mensajería — Admin</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/style2.css}" type="text/css">
-    <meta name="user-display" content="admin">
 </head>
 <body data-currentuser="admin">
-<section class="contenedor">
-    <div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
-    <section id="admin-mensajeria" class="chatv2">
-        <!-- LATERAL -->
-        <aside id="chat-list">
-            <div class="chatv2__sidehead">
-                <strong>Conversaciones</strong>
+<!-- ===== CHAT ADMIN — estructura idéntica a Médico ===== -->
+<section id="admin-mensajeria" class="chatv2">
+    <!-- LATERAL -->
+    <aside id="chat-list">
+        <div class="chatv2__sidehead">
+            <h3>Conversaciones</h3>
+            <span class="pill pill--muted" id="convCount" style="display:none"></span>
+        </div>
+
+        <!-- Crear conversación directa (habilitado también en Admin) -->
+        <div class="crear-conv">
+            <div class="crear-conv__form">
+                <input id="nuevo-usuario" type="text" placeholder="Username del usuario…">
+                <button id="btn-crear" type="button">Nueva</button>
             </div>
+            <small class="crear-conv__help">
+                Crea o reabre una conversación DIRECT con el usuario indicado.
+            </small>
+        </div>
 
-            <!-- Crear DIRECT (opcional para admin, puedes ocultarlo si no lo usarás) -->
-            <div class="crear-conv" style="display:none">
-                <div class="crear-conv__form">
-                    <input type="text" id="nuevoUser" placeholder="Username del usuario…">
-                    <button id="btnNueva" type="button">Nueva</button>
-                </div>
-                <small class="crear-conv__help">Crea o reabre una conversación DIRECT con el usuario indicado.</small>
+        <ul id="listaConversaciones" class="chat-list">
+            <li class="empty-state">Cargando conversaciones…</li>
+        </ul>
+
+        <div class="pager">
+            <button id="prev">«</button>
+            <span id="pageInfo"></span>
+            <button id="next">»</button>
+            <select id="size">
+                <option>10</option>
+                <option selected>20</option>
+                <option>50</option>
+            </select>
+        </div>
+    </aside>
+
+
+    <!-- PANEL DE CHAT -->
+    <main id="chat-panel">
+        <!-- Cabecera -->
+        <header class="chatv2__head">
+            <button class="back-btn" type="button" aria-label="Volver">←</button>
+            <div class="title">
+                <strong id="convTitle">Selecciona una conversación</strong>
+                <span class="status"><span class="dot"></span> en línea</span>
             </div>
-
-            <ul id="listaConversations" style="display:none"></ul> <!-- compat viejo -->
-
-            <ul id="listaConversaciones"><!-- listado dinámico --></ul>
-
-            <div class="pager" style="padding:.5rem .6rem">
-                <button id="prev">«</button>
-                <span id="pageInfo"></span>
-                <button id="next">»</button>
-                <select id="size"><option>10</option><option selected>20</option><option>50</option></select>
+            <div class="actions">
+                <button class="ghost" title="Buscar">🔍</button>
+                <button class="ghost" title="Opciones">⋯</button>
             </div>
-        </aside>
+        </header>
 
-        <!-- PANEL -->
-        <section id="chat-panel">
-            <header class="chatv2__head">
-                <div class="title">
-                    <h3 id="convTitle" style="margin:0;color:var(--color_primario)">Selecciona una conversación</h3>
-                    <span id="convStatus" class="status"><span class="dot"></span><span>en línea</span></span>
-                </div>
-                <small id="convMeta" class="status"></small>
-            </header>
+        <!-- Mensajes -->
+        <div id="mensajes" class="chatv2__messages" aria-live="polite">
+            <div class="empty-state">Selecciona una conversación para ver los mensajes.</div>
+        </div>
 
-            <div id="mensajes" class="chatv2__messages" aria-live="polite">
-                <div class="empty-state">No hay mensajes aún…</div>
-            </div>
-
-            <form id="form-msg" class="chatv2__composer" autocomplete="off">
-                <textarea id="msg" rows="2" placeholder="Escribe un mensaje…  (Enter para enviar)"></textarea>
-                <button type="submit" class="send">Enviar</button>
-            </form>
-        </section>
-    </section>
-
-
-    <div th:replace="~{fragments/footer :: footer}"></div>
+        <!-- Composer -->
+        <form id="form-msg" class="chatv2__composer" autocomplete="off">
+            <textarea id="msg" rows="1" placeholder="Escribe un mensaje… (Enter para enviar)"></textarea>
+            <button type="submit" class="send">Enviar</button>
+        </form>
+    </main>
 </section>
 
-<script th:src="@{/js/admin-mensajeria.js}"></script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Script -->
+<script defer th:src="@{/js/admin-mensajeria.js}"></script>
 </body>
 </html>

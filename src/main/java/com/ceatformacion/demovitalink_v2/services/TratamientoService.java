@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TratamientoService {
@@ -20,4 +21,6 @@ public interface TratamientoService {
     void eliminar(Integer id);
     // 🆕 ADMIN
     Page<Tratamientos> buscarAdmin(String q, String estado, Integer idUsuario, Pageable pageable);
+    void actualizarAdmin(Integer id, Map<String,Object> body);
+    void eliminarAdmin(Integer id);
 }

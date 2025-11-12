@@ -3,7 +3,7 @@
  * ========================================================================= */
 (() => {
     if (!document.getElementById('usuarios-pacientes')) return;
-    const { qs, pageInfo, safeFetchJSON } = window.$common;
+    const { qs, pageInfo, safeFetchJSON, confirmDialog } = window.$common;
 
     const state = { page: 0, size: 10, q: "" };
     const $q         = qs("#qPac");
@@ -45,7 +45,7 @@
             render(page);
         } catch (err) {
             console.error(err);
-            $tbody.innerHTML = `<tr><td colspan="4">Error al cargar: ${err.message}</td></tr>`;
+            $tbody.innerHTML = `<tr><td colspan="5">Error al cargar: ${err.message}</td></tr>`;
             $info.textContent = "—";
             $prev.disabled = $next.disabled = true;
         }
@@ -53,10 +53,9 @@
 
     function render(page) {
         if (!page.content || page.content.length === 0) {
-            $tbody.innerHTML = `<tr><td colspan="4" class="muted">No hay pacientes</td></tr>`;
+            $tbody.innerHTML = `<tr><td colspan="5" class="muted">No hay pacientes</td></tr>`;
         } else {
             $tbody.innerHTML = page.content.map(c => {
-                // DTO esperado: idCliente, nombre, apellidos, medicoId, medicoUsername
                 const idC     = c.idCliente ?? c.id_cliente ?? c.id;
                 const nombre  = `${c.nombre || ""} ${c.apellidos || ""}`.trim();
                 const medName = c.medicoUsername || (c.medicoReferencia?.username ?? "—");
@@ -66,7 +65,11 @@
             <td>${idC}</td>
             <td>${nombre || "—"}</td>
             <td data-medcol>${medName || "—"}</td>
-            <td><button class="asignar">Asignar/Reasignar</button></td>
+            <td style="width:280px;display: flex;justify-content: space-around;flex-direction: row;flex-wrap: wrap;">
+                <button class="edit">Editar</button>
+                <button class="asignar">Asignar/Reasignar</button>
+                <button class="danger del">🗑️</button>
+            </td>
           </tr>`;
             }).join("");
         }
@@ -75,7 +78,62 @@
         $next.disabled = page.last;
     }
 
-    // Eventos
+    // ========== MODAL EDICIÓN ==========
+    function abrirModal(datos) {
+        const modal = document.getElementById("modalEditar");
+        const modalCampos = modal.querySelector("#modalCampos");
+        const form = modal.querySelector("#modalForm");
+        const btnCancelar = modal.querySelector("#btnCancelar");
+        const titulo = modal.querySelector("#modalTitulo");
+
+        titulo.textContent = `Editar paciente #${datos.id}`;
+        modalCampos.innerHTML = `
+            <label>Nombre:</label>
+            <input id="inputNombre" type="text" value="${datos.nombre || ""}">
+            <label>Apellidos:</label>
+            <input id="inputApellidos" type="text" value="${datos.apellidos || ""}">
+            <label>Correo electrónico:</label>
+            <input id="inputCorreo" type="email" value="${datos.correo || ""}">
+            <label>Teléfono:</label>
+            <input id="inputTelefono" type="text" value="${datos.telefono || ""}">
+            <label>Dirección:</label>
+            <input id="inputDireccion" type="text" value="${datos.direccion || ""}">
+            <label>Código Postal:</label>
+            <input id="inputCP" type="text" value="${datos.cp || ""}">
+        `;
+        modal.style.display = "flex";
+        btnCancelar.onclick = () => modal.style.display = "none";
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const body = {
+                nombre: qs("#inputNombre").value.trim(),
+                apellidos: qs("#inputApellidos").value.trim(),
+                correoElectronico: qs("#inputCorreo").value.trim(),
+                telefono: qs("#inputTelefono").value.trim(),
+                direccion: qs("#inputDireccion").value.trim(),
+                cp_id: qs("#inputCP").value.trim()
+            };
+            try {
+                const res = await fetch(`/api/admin/pacientes/${datos.id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                toast("✅ Paciente actualizado correctamente");
+                modal.style.display = "none";
+                load();
+            } catch (err) {
+                console.error(err);
+                toast("❌ Error al actualizar paciente");
+            }
+        };
+    }
+
+    // ===============================
+    //  EVENTOS
+    // ===============================
     if ($btnBuscar) $btnBuscar.addEventListener("click", () => { state.q = ($q?.value || "").trim(); state.page = 0; load(); });
     if ($q) $q.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $btnBuscar?.click(); } });
     if ($size) $size.addEventListener("change", e => { state.size = parseInt(e.target.value, 10); state.page = 0; load(); });
@@ -83,10 +141,50 @@
     if ($next) $next.addEventListener("click", () => { state.page = state.page + 1; load(); });
 
     if ($tbody) $tbody.addEventListener("click", async (e) => {
-        const btn = e.target.closest("button.asignar");
-        if (!btn) return;
+        const btnAsignar = e.target.closest("button.asignar");
+        const btnEdit = e.target.closest("button.edit");
+        const btnDel = e.target.closest("button.del");
 
-        const tr = btn.closest("tr");
+        // === ELIMINAR PACIENTE ===
+        if (btnDel) {
+            const tr = btnDel.closest("tr");
+            const idCliente = tr.dataset.idc;
+
+            if (await confirmDialog(`¿Seguro que deseas eliminar al paciente #${idCliente}?`)) {
+                try {
+                    const res = await fetch(`/api/admin/pacientes/${idCliente}`, { method: "DELETE" });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    toast("✅ Paciente eliminado correctamente");
+                    load();
+                } catch (err) {
+                    console.error(err);
+                    toast("❌ No se pudo eliminar el paciente (posibles datos vinculados)");
+                }
+            }
+            return;
+        }
+
+        // === EDITAR PACIENTE ===
+        if (btnEdit) {
+            const tr = btnEdit.closest("tr");
+            const idCliente = tr.dataset.idc;
+            const nombreParts = tr.children[1].textContent.trim().split(" ");
+            const datos = {
+                id: idCliente,
+                nombre: nombreParts[0] || "",
+                apellidos: nombreParts.slice(1).join(" ") || "",
+                correo: "",
+                telefono: "",
+                direccion: "",
+                cp: ""
+            };
+            abrirModal(datos);
+            return;
+        }
+
+        // === ASIGNAR MÉDICO ===
+        if (!btnAsignar) return;
+        const tr = btnAsignar.closest("tr");
         const idCliente = tr.dataset.idc;
         const medCol = tr.querySelector("[data-medcol]");
 
@@ -103,7 +201,6 @@
         const sel = document.createElement("select");
         sel.innerHTML = medicos.map(m => `<option value="${m.id}">${m.username}</option>`).join("");
 
-        // Preseleccionar médico actual si existe en data-medico-id
         const actualId = tr.dataset.medicoId || "";
         if (actualId) sel.value = String(actualId);
 
@@ -120,8 +217,6 @@
 
         ok.onclick = async () => {
             const idMed = sel.value;
-
-            // CSRF opcional (si lo activas en /api/**)
             const token = document.querySelector('meta[name="_csrf"]')?.content;
             const header = document.querySelector('meta[name="_csrf_header"]')?.content;
             const headers = { "Accept": "application/json" };
@@ -136,14 +231,11 @@
                 });
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-                // Si el backend devuelve DTO actual (recomendado)
                 let dto = null;
                 try { dto = await res.json(); } catch (_) {}
 
                 const name = dto?.medicoUsername ?? (medicos.find(m => String(m.id) === String(idMed))?.username) ?? "—";
                 medCol.textContent = name;
-
-                // Actualiza el dataset para futuras reasignaciones
                 tr.dataset.medicoId = dto?.medicoId ?? idMed;
 
                 toast("Asignación guardada ✅");
@@ -156,6 +248,7 @@
         };
     });
 
+    // === CARGA DIFERIDA AL HACER SCROLL / VISUALIZAR ===
     const target = document.getElementById('usuarios-pacientes');
     if (target) {
         const observer = new IntersectionObserver(entries => {
@@ -164,7 +257,7 @@
         observer.observe(target);
     }
 
-    // Toast minimalista
+    // === TOAST NOTIFICACIONES ===
     function toast(msg) {
         const t = document.createElement('div');
         t.textContent = msg;

@@ -12,21 +12,20 @@
 <section id="admin-estadisticas" class="section-dashboard">
     <header class="dash__head">
         <h2>Estadísticas y Reportes (ADMIN)</h2>
-        <div class="dash__filters" id="filtros">
-            <input type="date" id="fDesde">
-            <input type="date" id="fHasta">
-            <select id="groupBy">
-                <option value="day">Día</option>
-                <option value="week">Semana</option>
-                <option value="month">Mes</option>
-            </select>
-            <select id="medicoSel"><option value="">Todos los médicos</option></select>
-            <button id="btnAplicar">Aplicar</button>
-            <button id="btnLimpiar" class="btn--muted">Limpiar</button>
-            <button id="btnExportCSV" class="btn--ghost">Exportar CSV</button>
-        </div>
     </header>
-
+    <div class="dash__filters" id="filtros">
+        <input type="date" id="fDesde">
+        <input type="date" id="fHasta">
+        <select id="groupBy">
+            <option value="day">Día</option>
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+        </select>
+        <select id="medicoSel"><option value="">Todos los médicos</option></select>
+        <button id="btnAplicar">Aplicar</button>
+        <button id="btnLimpiar" class="btn--muted">Limpiar</button>
+        <button id="btnExportCSV" class="btn--ghost">Exportar CSV Citas</button>
+    </div>
     <!-- KPIs -->
     <div class="kpis-grid" id="kpis">
         <article class="kpi"><h4>Pacientes activos</h4><strong id="kpiPacAct">—</strong></article>

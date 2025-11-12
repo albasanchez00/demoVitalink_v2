@@ -2,12 +2,15 @@ package com.ceatformacion.demovitalink_v2.controller;
 
 import com.ceatformacion.demovitalink_v2.dto.admin.*;
 import com.ceatformacion.demovitalink_v2.services.AdminEstadisticasService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -140,4 +143,36 @@ public class AdminEstadisticasController {
     ) {
         return statsService.reporteSintomas(from, to, page, size, sort);
     }
+
+    @GetMapping("/reportes/export")
+    public void exportarReportesCSV(
+            @RequestParam LocalDate from,
+            @RequestParam LocalDate to,
+            @RequestParam(required = false) Long medicoId,
+            @RequestParam(defaultValue = "day") String groupBy,
+            HttpServletResponse response) throws IOException {
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=reportes_citas.csv");
+
+        // Recupera los datos
+        Page<Map<String,Object>> page = statsService.reporteCitas(from, to, medicoId, 0, 1000, "fecha,desc");
+
+        try (PrintWriter writer = response.getWriter()) {
+            // Cabecera CSV
+            writer.println("Fecha,Paciente,Médico,Estado,Motivo");
+
+            // Filas
+            for (Map<String,Object> row : page.getContent()) {
+                writer.printf("%s,%s,%s,%s,%s%n",
+                        row.get("fecha") != null ? row.get("fecha") : "",
+                        row.get("pacienteNombre") != null ? row.get("pacienteNombre") : "",
+                        row.get("medicoNombre") != null ? row.get("medicoNombre") : "",
+                        row.get("estado") != null ? row.get("estado") : "",
+                        row.get("motivo") != null ? row.get("motivo").toString().replace(",", ";") : ""
+                );
+            }
+        }
+    }
+
 }

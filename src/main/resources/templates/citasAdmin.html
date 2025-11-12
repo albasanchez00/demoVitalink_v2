@@ -10,9 +10,9 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <section id="admin-citas" class="section-admin">
-    <h2>Gestión de Citas</h2>
+    <h2 class="text_center">Gestión de Citas</h2>
 
-    <div class="card filtros filtros-trat filtros-compact">
+    <div class="card-filt filtros filtros-trat filtros-compact">
         <div class="row">
             <input id="q" type="search" placeholder="Buscar por título o descripción…">
             <select id="estado">
@@ -24,9 +24,7 @@
             </select>
             <input id="desde" type="date">
             <input id="hasta" type="date">
-        </div>
 
-        <div class="row">
             <div class="usuario-autocomplete">
                 <input id="pacienteInput" type="search" placeholder="Paciente…">
                 <input id="idPaciente" type="hidden">

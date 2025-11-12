@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin/pacientes")
 @PreAuthorize("hasRole('ADMIN')")
@@ -42,6 +44,34 @@ public class AdminPacientesController {
     ) {
         PacienteListDTO dto = service.asignarMedico(idCliente, idUsuarioMedico);
         return ResponseEntity.ok(dto);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> actualizarPaciente(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Object> datos
+    ) {
+        try {
+            service.actualizarPaciente(id, datos);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.internalServerError().body(ex.getMessage());
+        }
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarPaciente(@PathVariable Integer id) {
+        try {
+            service.eliminarPaciente(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }
