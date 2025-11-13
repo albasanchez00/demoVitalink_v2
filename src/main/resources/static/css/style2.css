@@ -3005,7 +3005,6 @@ body:not(.chat-open) #chat-panel { opacity: 0; transform: translateX(10%); }
     display: grid;
     grid-template-columns: 320px 1fr;
 }
-
 /* El panel derecho debe forzar el alto completo del chat */
 #chat-panel {
     display: grid;
