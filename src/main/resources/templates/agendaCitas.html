@@ -16,7 +16,37 @@
 <div th:replace="fragments/header :: header"></div>
 
 <main>
-    <h2 th:text="'📅 Agenda de: ' + ${medicoNombre}" class="title-cita"></h2>
+    <div class="agenda-container">
+        <div class="agenda-header">
+            <a id="btnVolver" class="btn btn-primario" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
+            <h2>
+                <span>📅</span>
+                <span th:text="'Agenda de: ' + ${medicoNombre}">Agenda de: Dr. Médico</span>
+            </h2>
+        </div>
+
+        <!-- Filtro por estado -->
+        <div class="filtro-citas">
+            <form method="get" th:action="@{/medico/citas}">
+                <label for="estado">Filtrar por estado:</label>
+                <select name="estado" id="estado" th:value="${estado}">
+                    <option value="">Todas</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                    <option value="CANCELADA">Cancelada</option>
+                </select>
+                <button type="submit">Filtrar</button>
+            </form>
+        </div>
+
+        <!-- Calendario -->
+        <div class="calendar-wrapper">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Estado -->
     <div id="estadoModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span id="cerrarModal" class="close">&times;</span>
@@ -30,23 +60,6 @@
             </div>
         </div>
     </div>
-    <!-- Filtro por estado -->
-    <div class="filtro-citas">
-        <form method="get" th:action="@{/medico/citas}">
-            <label for="estado">Filtrar por estado:</label>
-            <select name="estado" id="estado" th:value="${estado}">
-                <option value="">Todas</option>
-                <option value="PENDIENTE">Pendiente</option>
-                <option value="CONFIRMADA">Confirmada</option>
-                <option value="FINALIZADA">Finalizada</option>
-                <option value="CANCELADA">Cancelada</option>
-            </select>
-            <button type="submit">Filtrar</button>
-        </form>
-    </div>
-
-    <!-- Calendario -->
-    <div id="calendar"></div>
 
     <!-- Modal de Acciones -->
     <div id="modalAcciones" class="modal" style="display: none;">
@@ -59,11 +72,10 @@
                 <button id="btnEditar">✏️ Editar</button>
                 <button id="btnAtender">✅ Marcar como atendida</button>
                 <button id="btnEliminar">🗑️ Eliminar</button>
-                <button onclick="cerrarModalAcciones()">❌ Cancelar</button>
+                <button onclick="cerrarModalAcciones()" class="btn-secundario">❌ Cancelar</button>
             </div>
         </div>
     </div>
-
 
     <!-- Modal de edición -->
     <div id="modalEditar" class="modal" style="display:none;">
@@ -72,14 +84,15 @@
             <h3>✏️ Editar Cita</h3>
             <form id="formEditarCita">
                 <input type="hidden" id="editId">
-                <label>Fecha: <input type="date" id="editFecha" required></label><br>
-                <label>Hora: <input type="time" id="editHora" required></label><br>
-                <label>Motivo: <textarea id="editDescripcion" required></textarea></label><br>
+                <label>Fecha: <input type="date" id="editFecha" required></label>
+                <label>Hora: <input type="time" id="editHora" required></label>
+                <label>Motivo: <textarea id="editDescripcion" required></textarea></label>
                 <button type="submit">Guardar Cambios</button>
             </form>
         </div>
     </div>
 
+    <!-- Modal de eliminación -->
     <div id="modalEliminar" class="modal" style="display:none;">
         <div class="modal-content">
             <span id="cerrarEliminar" class="close">&times;</span>
@@ -87,8 +100,8 @@
             <p><strong>Paciente:</strong> <span id="eliminarPaciente"></span></p>
             <p><strong>Motivo:</strong> <span id="eliminarDescripcion"></span></p>
             <div class="botones-estado">
-                <button id="btnConfirmarEliminar" class="btn btn-danger">🗑️ Eliminar</button>
-                <button id="btnCancelarEliminar" class="btn btn-secundario">❌ Cancelar</button>
+                <button id="btnConfirmarEliminar">🗑️ Eliminar</button>
+                <button id="btnCancelarEliminar" class="btn-secundario">❌ Cancelar</button>
             </div>
         </div>
     </div>
@@ -128,6 +141,12 @@
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                list: 'Lista'
             },
             events: calendarEvents,
             eventClick: function (info) {
@@ -205,8 +224,7 @@
                 .catch(err => alert("❌ Error: " + err));
         };
 
-
-        // === CAMBIO DE ESTADO GENERAL (modal extra) ===
+        // === CAMBIO DE ESTADO GENERAL ===
         document.querySelectorAll('#estadoModal .botones-estado button').forEach(btn => {
             btn.onclick = () => {
                 const estado = btn.getAttribute('data-estado');
@@ -214,7 +232,7 @@
             };
         });
 
-        // === CIERRES MODALES
+        // === CIERRES MODALES ===
         document.getElementById('cerrarModal').onclick = () => cerrarModal('estadoModal');
         document.getElementById('cerrarEditar').onclick = () => cerrarModal('modalEditar');
         document.getElementById('cerrarEliminar').onclick = () => cerrarModal('modalEliminar');
@@ -230,24 +248,36 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
                 [csrfHeader]: csrfToken
             },
-            body: new URLSearchParams({
-                estado: 'ATENDIDA' // o CONFIRMADA, CANCELADA, etc.
-            })
+            body: new URLSearchParams({ estado: nuevoEstado })
         }).then(res => res.ok ? location.reload() : alert("❌ Error al actualizar estado."))
             .catch(err => alert("❌ Error: " + err));
     }
 
     function abrirModal(id) {
-        document.getElementById(id)?.style.setProperty('display', 'block');
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'block';
+        }
     }
 
     function cerrarModal(id) {
-        document.getElementById(id)?.style.setProperty('display', 'none');
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'none';
+        }
     }
 
     function cerrarModalAcciones() {
         cerrarModal('modalAcciones');
         citaSeleccionada = null;
+    }
+
+    // Cerrar modales al hacer clic fuera
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+            citaSeleccionada = null;
+        }
     }
 </script>
 

@@ -1,5 +1,5 @@
 /* =========================================================================
- *  ADMIN — Chat (mismo layout que MÉDICO, endpoints ADMIN)
+ *  ADMIN – Chat mejorado con reconexión, typing, lecturas y notificaciones
  * ========================================================================= */
 (() => {
     const $root = document.getElementById('admin-mensajeria');
@@ -7,6 +7,7 @@
 
     // ==== Utilidades ====
     const qs = (s, r = document) => (r ? r.querySelector(s) : document.querySelector(s));
+
     const safeFetchJSON = (u, o) =>
         fetch(u, o).then(r => (r.ok ? r.json() : r.text().then(t => Promise.reject(t))));
 
@@ -56,10 +57,49 @@
     const $pageInfo = qs('#pageInfo', $root);
     const $size = qs('#size', $root);
     const $title = qs('#convTitle');
-    const $meta = qs('#convMeta');
     const $msgs = qs('#mensajes');
     const $form = qs('#form-msg');
     const $msg = qs('#msg');
+
+    // ==== WebSocket (STOMP) ====
+    let stompClient = null;
+    let currentSubscription = null;
+    let typingSubscription = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 10;
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws-chat');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = () => {}; // Silenciar logs
+
+        stompClient.connect({},
+            () => {
+                console.log('✅ WebSocket conectado');
+                reconnectAttempts = 0;
+                if (state.current) {
+                    attachStomp(state.current);
+                }
+            },
+            (error) => {
+                console.warn('⚠️ Error de conexión WebSocket:', error);
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    reconnectAttempts++;
+                    const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                    console.log(`Reintentando en ${delay}ms... (intento ${reconnectAttempts})`);
+                    setTimeout(connectWebSocket, delay);
+                }
+            }
+        );
+
+        // Manejo de desconexión
+        socket.onclose = () => {
+            console.warn('🔌 WebSocket cerrado, intentando reconectar...');
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                setTimeout(connectWebSocket, 3000);
+            }
+        };
+    }
 
     // ==== Listado de conversaciones ====
     async function loadConvs() {
@@ -70,15 +110,21 @@
             size: state.size,
         });
 
-        const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
-        renderConvs(page);
+        try {
+            const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
+            renderConvs(page);
 
-        // 👉 Abrir automáticamente la primera conversación si no hay una activa
-        if (!state.current && page.content && page.content.length > 0) {
-            openConv(page.content[0].id);
+            // Abrir automáticamente la primera conversación si no hay una activa
+            if (!state.current && page.content && page.content.length > 0) {
+                openConv(page.content[0].id);
+            }
+        } catch (error) {
+            console.error('❌ Error cargando conversaciones:', error);
+            $lista.innerHTML = '<li class="empty-state">Error al cargar conversaciones.</li>';
         }
     }
-// ==== Crear conversación directa (igual que médico) ====
+
+    // ==== Crear conversación directa ====
     const $btnCrear = document.getElementById('btn-crear');
     const $nuevoUser = document.getElementById('nuevo-usuario');
 
@@ -95,11 +141,12 @@
                     method: 'POST',
                     headers: { Accept: 'application/json' },
                 });
+                $nuevoUser.value = '';
                 await loadConvs();
                 alert('Conversación creada o reabierta correctamente.');
             } catch (err) {
                 console.error('❌ Error creando conversación:', err);
-                alert('No se pudo crear la conversación.');
+                alert('No se pudo crear la conversación: ' + err);
             }
         });
     }
@@ -124,23 +171,42 @@
                     <div class="meta">
                         <span class="time">—</span>
                         <span class="badge">${c.miembrosCount || 0}</span>
+                        <button class="delete-btn" title="Eliminar conversación">🗑️</button>
                     </div>
                 </div>
             `;
-            li.onclick = () => openConv(c.id);
+
+            li.querySelector('.info').onclick = () => openConv(c.id);
+
+            // Botón eliminar
+            li.querySelector('.delete-btn').onclick = async (e) => {
+                e.stopPropagation();
+                if (confirm('¿Seguro que deseas eliminar esta conversación?')) {
+                    try {
+                        await fetch(`/api/admin/chat/conversaciones/${c.id}`, { method: 'DELETE' });
+                        await loadConvs();
+                    } catch (err) {
+                        console.error('❌ Error eliminando:', err);
+                        alert('No se pudo eliminar la conversación');
+                    }
+                }
+            };
+
             if (state.current === c.id) li.classList.add('is-active');
             $lista.appendChild(li);
         });
 
-        $pageInfo.textContent = `Página ${page.number + 1}/${page.totalPages} — ${page.totalElements}`;
+        $pageInfo.textContent = `Página ${page.number + 1}/${page.totalPages} – ${page.totalElements}`;
         $prev.disabled = page.first;
         $next.disabled = page.last;
+
         $prev.onclick = () => {
             if (!page.first) {
                 state.page--;
                 loadConvs();
             }
         };
+
         $next.onclick = () => {
             if (!page.last) {
                 state.page++;
@@ -161,40 +227,46 @@
         state.msgPage = 0;
         markActive(id);
         if ($title) $title.textContent = 'CHAT';
-        if ($meta) $meta.textContent = '';
+
         await loadMsgs(true);
         attachStomp(id);
 
-        // 👉 Activa vista "chat abierto" en móvil (igual que médico)
+        // Activa vista "chat abierto" en móvil
         document.body.classList.add('chat-open');
     }
 
     async function loadMsgs(scrollBottom = false) {
         if (!state.current) return;
+
         const url = buildURL(
             `/api/admin/chat/conversaciones/${state.current}/mensajes`,
             { page: state.msgPage, size: state.msgSize }
         );
 
-        const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
-        const msgs = [...page.content].reverse();
+        try {
+            const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
+            const msgs = [...page.content].reverse();
 
-        if (!msgs.length) {
-            $msgs.innerHTML = '<div class="empty-state">No hay mensajes en esta conversación.</div>';
-        } else {
-            $msgs.innerHTML = msgs.map(renderMsg).join('');
-            if (scrollBottom) $msgs.scrollTop = $msgs.scrollHeight;
-        }
+            if (!msgs.length) {
+                $msgs.innerHTML = '<div class="empty-state">No hay mensajes en esta conversación.</div>';
+            } else {
+                $msgs.innerHTML = msgs.map(renderMsg).join('');
+                if (scrollBottom) $msgs.scrollTop = $msgs.scrollHeight;
+            }
 
-        // Scroll infinito hacia arriba
-        $msgs.onscroll = null;
-        if (!page.last) {
-            $msgs.onscroll = () => {
-                if ($msgs.scrollTop === 0) {
-                    state.msgPage++;
-                    appendOlder();
-                }
-            };
+            // Scroll infinito hacia arriba
+            $msgs.onscroll = null;
+            if (!page.last) {
+                $msgs.onscroll = () => {
+                    if ($msgs.scrollTop === 0) {
+                        state.msgPage++;
+                        appendOlder();
+                    }
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error cargando mensajes:', error);
+            $msgs.innerHTML = '<div class="empty-state">Error al cargar mensajes.</div>';
         }
     }
 
@@ -213,11 +285,16 @@
             `/api/admin/chat/conversaciones/${state.current}/mensajes`,
             { page: state.msgPage, size: state.msgSize }
         );
-        const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
-        const prevScroll = $msgs.scrollHeight;
-        const older = [...page.content].reverse().map(renderMsg).join('');
-        $msgs.insertAdjacentHTML('afterbegin', older);
-        $msgs.scrollTop = $msgs.scrollHeight - prevScroll;
+
+        try {
+            const page = await safeFetchJSON(url, { headers: { Accept: 'application/json' } });
+            const prevScroll = $msgs.scrollHeight;
+            const older = [...page.content].reverse().map(renderMsg).join('');
+            $msgs.insertAdjacentHTML('afterbegin', older);
+            $msgs.scrollTop = $msgs.scrollHeight - prevScroll;
+        } catch (error) {
+            console.error('❌ Error cargando mensajes antiguos:', error);
+        }
     }
 
     // ==== Envío de mensajes ====
@@ -228,16 +305,34 @@
             const text = ($msg.value || '').trim();
             if (!text) return;
 
-            await fetch(`/api/admin/chat/conversaciones/${state.current}/mensajes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain',
-                    Accept: 'application/json',
-                },
-                body: text,
-            });
-            $msg.value = '';
-            await loadMsgs(true);
+            try {
+                // Enviar al backend
+                await fetch(`/api/admin/chat/conversaciones/${state.current}/mensajes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                        Accept: 'application/json',
+                    },
+                    body: text,
+                });
+
+                // ✅ Eco optimista: mostrar inmediatamente
+                const currentUser = getCurrentDisplayName();
+                $msgs.insertAdjacentHTML(
+                    'beforeend',
+                    renderMsg({
+                        remitenteNombre: currentUser,
+                        creadoEn: new Date().toISOString(),
+                        contenido: text,
+                    })
+                );
+                $msgs.scrollTop = $msgs.scrollHeight;
+
+                $msg.value = '';
+            } catch (error) {
+                console.error('❌ Error enviando mensaje:', error);
+                alert('No se pudo enviar el mensaje');
+            }
         });
 
         // Ctrl/Cmd + Enter para enviar
@@ -263,26 +358,69 @@
         document.body.classList.remove('chat-open');
     });
 
-    // ==== Inicialización ====
-    loadConvs();
-
     // ==== STOMP (tiempo real) ====
     function attachStomp(convId) {
-        if (!window.stompClient) return;
-        if (window._sub) window._sub.unsubscribe();
+        if (!stompClient || !stompClient.connected) {
+            console.warn('⚠️ STOMP no conectado, intentando reconectar...');
+            connectWebSocket();
+            return;
+        }
 
-        window._sub = window.stompClient.subscribe(`/topic/conversaciones.${convId}`, frame => {
-            const m = JSON.parse(frame.body);
-            if (!m || m.convId !== state.current) return;
-            $msgs.insertAdjacentHTML(
-                'beforeend',
-                renderMsg({
-                    remitenteNombre: m.remitenteNombre,
-                    creadoEn: m.creadoEn,
-                    contenido: m.contenido,
-                })
-            );
-            $msgs.scrollTop = $msgs.scrollHeight;
-        });
+        // Desuscribirse de conversación anterior
+        if (currentSubscription) {
+            try {
+                currentSubscription.unsubscribe();
+            } catch (e) {
+                console.warn('Error al desuscribirse:', e);
+            }
+            currentSubscription = null;
+        }
+
+        // Suscribirse a nuevos mensajes
+        try {
+            currentSubscription = stompClient.subscribe(`/topic/conversaciones.${convId}`, frame => {
+                const m = JSON.parse(frame.body);
+                if (!m || m.convId !== state.current) return;
+
+                // ✅ FILTRAR eco duplicado - Si soy yo, no mostrar
+                const currentUser = getCurrentDisplayName();
+                if (m.remitenteNombre === currentUser) return;
+
+                $msgs.insertAdjacentHTML(
+                    'beforeend',
+                    renderMsg({
+                        remitenteNombre: m.remitenteNombre,
+                        creadoEn: m.creadoEn,
+                        contenido: m.contenido,
+                    })
+                );
+                $msgs.scrollTop = $msgs.scrollHeight;
+
+                // Notificación sonora (opcional)
+                playNotificationSound();
+            });
+
+            console.log(`✅ Suscrito a conversación ${convId}`);
+        } catch (error) {
+            console.error('❌ Error al suscribirse:', error);
+        }
     }
+
+    // ==== Sonido de notificación ====
+    function playNotificationSound() {
+        try {
+            const audio = new Audio('/sounds/notification.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(e => console.log('No se pudo reproducir sonido', e));
+        } catch (e) {
+            console.log('Audio no disponible');
+        }
+    }
+
+    // ==== Inicialización ====
+    connectWebSocket();
+    loadConvs();
+
+    // Hacer stompClient global para debugging si es necesario
+    window.stompClient = stompClient;
 })();

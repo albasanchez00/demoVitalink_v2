@@ -60,9 +60,7 @@ html, body {
     max-width: 100vw;
 }
 
-main::-webkit-scrollbar {
-    display: none;
-}
+body::-webkit-scrollbar{ display: none; }
 
 .contenedor {
     display: flex;
@@ -314,7 +312,7 @@ main {
 /* BANNER HERO MEJORADO */
 .banner-demo {
     background: linear-gradient(135deg, rgba(10,37,64,0.95) 0%, rgba(0,84,160,0.9) 100%),
-    url('../media/img/imagen-empresa.png');
+    url('../media/img/solicitar-demo.svg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

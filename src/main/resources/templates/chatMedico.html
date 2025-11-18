@@ -7,63 +7,91 @@
     <link rel="stylesheet" href="/css/style2.css">
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
 </head>
-<body data-user="${#authentication.name}">
-<!-- Header global -->
+<body class="body-msg" data-user="${#authentication.name}">
 <div th:replace="~{fragments/header :: header}"></div>
 
-<!-- Chat -->
-<section id="chat-wrap" class="chatv2">
+<section id="chat-wrap">
     <aside id="chat-list">
         <div class="chatv2__sidehead">
-            <h3>Conversaciones</h3>
-            <span class="pill pill--muted" id="convCount" style="display:none"></span>
+            <h3>Mensajería</h3>
+            <span class="pill pill--danger" id="totalUnread" style="display:none">0</span>
         </div>
 
-        <!-- Crear conversación directa -->
         <div class="crear-conv">
             <div class="crear-conv__form">
-                <input id="nuevo-usuario" type="text" placeholder="Username del usuario…">
+                <input id="nuevo-usuario" type="text" placeholder="Buscar o crear conversación...">
                 <button id="btn-crear" type="button">Nueva</button>
             </div>
-            <small class="crear-conv__help">Crea o reabre una conversación DIRECT con el usuario indicado.</small>
+            <small class="crear-conv__help">Escribe el username del usuario</small>
         </div>
 
         <ul id="listaConversaciones" class="chat-list">
-            <li class="empty-state">Cargando conversaciones…</li>
+            <li class="empty-state">Cargando conversaciones...</li>
         </ul>
     </aside>
 
     <main id="chat-panel">
-        <!-- Cabecera de la conversación -->
         <header class="chatv2__head">
             <button class="back-btn" type="button" aria-label="Volver">←</button>
             <div class="title">
-                <strong id="convTitle">CHAT</strong>
-                <span class="status"><span class="dot"></span> en línea</span>
+                <strong id="convTitle">Selecciona una conversación</strong>
+                <span class="status">
+                    <span class="dot"></span>
+                    <span id="statusText">en línea</span>
+                </span>
             </div>
             <div class="actions">
-                <button class="ghost" title="Buscar">🔍</button>
-                <button class="ghost" title="Opciones">⋯</button>
+                <button class="ghost" id="search-btn" title="Buscar">🔍</button>
+                <button class="ghost" id="options-btn" title="Opciones">⋯</button>
+
+                <!-- Menú de opciones -->
+                <div id="options-menu">
+                    <div class="menu-item" id="mute-conv">
+                        <span class="menu-icon">🔕</span>
+                        <span>Silenciar</span>
+                    </div>
+                    <div class="menu-item" id="archive-conv">
+                        <span class="menu-icon">📁</span>
+                        <span>Archivar</span>
+                    </div>
+                    <div class="menu-item" id="details-conv">
+                        <span class="menu-icon">ℹ️</span>
+                        <span>Ver detalles</span>
+                    </div>
+                    <div class="menu-item" id="clear-history">
+                        <span class="menu-icon">🗑️</span>
+                        <span>Limpiar historial</span>
+                    </div>
+                    <div class="menu-item danger" id="delete-conv">
+                        <span class="menu-icon">❌</span>
+                        <span>Eliminar conversación</span>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <!-- Mensajes -->
-        <div id="mensajes" class="chatv2__messages">
-            <div class="empty-state">Selecciona una conversación para ver los mensajes.</div>
+        <!-- Barra de búsqueda -->
+        <div id="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar en la conversación...">
+            <span id="search-results">0 resultados</span>
+            <button class="search-nav-btn" id="prev-result" disabled>↑</button>
+            <button class="search-nav-btn" id="next-result" disabled>↓</button>
+            <button id="close-search">✕</button>
         </div>
 
-        <!-- Composer -->
+        <div id="mensajes" class="chatv2__messages">
+            <div class="empty-state">Selecciona una conversación para empezar</div>
+        </div>
+
         <form id="form-msg" class="chatv2__composer" autocomplete="off">
-            <textarea id="txt" rows="1" placeholder="Escribe un mensaje… (Enter para enviar)"></textarea>
+            <textarea id="txt" rows="1" placeholder="Escribe un mensaje..."></textarea>
             <button type="submit" class="send">Enviar</button>
         </form>
     </main>
 </section>
 
-<!-- Footer global -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- Librerías -->
 <script defer src="/webjars/sockjs-client/sockjs.min.js"></script>
 <script defer src="/webjars/stomp-websocket/stomp.min.js"></script>
 
@@ -77,27 +105,29 @@
         let stomp = null;
         let currentConvId = null;
         let currentSubscription = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT = 10;
+
+        // ===== ESTADO DE BÚSQUEDA =====
+        let searchResults = [];
+        let currentSearchIndex = -1;
 
         const $lista = () => document.getElementById('listaConversaciones');
         const $msgs  = () => document.getElementById('mensajes');
         const $title = () => document.getElementById('convTitle');
+        const $totalUnread = () => document.getElementById('totalUnread');
+        const $searchBar = () => document.getElementById('search-bar');
+        const $searchInput = () => document.getElementById('search-input');
+        const $searchResults = () => document.getElementById('search-results');
+        const $optionsMenu = () => document.getElementById('options-menu');
 
         function renderEmptyMensajes(texto){
             $msgs().innerHTML = '<div class="empty-state">' + escapeHTML(texto) + '</div>';
         }
 
-        function conectarChat() {
-            const sock = new SockJS('/ws-chat');
-            stomp = Stomp.over(sock);
-            stomp.debug = () => {}; // silencia logs internos
-            //stomp.debug = function(){};
-            stomp.reconnect_delay = 3000;
-
-            stomp.connect({}, function () {
-                console.log('Conectado al chat interno');
-                if (currentConvId) { suscribirA(currentConvId); }
-            }, function (err) {
-                console.warn('Reintentando conexión WS…', err);
+        function escapeHTML(s){
+            return String(s).replace(/[&<>"']/g, function(c){
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
             });
         }
 
@@ -110,71 +140,101 @@
             });
         }
 
+        function conectarChat() {
+            const sock = new SockJS('/ws-chat');
+            stomp = Stomp.over(sock);
+            stomp.debug = () => {};
+
+            stomp.connect({}, function () {
+                console.log('✅ Conectado');
+                reconnectAttempts = 0;
+                if (currentConvId) {
+                    suscribirA(currentConvId);
+                }
+            }, function (err) {
+                console.warn('⚠️ Reintentando...', err);
+                if (reconnectAttempts < MAX_RECONNECT) {
+                    reconnectAttempts++;
+                    const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                    setTimeout(conectarChat, delay);
+                }
+            });
+
+            sock.onclose = () => {
+                console.warn('🔌 Desconectado, reconectando...');
+                if (reconnectAttempts < MAX_RECONNECT) setTimeout(conectarChat, 3000);
+            };
+        }
+
         function cargarConversaciones() {
             fetchJSON('/api/chat/conversaciones').then(function(data){
                 const ul = $lista();
                 ul.innerHTML = '';
 
                 if (!data || !data.length){
-                    ul.innerHTML = '<li class="empty-state">No tienes conversaciones todavía.</li>';
-                    renderEmptyMensajes('Selecciona o crea una conversación.');
+                    ul.innerHTML = '<li class="empty-state">No tienes conversaciones</li>';
+                    renderEmptyMensajes('Crea una conversación para empezar');
+                    actualizarContadorGlobal(0);
                     return;
                 }
+
+                let totalUnread = 0;
 
                 data.forEach(function(c){
                     const li = document.createElement('li');
                     li.dataset.id = c.id;
 
                     const titulo = c.servicio ? escapeHTML(c.servicio) : ('Conversación #' + c.id);
-                    const badge = (c.miembrosCount && c.miembrosCount > 1)
-                        ? '<span class="badge">' + c.miembrosCount + '</span>'
+                    const unreadBadge = c.unreadCount > 0
+                        ? '<span class="unread-badge">' + c.unreadCount + '</span>'
                         : '';
 
+                    totalUnread += c.unreadCount || 0;
+
                     li.innerHTML = `
-                        <div class="conv-item">
+                        <div class="conv-item ${c.unreadCount > 0 ? 'has-unread' : ''}">
                             <div class="info">
-                                <strong class="conv-title">${titulo}</strong>
-                                <span class="last-msg">Sin mensajes recientes</span>
+                                <div class="conv-title">${titulo}</div>
+                                <div class="last-msg">Toca para abrir</div>
                             </div>
                             <div class="meta">
-                                <span class="time">—</span>
-                                ${badge}
-                                <button class="delete-btn" title="Eliminar conversación">🗑️</button>
+                                ${unreadBadge}
+                                <button class="delete-btn" title="Eliminar">🗑️</button>
                             </div>
                         </div>`;
 
-                    // ✅ clic para abrir conversación
                     li.querySelector('.info').onclick = () => abrirConversacion(c.id);
 
-                    // ✅ botón eliminar conversación
                     li.querySelector('.delete-btn').onclick = (e) => {
                         e.stopPropagation();
-                        if (confirm('¿Seguro que deseas eliminar esta conversación?')) {
-                            fetch(`/api/chat/conversaciones/${c.id}`, { method: 'DELETE' })
-                                .then(r => {
-                                    if (!r.ok) throw new Error('Error al eliminar conversación');
-                                    return cargarConversaciones();
-                                })
-                                .catch(err => console.error('❌ Error eliminando:', err));
-                        }
+                        eliminarConversacion(c.id);
                     };
 
                     ul.appendChild(li);
                 });
 
+                actualizarContadorGlobal(totalUnread);
 
-                // abrir la primera automáticamente si no hay una activa
                 if (!currentConvId && data.length > 0) abrirConversacion(data[0].id);
             }).catch(function(e){
-                console.error('❌ Error cargando conversaciones:', e);
-                $lista().innerHTML = '<li class="empty-state">No se pudieron cargar las conversaciones.</li>';
-                renderEmptyMensajes('No se pudieron cargar los mensajes.');
+                console.error('Error:', e);
+                $lista().innerHTML = '<li class="empty-state">Error al cargar</li>';
             });
+        }
+
+        function actualizarContadorGlobal(count) {
+            const badge = $totalUnread();
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.style.display = 'none';
+            }
         }
 
         function setConvTitleFromList(id){
             const li = Array.from($lista().children).find(el => Number(el.dataset.id) === id);
-            const t  = li?.querySelector('.conv-title')?.textContent || 'CHAT';
+            const t  = li?.querySelector('.conv-title')?.textContent || 'Chat';
             $title().textContent = t;
         }
 
@@ -183,12 +243,14 @@
 
             const items = $lista().children;
             for (let i=0; i<items.length; i++){
-                const li = items[i];
-                li.classList.toggle('is-active', Number(li.dataset.id) === id);
+                items[i].classList.toggle('is-active', Number(items[i].dataset.id) === id);
             }
 
             currentConvId = id;
             setConvTitleFromList(id);
+
+            // Cerrar búsqueda al cambiar de conversación
+            cerrarBusqueda();
 
             if (currentSubscription){
                 try { currentSubscription.unsubscribe(); } catch(e){}
@@ -201,48 +263,60 @@
                 cont.innerHTML = '';
 
                 if (!mensajes.length){
-                    renderEmptyMensajes('Aún no hay mensajes en esta conversación.');
+                    renderEmptyMensajes('Envía el primer mensaje');
                 } else {
                     mensajes.forEach(function(m){
-                        const esMio = (m.remitente === yo || m.remitenteNombre === yo);
-                        cont.appendChild(crearBurbuja(m.remitente || m.remitenteNombre, m.contenido, esMio));
+                        const esMio = (m.remitente === yo);
+                        cont.appendChild(crearBurbuja(m.remitente, m.contenido, esMio, m.leido, m.creadoEn));
                     });
                     cont.scrollTop = cont.scrollHeight;
                 }
 
-                if (stomp && stomp.connected){ suscribirA(id); }
+                if (stomp && stomp.connected){
+                    suscribirA(id);
+                }
 
-                // 👉 activar vista "chat abierto" en móvil
+                fetch(`/api/chat/conversaciones/${id}/marcar-leida`, { method: 'POST' })
+                    .then(() => cargarConversaciones())
+                    .catch(e => console.warn('No se marcó como leída', e));
+
                 document.body.classList.add('chat-open');
             }).catch(function(e){
                 console.error(e);
-                renderEmptyMensajes('No se pudieron cargar los mensajes.');
+                renderEmptyMensajes('Error al cargar mensajes');
             });
         }
 
         function suscribirA(convId){
             if (currentSubscription){
                 try { currentSubscription.unsubscribe(); } catch(e){}
-                currentSubscription = null;
             }
-            currentSubscription = stomp.subscribe('/topic/conversaciones.' + convId, function(e){
-                const m = JSON.parse(e.body);
 
-                // si es mi propio mensaje reemitido, lo ignoro (ya hicimos eco optimista)
+            currentSubscription = stomp.subscribe('/topic/conversaciones.' + convId, function(frame){
+                const m = JSON.parse(frame.body);
+
                 if (m.remitenteNombre === yo) return;
 
-                const div = crearBurbuja(m.remitenteNombre, m.contenido, false);
+                const div = crearBurbuja(m.remitenteNombre, m.contenido, false, false, m.creadoEn);
                 $msgs().appendChild(div);
                 div.scrollIntoView({ behavior: 'smooth' });
+
+                reproducirSonido();
             });
         }
 
-        function crearBurbuja(remitente, texto, esMio){
+        function crearBurbuja(remitente, texto, esMio, leido, timestamp){
             const div = document.createElement('div');
             div.className = 'msg' + (esMio ? ' me' : '');
+            div.dataset.content = texto; // Para búsqueda
+
+            const time = timestamp ? new Date(timestamp).toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'}) : '';
+            const leidoIndicator = esMio && leido ? '<span class="read-indicator">✓✓</span>' : '';
+
             div.innerHTML = esMio
-                ? escapeHTML(texto)
-                : '<strong>' + escapeHTML(remitente) + ':</strong> ' + escapeHTML(texto);
+                ? escapeHTML(texto) + leidoIndicator + (time ? '<span class="msg-time">' + time + '</span>' : '')
+                : '<strong>' + escapeHTML(remitente) + '</strong><br>' + escapeHTML(texto) + (time ? '<span class="msg-time">' + time + '</span>' : '');
+
             return div;
         }
 
@@ -253,7 +327,7 @@
             if (!contenido || !currentConvId) return;
 
             if (!stomp || !stomp.connected){
-                alert('Sin conexión al chat. Intentando reconectar…');
+                alert('Sin conexión. Reconectando...');
                 conectarChat();
                 return;
             }
@@ -261,10 +335,7 @@
             const payload = JSON.stringify({ convId: currentConvId, texto: contenido });
             stomp.send('/app/chat.send', {}, payload);
 
-            const div = crearBurbuja(yo, contenido, true);
-            $msgs().appendChild(div);
             txt.value = '';
-            div.scrollIntoView({ behavior: 'smooth' });
         });
 
         document.getElementById('txt').addEventListener('keydown', function(e){
@@ -276,34 +347,260 @@
 
         document.getElementById('btn-crear').addEventListener('click', function(){
             const user = document.getElementById('nuevo-usuario').value.trim();
-            if (!user) { console.warn('Introduce un nombre de usuario');}
+            if (!user) {
+                alert('Introduce un username');
+                return;
+            }
 
             fetchJSON('/api/chat/conversaciones/directa?username=' + encodeURIComponent(user), { method: 'POST' })
-                .then(function(){ return cargarConversaciones(); })
-                .then(function(){ alert('Conversación creada o reabierta correctamente.'); })
-                .catch(function(e){
+                .then(() => {
+                    document.getElementById('nuevo-usuario').value = '';
+                    return cargarConversaciones();
+                })
+                .then(() => alert('Conversación creada'))
+                .catch(e => {
                     console.error(e);
-                    alert('Error al crear conversación.');
+                    alert('Error: ' + e);
                 });
         });
 
-        // 👈 botón “volver” (visible en móvil) — cierra el panel y vuelve a la lista
         document.querySelector('.back-btn')?.addEventListener('click', () => {
             document.body.classList.remove('chat-open');
         });
 
-        // Al pasar a escritorio, aseguramos que la clase no “bloquee” la vista
-        const mq = window.matchMedia('(min-width: 901px)');
-        mq.addEventListener?.('change', e => { if (e.matches) document.body.classList.remove('chat-open'); });
-
-        function escapeHTML(s){
-            return String(s).replace(/[&<>"']/g, function(c){
-                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
-            });
+        function reproducirSonido() {
+            try {
+                const audio = new Audio('/sounds/notification.mp3');
+                audio.volume = 0.3;
+                audio.play().catch(() => {});
+            } catch(e) {}
         }
+
+        // ===== FUNCIONALIDAD BÚSQUEDA =====
+
+        document.getElementById('search-btn').addEventListener('click', function(){
+            if (!currentConvId) {
+                alert('Abre una conversación primero');
+                return;
+            }
+
+            const searchBar = $searchBar();
+            searchBar.classList.toggle('active');
+
+            if (searchBar.classList.contains('active')) {
+                $searchInput().focus();
+            } else {
+                cerrarBusqueda();
+            }
+        });
+
+        document.getElementById('search-input').addEventListener('input', function(e){
+            const query = e.target.value.trim().toLowerCase();
+
+            if (!query) {
+                limpiarBusqueda();
+                return;
+            }
+
+            buscarEnMensajes(query);
+        });
+
+        function buscarEnMensajes(query) {
+            const mensajes = Array.from($msgs().querySelectorAll('.msg'));
+            searchResults = [];
+
+            // Limpiar highlights previos
+            mensajes.forEach(msg => {
+                const content = msg.dataset.content || '';
+                const remitente = msg.querySelector('strong')?.textContent || '';
+                msg.innerHTML = msg.classList.contains('me')
+                    ? escapeHTML(content)
+                    : '<strong>' + escapeHTML(remitente) + '</strong><br>' + escapeHTML(content);
+            });
+
+            // Buscar y resaltar
+            mensajes.forEach((msg, index) => {
+                const content = msg.dataset.content || '';
+                if (content.toLowerCase().includes(query)) {
+                    searchResults.push({ element: msg, index: index });
+
+                    // Resaltar coincidencias
+                    const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+                    const highlighted = content.replace(regex, '<span class="highlight">$1</span>');
+
+                    if (msg.classList.contains('me')) {
+                        msg.innerHTML = highlighted;
+                    } else {
+                        const remitente = msg.querySelector('strong')?.textContent || '';
+                        msg.innerHTML = '<strong>' + escapeHTML(remitente) + '</strong><br>' + highlighted;
+                    }
+                }
+            });
+
+            // Actualizar UI
+            $searchResults().textContent = searchResults.length + ' resultado' + (searchResults.length !== 1 ? 's' : '');
+            document.getElementById('prev-result').disabled = searchResults.length === 0;
+            document.getElementById('next-result').disabled = searchResults.length === 0;
+
+            if (searchResults.length > 0) {
+                currentSearchIndex = 0;
+                navegarAResultado(0);
+            } else {
+                currentSearchIndex = -1;
+            }
+        }
+
+        function navegarAResultado(index) {
+            if (searchResults.length === 0) return;
+
+            // Limpiar highlight activo
+            document.querySelectorAll('.highlight.active').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Activar nuevo highlight
+            const result = searchResults[index];
+            const highlights = result.element.querySelectorAll('.highlight');
+            if (highlights.length > 0) {
+                highlights[0].classList.add('active');
+            }
+
+            // Scroll al resultado
+            result.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Actualizar contador
+            $searchResults().textContent = `${index + 1} de ${searchResults.length}`;
+        }
+
+        document.getElementById('prev-result').addEventListener('click', function(){
+            if (searchResults.length === 0) return;
+            currentSearchIndex = (currentSearchIndex - 1 + searchResults.length) % searchResults.length;
+            navegarAResultado(currentSearchIndex);
+        });
+
+        document.getElementById('next-result').addEventListener('click', function(){
+            if (searchResults.length === 0) return;
+            currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+            navegarAResultado(currentSearchIndex);
+        });
+
+        document.getElementById('close-search').addEventListener('click', function(){
+            cerrarBusqueda();
+        });
+
+        function cerrarBusqueda() {
+            $searchBar().classList.remove('active');
+            $searchInput().value = '';
+            limpiarBusqueda();
+        }
+
+        function limpiarBusqueda() {
+            // Limpiar highlights
+            const mensajes = Array.from($msgs().querySelectorAll('.msg'));
+            mensajes.forEach(msg => {
+                const content = msg.dataset.content || '';
+                const remitente = msg.querySelector('strong')?.textContent || '';
+                msg.innerHTML = msg.classList.contains('me')
+                    ? escapeHTML(content)
+                    : '<strong>' + escapeHTML(remitente) + '</strong><br>' + escapeHTML(content);
+            });
+
+            searchResults = [];
+            currentSearchIndex = -1;
+            $searchResults().textContent = '0 resultados';
+            document.getElementById('prev-result').disabled = true;
+            document.getElementById('next-result').disabled = true;
+        }
+
+        // ===== FUNCIONALIDAD OPCIONES =====
+
+        document.getElementById('options-btn').addEventListener('click', function(e){
+            e.stopPropagation();
+            if (!currentConvId) {
+                alert('Abre una conversación primero');
+                return;
+            }
+            $optionsMenu().classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', function(e){
+            if (!e.target.closest('#options-btn') && !e.target.closest('#options-menu')) {
+                $optionsMenu().classList.remove('active');
+            }
+        });
+
+        document.getElementById('mute-conv').addEventListener('click', function(){
+            alert('Funcionalidad: Silenciar conversación\n(Próximamente)');
+            $optionsMenu().classList.remove('active');
+        });
+
+        document.getElementById('archive-conv').addEventListener('click', function(){
+            alert('Funcionalidad: Archivar conversación\n(Próximamente)');
+            $optionsMenu().classList.remove('active');
+        });
+
+        document.getElementById('details-conv').addEventListener('click', function(){
+            if (!currentConvId) return;
+
+            fetchJSON('/api/chat/conversaciones').then(function(data){
+                const conv = data.find(c => c.id === currentConvId);
+                if (conv) {
+                    alert(
+                        'Detalles de la conversación:\n\n' +
+                        'ID: ' + conv.id + '\n' +
+                        'Tipo: ' + (conv.tipo || 'DIRECT') + '\n' +
+                        'Servicio: ' + (conv.servicio || 'N/A') + '\n' +
+                        'Miembros: ' + (conv.miembrosCount || 0) + '\n' +
+                        'Mensajes no leídos: ' + (conv.unreadCount || 0)
+                    );
+                }
+            });
+            $optionsMenu().classList.remove('active');
+        });
+
+        document.getElementById('clear-history').addEventListener('click', function(){
+            if (!currentConvId) return;
+
+            if (confirm('¿Estás seguro de que quieres limpiar el historial? Esta acción no se puede deshacer.')) {
+                alert('Funcionalidad: Limpiar historial\n(Próximamente)');
+            }
+            $optionsMenu().classList.remove('active');
+        });
+
+        document.getElementById('delete-conv').addEventListener('click', function(){
+            if (!currentConvId) return;
+            eliminarConversacion(currentConvId);
+            $optionsMenu().classList.remove('active');
+        });
+
+        function eliminarConversacion(id) {
+            if (confirm('¿Eliminar esta conversación?')) {
+                fetch(`/api/chat/conversaciones/${id}`, { method: 'DELETE' })
+                    .then(() => {
+                        if (currentConvId === id) {
+                            currentConvId = null;
+                            renderEmptyMensajes('Selecciona una conversación');
+                        }
+                        cargarConversaciones();
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('No se pudo eliminar la conversación');
+                    });
+            }
+        }
+
+        // ===== INIT =====
 
         conectarChat();
         cargarConversaciones();
+
+        setInterval(() => {
+            fetchJSON('/api/chat/no-leidos/total')
+                .then(data => actualizarContadorGlobal(data.total))
+                .catch(() => {});
+        }, 30000);
     }
 </script>
 </body>

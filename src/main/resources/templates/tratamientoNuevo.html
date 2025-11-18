@@ -9,139 +9,299 @@
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
 </head>
 <body>
-<section class="contenedor">
-    <div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
-    <main id="main-tratamientos">
-        <!-- Ponemos th:object aquí para poder usar *{...} en los campos -->
-        <section class="section-tratamientos" th:object="${tratamiento}">
+<div class="page-container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1>
+            <span>💊</span>
+            <span id="page-title">Nuevo Tratamiento</span>
+        </h1>
+        <p class="subtitle" id="patient-name">Para: Juan Pérez</p>
+    </div>
 
-            <h2>
-                <!-- SOLO ${} aquí, sin *{} -->
-                <span th:if="${tratamiento == null or tratamiento.id_tratamiento == null}"
-                      th:text="${'Nuevo tratamiento para: ' + (usuario != null ? usuario.username
-                       : (tratamiento != null and tratamiento.usuario != null ? tratamiento.usuario.username : '—'))}">
-          Nuevo tratamiento
-        </span>
+    <!-- Info Box (opcional) -->
+    <div class="info-box">
+        <span class="icon">💡</span>
+        <p>Complete todos los campos requeridos para registrar el tratamiento médico del paciente.</p>
+    </div>
 
-                <span th:if="${tratamiento != null and tratamiento.id_tratamiento != null}"
-                      th:text="${'Editar tratamiento de: ' + (usuario != null ? usuario.username
-                       : (tratamiento.usuario != null ? tratamiento.usuario.username : '—'))}">
-          Editar tratamiento
-        </span>
-            </h2>
+    <!-- Form Container -->
+    <div class="form-container">
+        <form id="treatment-form">
+            <!-- Patient Selection (if needed) -->
+            <div class="form-field full-width" id="patient-selector-field">
+                <label for="patient-select">
+                    <span>👤</span>
+                    Paciente
+                    <span class="required">*</span>
+                </label>
+                <select id="patient-select" required>
+                    <option value="">Selecciona un usuario</option>
+                    <option value="1">Juan Pérez</option>
+                    <option value="2">María García</option>
+                    <option value="3">Carlos López</option>
+                </select>
+            </div>
 
-            <!-- TERNARIO en th:action, sin mezclar *{} -->
-            <form th:action="${tratamiento != null and tratamiento.id_tratamiento != null}
-                        ? @{/medico/actualizar}
-                        : @{/medico/guardar}"
-                  method="post" class="form-trat">
+            <!-- Medication Information -->
+            <div class="form-section-title">
+                <span>💊</span>
+                Información del Medicamento
+            </div>
 
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="nombre_tratamiento">
+                        Medicamento
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                            type="text"
+                            id="nombre_tratamiento"
+                            name="nombre_tratamiento"
+                            placeholder="ej. Paracetamol"
+                            required
+                    >
+                    <span class="error-message">Este campo es obligatorio</span>
+                </div>
 
-                <!-- Id del tratamiento (solo edición) -->
-                <input th:if="*{id_tratamiento != null}" type="hidden" th:field="*{id_tratamiento}"/>
-
-                <!-- Usuario fijado (viene en el modelo) -->
-                <input th:if="${usuario != null}" type="hidden" name="id_usuario" th:value="${usuario.id_usuario}"/>
-
-                <!-- Selector de usuario solo si no viene fijado -->
-                <div th:if="${usuario == null}" class="form-row">
-                    <label for="id_usuario">Usuario</label>
-                    <select id="id_usuario" name="id_usuario" required>
-                        <option value="">Selecciona un usuario</option>
-                        <option th:each="u : ${usuarios}"
-                                th:value="${u.id_usuario}"
-                                th:text="${u.username}">
-                        </option>
+                <div class="form-field">
+                    <label for="formula">Forma farmacéutica</label>
+                    <select id="formula" name="formula">
+                        <option value="">Seleccionar...</option>
+                        <option value="tableta">Tableta</option>
+                        <option value="jarabe">Jarabe</option>
+                        <option value="inyectable">Inyectable</option>
+                        <option value="capsula">Cápsula</option>
+                        <option value="suspension">Suspensión</option>
+                        <option value="pomada">Pomada</option>
                     </select>
                 </div>
 
-                <div class="form-grid">
-                    <div class="form-row">
-                        <label for="nombre_tratamiento">Medicamento</label>
-                        <input id="nombre_tratamiento" th:field="*{nombre_tratamiento}" required />
-                    </div>
-
-                    <div class="form-row">
-                        <label for="formula">Forma farmacéutica</label>
-                        <select id="formula" th:field="*{formula}">
-                            <option value=""></option>
-                            <option value="tableta">Tableta</option>
-                            <option value="jarabe">Jarabe</option>
-                            <option value="inyectable">Inyectable</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <label for="dosis">Dosis</label>
-                        <input id="dosis" th:field="*{dosis}" placeholder="p.ej. 500 mg" />
-                    </div>
-
-                    <div class="form-row">
-                        <label for="frecuencia">Frecuencia</label>
-                        <input id="frecuencia" th:field="*{frecuencia}" placeholder="p.ej. cada 8 horas" />
-                    </div>
-
-                    <div class="form-row">
-                        <label for="fecha_inicio">Fecha inicio</label>
-                        <input type="date" id="fecha_inicio" th:field="*{fecha_inicio}" />
-                    </div>
-
-                    <div class="form-row">
-                        <label for="fecha_fin">Fecha fin</label>
-                        <input type="date" id="fecha_fin" th:field="*{fecha_fin}" />
-                    </div>
-
-
-                    <div class="form-row">
-                        <label for="toma_alimentos">Con alimentos</label>
-                        <select id="toma_alimentos" th:field="*{toma_alimentos}">
-                            <option th:value="true">Sí</option>
-                            <option th:value="false">No</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <label for="estado_tratamiento">Estado</label>
-                        <select id="estado_tratamiento" th:field="*{estado_tratamiento}">
-                            <option value=""></option>
-                            <option value="Activo">Activo</option>
-                            <option value="Pausado">Pausado</option>
-                            <option value="Finalizado">Finalizado</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row" style="grid-column:1 / -1;">
-                        <label for="sintomas">Síntomas relacionados</label>
-                        <input id="sintomas" th:field="*{sintomas}" placeholder="p.ej. dolor, fiebre..." />
-                    </div>
-
-                    <div class="form-row" style="grid-column:1 / -1;">
-                        <label for="observaciones">Observaciones</label>
-                        <textarea id="observaciones" th:field="*{observaciones}" rows="3"></textarea>
-                    </div>
+                <div class="form-field">
+                    <label for="dosis">Dosis</label>
+                    <input
+                            type="text"
+                            id="dosis"
+                            name="dosis"
+                            placeholder="ej. 500 mg"
+                    >
+                    <span class="help-text">Especifique la cantidad por toma</span>
                 </div>
 
-                <div class="rec-actions" style="margin-top:12px;display:flex;gap:.5rem;flex-wrap:wrap;">
-                    <button type="submit"
-                            th:text="${tratamiento != null and tratamiento.id_tratamiento != null
-                           ? 'Guardar cambios' : 'Guardar tratamiento'}">
-                        Guardar
-                    </button>
-
-                    <a th:if="${usuario != null}"
-                       th:href="@{/medico/tratamientos(id_usuario=${usuario.id_usuario})}"
-                       class="btn-sec">Volver</a>
-                    <a th:if="${usuario == null}"
-                       th:href="@{/medico/tratamientos}"
-                       class="btn-sec">Volver</a>
+                <div class="form-field">
+                    <label for="frecuencia">Frecuencia</label>
+                    <input
+                            type="text"
+                            id="frecuencia"
+                            name="frecuencia"
+                            placeholder="ej. cada 8 horas"
+                    >
+                    <span class="help-text">Intervalo entre dosis</span>
                 </div>
-            </form>
-        </section>
-    </main>
+            </div>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
-</section>
+            <!-- Treatment Schedule -->
+            <div class="form-section-title">
+                <span>📅</span>
+                Cronograma del Tratamiento
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="fecha_inicio">
+                        <span>📆</span>
+                        Fecha de inicio
+                    </label>
+                    <input
+                            type="date"
+                            id="fecha_inicio"
+                            name="fecha_inicio"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="fecha_fin">
+                        <span>🏁</span>
+                        Fecha de fin
+                    </label>
+                    <input
+                            type="date"
+                            id="fecha_fin"
+                            name="fecha_fin"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="toma_alimentos">
+                        <span>🍽️</span>
+                        Con alimentos
+                    </label>
+                    <select id="toma_alimentos" name="toma_alimentos">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="estado_tratamiento">
+                        <span>📊</span>
+                        Estado
+                    </label>
+                    <select id="estado_tratamiento" name="estado_tratamiento">
+                        <option value="">Seleccionar...</option>
+                        <option value="Activo" selected>Activo</option>
+                        <option value="Pausado">Pausado</option>
+                        <option value="Finalizado">Finalizado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section-title">
+                <span>📝</span>
+                Información Adicional
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field full-width">
+                    <label for="sintomas">
+                        <span>🩺</span>
+                        Síntomas relacionados
+                    </label>
+                    <input
+                            type="text"
+                            id="sintomas"
+                            name="sintomas"
+                            placeholder="ej. dolor, fiebre, malestar general..."
+                    >
+                    <span class="help-text">Síntomas que motivan este tratamiento</span>
+                </div>
+
+                <div class="form-field full-width">
+                    <label for="observaciones">
+                        <span>📋</span>
+                        Observaciones
+                    </label>
+                    <textarea
+                            id="observaciones"
+                            name="observaciones"
+                            placeholder="Instrucciones adicionales, precauciones o notas importantes..."
+                    ></textarea>
+                    <span class="help-text">Información adicional relevante para el tratamiento</span>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span>💾</span>
+                    <span id="submit-text">Guardar tratamiento</span>
+                </button>
+                <a href="#" class="btn btn-secondary" id="back-btn">
+                    <span>↩️</span>
+                    Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    // Simulate different modes: 'create' or 'edit'
+    const mode = 'create'; // Change to 'edit' to test edit mode
+    const hasPreselectedPatient = true; // Change to false to show patient selector
+
+    // Update UI based on mode
+    if (mode === 'edit') {
+        document.getElementById('page-title').textContent = 'Editar Tratamiento';
+        document.getElementById('submit-text').textContent = 'Guardar cambios';
+
+        // Populate form with existing data (simulation)
+        document.getElementById('nombre_tratamiento').value = 'Paracetamol';
+        document.getElementById('formula').value = 'tableta';
+        document.getElementById('dosis').value = '500mg';
+        document.getElementById('frecuencia').value = 'cada 8h';
+        document.getElementById('fecha_inicio').value = '2025-01-15';
+        document.getElementById('fecha_fin').value = '2025-01-22';
+        document.getElementById('sintomas').value = 'Fiebre';
+        document.getElementById('observaciones').value = 'Reposo durante 3 días';
+    }
+
+    // Hide patient selector if patient is preselected
+    if (hasPreselectedPatient) {
+        document.getElementById('patient-selector-field').style.display = 'none';
+    }
+
+    // Form validation
+    const form = document.getElementById('treatment-form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const submitBtn = form.querySelector('.btn-primary');
+        const nombreTratamiento = document.getElementById('nombre_tratamiento');
+
+        // Basic validation
+        if (!nombreTratamiento.value.trim()) {
+            nombreTratamiento.closest('.form-field').classList.add('error');
+            nombreTratamiento.focus();
+            return;
+        }
+
+        // Remove error state
+        nombreTratamiento.closest('.form-field').classList.remove('error');
+
+        // Show loading state
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        // Simulate form submission
+        setTimeout(() => {
+            alert('✅ Tratamiento guardado correctamente');
+            // In real implementation: window.location.href = '/medico/tratamientos';
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }, 1500);
+    });
+
+    // Clear error on input
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            this.closest('.form-field')?.classList.remove('error');
+        });
+    });
+
+    // Date validation: end date should be after start date
+    const startDate = document.getElementById('fecha_inicio');
+    const endDate = document.getElementById('fecha_fin');
+
+    startDate.addEventListener('change', function() {
+        if (endDate.value && this.value > endDate.value) {
+            alert('⚠️ La fecha de inicio no puede ser posterior a la fecha de fin');
+            this.value = '';
+        }
+    });
+
+    endDate.addEventListener('change', function() {
+        if (startDate.value && this.value < startDate.value) {
+            alert('⚠️ La fecha de fin no puede ser anterior a la fecha de inicio');
+            this.value = '';
+        }
+    });
+
+    // Back button
+    document.getElementById('back-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('¿Deseas salir sin guardar los cambios?')) {
+            // window.location.href = '/medico/tratamientos';
+            history.back();
+        }
+    });
+</script>
 </body>
 </html>

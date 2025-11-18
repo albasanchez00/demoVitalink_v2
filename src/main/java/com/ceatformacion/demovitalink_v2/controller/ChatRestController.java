@@ -26,97 +26,202 @@ public class ChatRestController {
 
     private final ConversacionRepository convRepo;
     private final ChatService chat;
-    private final UsuariosRepository usuariosRepo;
+    private final com.ceatformacion.demovitalink_v2.repository.UsuariosRepository usuariosRepo;
 
     public ChatRestController(ConversacionRepository convRepo,
                               ChatService chat,
-                              UsuariosRepository usuariosRepo) {
+                              com.ceatformacion.demovitalink_v2.repository.UsuariosRepository usuariosRepo) {
         this.convRepo = convRepo;
         this.chat = chat;
         this.usuariosRepo = usuariosRepo;
     }
 
-    /** Lista las conversaciones del usuario autenticado */
+    /**
+     * 📋 Lista las conversaciones del usuario autenticado
+     * GET /api/chat/conversaciones
+     */
     @GetMapping("/conversaciones")
     @Transactional(readOnly = true)
     public List<ConversacionRow> mias(Principal principal) {
-        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
         List<Conversacion> conversaciones = convRepo.findConversacionesDeMiembro(userId);
-        return conversaciones.stream().map(this::toRow).collect(Collectors.toList());
+
+        return conversaciones.stream()
+                .map(c -> toRowWithUnread(c, userId))
+                .collect(Collectors.toList());
     }
 
-    /** Histórico paginado de mensajes (solo si el usuario es miembro) */
+    /**
+     * 💬 Histórico paginado de mensajes (solo si el usuario es miembro)
+     * GET /api/chat/conversaciones/{id}/mensajes?page=0&size=50
+     */
     @GetMapping("/conversaciones/{id}/mensajes")
     @Transactional(readOnly = true)
-    public Page<MensajeRow> mensajes(Principal principal,
-                                     @PathVariable Integer id,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "50") int size) {
-        if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    public Page<MensajeRow> mensajes(
+            Principal principal,
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
         if (!convRepo.pertenece(id, userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No perteneces a esta conversación");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "No perteneces a esta conversación");
         }
 
         Page<Mensaje> mensajes = chat.historico(id, page, size);
+
         List<MensajeRow> dtos = mensajes.getContent().stream()
                 .map(m -> new MensajeRow(
                         m.getId(),
                         chat.nombreParaMostrar(m.getRemitente()),
                         m.getContenido(),
-                        m.getCreadoEn()
+                        m.getCreadoEn(),
+                        chat.estaLeido(m.getId(), userId)
                 ))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtos, mensajes.getPageable(), mensajes.getTotalElements());
     }
 
+    /**
+     * ➕ Crear o reabrir conversación directa
+     * POST /api/chat/conversaciones/directa?username=doctor123
+     */
     @PostMapping("/conversaciones/directa")
     @Transactional
-    public ResponseEntity<ConversacionDTO> crearDirecta(Principal principal,
-                                                        @RequestParam("username") String otroUsername) {
-        if (principal == null)
+    public ResponseEntity<ConversacionDTO> crearDirecta(
+            Principal principal,
+            @RequestParam("username") String otroUsername
+    ) {
+        if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         var me = usuariosRepo.findByUsernameIgnoreCase(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario actual no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario actual no encontrado"
+                ));
 
         var otro = usuariosRepo.findByUsernameIgnoreCase(otroUsername)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario destino no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuario destino no encontrado"
+                ));
 
         var conv = chat.getOrCreateDirectConversation(me, otro);
         return ResponseEntity.ok(ConversacionDTO.of(conv));
     }
 
-
-    // --- Mappers / DTOs internos del controlador ---
-    private ConversacionRow toRow(Conversacion c) {
-        return new ConversacionRow(
-                c.getId(),
-                safe(c.getTipo()),
-                safe(c.getServicio()),
-                c.getMiembros() != null ? c.getMiembros().size() : 0,
-                c.getCreadoEn()
-        );
-    }
-
-    public record MensajeRow(Integer id, String remitente, String contenido, LocalDateTime creadoEn) {}
-    public record ConversacionRow(Integer id, String tipo, String servicio, int miembrosCount, LocalDateTime creadoEn) {}
-
-    private static String safe(String s) { return s == null ? "" : s; }
-
+    /**
+     * 🗑️ Eliminar conversación (solo si eres miembro)
+     * DELETE /api/chat/conversaciones/{id}
+     */
     @DeleteMapping("/conversaciones/{id}")
     @Transactional
-    public ResponseEntity<Void> eliminarConversacion(@PathVariable Integer id, Principal principal) {
-        if (principal == null)
+    public ResponseEntity<Void> eliminarConversacion(
+            @PathVariable Integer id,
+            Principal principal
+    ) {
+        if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
         chat.eliminarConversacion(id, userId);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 📖 Marcar todos los mensajes de una conversación como leídos
+     * POST /api/chat/conversaciones/{id}/marcar-leida
+     *
+     * ✅ ENDPOINT QUE FALTABA
+     */
+    @PostMapping("/conversaciones/{id}/marcar-leida")
+    @Transactional
+    public ResponseEntity<Void> marcarConversacionLeida(
+            @PathVariable Integer id,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        // Verificar que el usuario es miembro de la conversación
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "No perteneces a esta conversación");
+        }
+
+        // Marcar todos los mensajes como leídos
+        chat.marcarConversacionLeida(id, userId);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 🔔 Obtener contador total de mensajes no leídos del usuario
+     * GET /api/chat/no-leidos/total
+     */
+    @GetMapping("/no-leidos/total")
+    @Transactional(readOnly = true)
+    public UnreadCountResponse contadorNoLeidos(Principal principal) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+        long total = chat.contarNoLeidosTotal(userId);
+
+        return new UnreadCountResponse(total);
+    }
+
+    // ===== Mappers / DTOs internos =====
+
+    private ConversacionRow toRowWithUnread(Conversacion c, Integer userId) {
+        long unreadCount = chat.contarNoLeidosEnConversacion(c.getId(), userId);
+
+        return new ConversacionRow(
+                c.getId(),
+                safe(c.getTipo()),
+                safe(c.getServicio()),
+                c.getMiembros() != null ? c.getMiembros().size() : 0,
+                c.getCreadoEn(),
+                unreadCount
+        );
+    }
+
+    public record MensajeRow(
+            Integer id,
+            String remitente,
+            String contenido,
+            LocalDateTime creadoEn,
+            boolean leido
+    ) {}
+
+    public record ConversacionRow(
+            Integer id,
+            String tipo,
+            String servicio,
+            int miembrosCount,
+            LocalDateTime creadoEn,
+            long unreadCount
+    ) {}
+
+    public record UnreadCountResponse(long total) {}
+
+    private static String safe(String s) {
+        return s == null ? "" : s;
+    }
 }

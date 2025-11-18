@@ -27,27 +27,32 @@ public class ChatService {
     private final ConversacionRepository convRepo;
     private final MensajeRepository msgRepo;
     private final UsuariosRepository usuariosRepo;
-    private final LecturaRepository lecturaRepo; // <-- NUEVO
+    private final LecturaRepository lecturaRepo;
 
     public ChatService(ConversacionRepository c,
                        MensajeRepository m,
                        UsuariosRepository u,
-                       LecturaRepository l) {     // <-- NUEVO
+                       LecturaRepository l) {
         this.convRepo = c;
         this.msgRepo = m;
         this.usuariosRepo = u;
-        this.lecturaRepo = l;                     // <-- NUEVO
+        this.lecturaRepo = l;
     }
 
-
-    /** Convierte principal.getName() (username) -> id de Usuarios. */
+    /**
+     * 🔐 Convierte username -> ID de usuario
+     */
     public Integer obtenerIdDesdePrincipal(String principalName) {
         return usuariosRepo.findByUsernameIgnoreCase(principalName)
-                .map(this::getUsuarioId)
+                .map(Usuarios::getId_usuario)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "No existe usuario con username=" + principalName));
+                        "No existe usuario con username=" + principalName
+                ));
     }
 
+    /**
+     * 👥 Obtiene los usernames de todos los miembros de una conversación
+     */
     public List<String> obtenerUsernamesMiembros(Integer convId) {
         return convRepo.findById(convId)
                 .map(conv -> conv.getMiembros()
@@ -56,15 +61,17 @@ public class ChatService {
                         .toList())
                 .orElse(List.of());
     }
+
+    /**
+     * 💬 Crear o recuperar conversación directa entre dos usuarios
+     */
     @Transactional
     public Conversacion getOrCreateDirectConversation(Usuarios a, Usuarios b) {
         int idA = a.getId_usuario();
         int idB = b.getId_usuario();
 
         // Clave determinística: menorID-mayorID
-        String key = (idA < idB)
-                ? idA + "-" + idB
-                : idB + "-" + idA;
+        String key = (idA < idB) ? idA + "-" + idB : idB + "-" + idA;
 
         return convRepo.findByTipoAndDirectKey("DIRECT", key)
                 .orElseGet(() -> {
@@ -83,25 +90,33 @@ public class ChatService {
                 });
     }
 
+    /**
+     * 🗑️ Elimina conversación (verificando permisos)
+     */
     @Transactional
     public void eliminarConversacion(Integer id, Integer userId) {
-        // Verificamos que el usuario sea miembro
         boolean pertenece = convRepo.existsByIdAndMiembro(id, userId);
-        if (!pertenece)
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes eliminar una conversación ajena");
-
+        if (!pertenece) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "No puedes eliminar una conversación ajena");
+        }
         convRepo.deleteByIdHard(id);
     }
 
-
-    /** Publica el mensaje y devuelve DTO ya mapeado con nombre listo. */
+    /**
+     * ✉️ Publica mensaje en conversación y retorna DTO mapeado
+     */
     @Transactional
     public MensajeDTO publicarYMapear(Integer convId, Integer remitenteId, String texto) {
-        var conv = convRepo.findById(convId).orElseThrow();
+        var conv = convRepo.findById(convId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Conversación no encontrada"
+                ));
 
-        // Carga remitente + cliente (para nombre/apellidos)
         var remitente = usuariosRepo.findByIdWithCliente(remitenteId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + remitenteId));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Usuario no encontrado: " + remitenteId
+                ));
 
         var msg = new Mensaje();
         msg.setConversacion(conv);
@@ -120,49 +135,111 @@ public class ChatService {
         );
     }
 
+    /**
+     * 📜 Histórico paginado de mensajes de una conversación
+     */
     public Page<Mensaje> historico(Integer convId, int page, int size) {
         return msgRepo.findByConversacion_Id(
-                convId, PageRequest.of(page, size, Sort.Direction.DESC, "creadoEn"));
+                convId,
+                PageRequest.of(page, size, Sort.Direction.DESC, "creadoEn")
+        );
     }
 
-    /** Construye nombre: "Nombre Apellidos" -> email cliente -> username -> "Usuario". */
+    /**
+     * 👤 Construye nombre para mostrar del usuario
+     *
+     * ✅ CORREGIDO: Ahora PRIORIZA el username
+     *
+     * Orden de prioridad:
+     * 1. Username (SIEMPRE presente)
+     * 2. Nombre completo del cliente (si existe)
+     * 3. Email del cliente (si existe)
+     * 4. Fallback: "Usuario"
+     */
     public String nombreParaMostrar(Usuarios u) {
+        // ✅ PRIORIDAD 1: Username (RECOMENDADO para chat)
+        try {
+            String username = safe(u.getUsername());
+            if (!username.isBlank()) {
+                return username;  // 👈 RETORNA DIRECTAMENTE EL USERNAME
+            }
+        } catch (Exception ignored) {}
+
+        // Solo si NO hay username, intentar otras opciones
         try {
             if (u.getCliente() != null) {
                 var c = u.getCliente();
+
+                // Intentar nombre completo
                 String n = safe(c.getNombre());
                 String a = safe(c.getApellidos());
                 String full = (n + " " + a).trim();
                 if (!full.isBlank()) return full;
 
+                // Intentar correo
                 String correo = safe(c.getCorreoElectronico());
                 if (!correo.isBlank()) return correo;
             }
         } catch (Exception ignored) {}
-        try {
-            String user = safe(u.getUsername());
-            if (!user.isBlank()) return user;
-        } catch (Exception ignored) {}
+
+        // Fallback final
         return "Usuario";
     }
 
-    private static String safe(String s) { return s == null ? "" : s; }
+    // ========== SISTEMA DE LECTURAS ==========
 
-    /** ⚠️ AJUSTA AQUÍ el getter exacto de tu PK en Usuarios */
-    private Integer getUsuarioId(Usuarios u) {
-        // Si tu getter real es getId_usuario():
-        return u.getId_usuario();
-        // Si fuera getIdUsuario(), usa:
-        // return u.getIdUsuario();
-    }
-
+    /**
+     * 📖 Marca un mensaje como leído por un usuario
+     */
     @Transactional
     public void marcarLeido(Integer mensajeId, Integer usuarioId) {
         if (!lecturaRepo.existsLectura(mensajeId, usuarioId)) {
-            var l = new Lectura();
-            l.setMensaje(msgRepo.getReferenceById(mensajeId));
-            l.setUsuario(usuariosRepo.getReferenceById(usuarioId));
-            lecturaRepo.save(l);
+            var lectura = new Lectura();
+            lectura.setMensaje(msgRepo.getReferenceById(mensajeId));
+            lectura.setUsuario(usuariosRepo.getReferenceById(usuarioId));
+            lecturaRepo.save(lectura);
         }
+    }
+
+    /**
+     * 📖 Marca todos los mensajes de una conversación como leídos
+     */
+    @Transactional
+    public void marcarConversacionLeida(Integer convId, Integer usuarioId) {
+        var mensajes = msgRepo.findByConversacion_Id(
+                convId,
+                PageRequest.of(0, Integer.MAX_VALUE)
+        );
+
+        mensajes.forEach(m -> marcarLeido(m.getId(), usuarioId));
+    }
+
+    /**
+     * 🔍 Verifica si un mensaje fue leído por un usuario
+     */
+    public boolean estaLeido(Integer mensajeId, Integer usuarioId) {
+        return lecturaRepo.existsLectura(mensajeId, usuarioId);
+    }
+
+    /**
+     * 🔢 Cuenta mensajes no leídos en una conversación específica
+     */
+    @Transactional(readOnly = true)
+    public long contarNoLeidosEnConversacion(Integer convId, Integer usuarioId) {
+        return convRepo.contarNoLeidosEnConversacion(convId, usuarioId);
+    }
+
+    /**
+     * 🔢 Cuenta TODOS los mensajes no leídos del usuario (en todas sus conversaciones)
+     */
+    @Transactional(readOnly = true)
+    public long contarNoLeidosTotal(Integer usuarioId) {
+        return convRepo.contarNoLeidosTotales(usuarioId);
+    }
+
+    // ===== Utilidades =====
+
+    private static String safe(String s) {
+        return s == null ? "" : s;
     }
 }

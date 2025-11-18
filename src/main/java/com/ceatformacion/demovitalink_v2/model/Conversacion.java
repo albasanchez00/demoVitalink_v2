@@ -18,7 +18,8 @@ public class Conversacion {
     @Column(length=80)
     private String servicio; // opcional (UCI, Urgencias...)
 
-    @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="creado_por", nullable=false)
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="creado_por", nullable=false)
     private Usuarios creadoPor;
 
     @Column(name = "direct_key", length = 100, unique = true)
@@ -27,6 +28,14 @@ public class Conversacion {
     @Column(name="creado_en", nullable=false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
+    // ✅ NUEVO: Campo para silenciar conversación
+    @Column(name="muted")
+    private Boolean muted = false;
+
+    // ✅ NUEVO: Campo para archivar conversación
+    @Column(name="archived")
+    private Boolean archived = false;
+
     @ManyToMany
     @JoinTable(
             name="conversacion_miembros",
@@ -34,6 +43,8 @@ public class Conversacion {
             inverseJoinColumns=@JoinColumn(name="usuario_id")
     )
     private Set<Usuarios> miembros;
+
+    // ===== GETTERS Y SETTERS =====
 
     public Integer getId() {
         return id;
@@ -82,5 +93,21 @@ public class Conversacion {
     }
     public void setDirectKey(String directKey) {
         this.directKey = directKey;
+    }
+
+    // ✅ NUEVOS: Getters y Setters para muted y archived
+
+    public Boolean getMuted() {
+        return muted;
+    }
+    public void setMuted(Boolean muted) {
+        this.muted = muted;
+    }
+
+    public Boolean getArchived() {
+        return archived;
+    }
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
     }
 }
