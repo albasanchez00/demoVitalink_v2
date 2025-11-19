@@ -4,54 +4,116 @@
     <meta charset="UTF-8">
     <title>Editar cliente</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
-    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
+<div th:replace="fragments/header :: header"></div>
 
-<h1>Editar cliente</h1>
+<main id="main-editar-cliente">
+    <div class="editar-wrap">
+        <!-- Header -->
+        <div class="editar-header">
+            <h1>📋 Editar Paciente</h1>
+            <a th:href="@{/medico/pacientes}" class="btn-volver">
+                ← Volver al listado
+            </a>
+        </div>
 
-<form th:action="@{/clientes/actualizar}" th:object="${cliente}" method="post">
-    <!-- CSRF -->
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <!-- ID del cliente -->
-    <input type="hidden" th:field="*{idCliente}"/>
+        <!-- Body -->
+        <div class="editar-body">
+            <!-- Info badge -->
+            <div class="info-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Actualiza la información del paciente y su médico de referencia
+            </div>
 
-    <div>
-        <label>Nombre</label>
-        <input type="text" th:field="*{nombre}" required>
+            <!-- Formulario -->
+            <form th:action="@{/clientes/actualizar}" th:object="${cliente}" method="post">
+                <!-- CSRF -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!-- ID del cliente -->
+                <input type="hidden" th:field="*{idCliente}"/>
+
+                <!-- Sección: Datos Personales -->
+                <div class="form-section">
+                    <div class="form-section-title">Datos Personales</div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>
+                                Nombre <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   th:field="*{nombre}"
+                                   placeholder="Ej: Juan"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Apellidos</label>
+                            <input type="text"
+                                   th:field="*{apellidos}"
+                                   placeholder="Ej: García Pérez">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Contacto -->
+                <div class="form-section">
+                    <div class="form-section-title">Información de Contacto</div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email"
+                                   th:field="*{correoElectronico}"
+                                   placeholder="ejemplo@correo.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text"
+                                   th:field="*{telefono}"
+                                   placeholder="+34 600 000 000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Asignación Médica -->
+                <div class="form-section">
+                    <div class="form-section-title">Asignación Médica</div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Médico de Referencia</label>
+                            <select name="medicoId">
+                                <option value="">-- Sin médico asignado --</option>
+                                <option th:each="m : ${medicos}"
+                                        th:value="${m.id_usuario}"
+                                        th:text="${m.cliente != null ? (m.cliente.nombre + ' ' + m.cliente.apellidos) : m.username}"
+                                        th:selected="${medicoSeleccionadoId != null and medicoSeleccionadoId == m.id_usuario}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="form-actions">
+                    <a th:href="@{/listaClientes}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        💾 Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</main>
 
-    <div>
-        <label>Apellidos</label>
-        <input type="text" th:field="*{apellidos}">
-    </div>
-
-    <div>
-        <label>Teléfono</label>
-        <input type="text" th:field="*{telefono}">
-    </div>
-
-    <div>
-        <label>Email</label>
-        <input type="email" th:field="*{correoElectronico}">
-    </div>
-
-    <div>
-        <label>Médico de referencia</label>
-        <!-- name=medicoId para que llegue al @RequestParam("medicoId") -->
-        <select name="medicoId">
-            <option value="">-- Sin médico --</option>
-            <option th:each="m : ${medicos}"
-                    th:value="${m.id_usuario}"
-                    th:text="${m.username}"
-                    th:selected="${medicoSeleccionadoId} != null and ${medicoSeleccionadoId} == ${m.id_usuario}">
-            </option>
-        </select>
-    </div>
-
-    <button type="submit">Guardar cambios</button>
-    <a th:href="@{/listaClientes}">Volver</a>
-</form>
-
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
