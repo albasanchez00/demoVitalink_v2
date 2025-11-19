@@ -112,12 +112,35 @@ function mapTratamiento(t) {
     };
 }
 
-// ===== API =====
-const API = {
-    sintomas: "/api/sintomas/mios",
-    citas: "/api/citas",
-    tratamientos: "/api/tratamientos/mios",
-};
+// ===== API - ACTUALIZADO para soportar userId =====
+/**
+ * Obtiene las URLs de API según el userId
+ * Si userId existe y es válido, usa las rutas del médico con el ID del paciente
+ * Si no, usa las rutas "/mios" (del usuario autenticado)
+ */
+function getAPIUrls() {
+    // Leer userId del window.USER_ID (inyectado por Thymeleaf)
+    const userId = window.USER_ID;
+
+    // Si hay un userId válido (y no es 0), usar las rutas del médico
+    if (userId && userId !== 0) {
+        console.log(`[Historial] Cargando datos para userId: ${userId}`);
+        return {
+            sintomas: `/api/medico/sintomas/${userId}`,
+            citas: `/api/citas?userId=${userId}`, // Ajusta según tu API de citas
+            tratamientos: `/api/tratamientos?userId=${userId}`, // Ajusta según tu API de tratamientos
+        };
+    } else {
+        // Sin userId válido, usar las rutas del usuario autenticado
+        console.log("[Historial] Cargando datos del usuario autenticado (/mios)");
+        return {
+            sintomas: "/api/sintomas/mios",
+            citas: "/api/citas",
+            tratamientos: "/api/tratamientos/mios",
+        };
+    }
+}
+
 async function getJSON(url) {
     const res = await fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -163,7 +186,7 @@ function passesFilters(ev, F) {
         if (!Number.isFinite(ev.intensidad) || ev.intensidad !== F.intensidad) return false;
     }
 
-    // estado tratamiento (si se pide y el evento es tratamiento: buscamos en el título “ · ESTADO” o en desc)
+    // estado tratamiento (si se pide y el evento es tratamiento: buscamos en el título " · ESTADO" o en desc)
     if (F.estadoTratamiento && ev.tipo === "TRATAMIENTO") {
         const blob = `${ev.titulo} ${ev.descripcion}`.toUpperCase();
         if (!blob.includes(F.estadoTratamiento)) return false;
@@ -175,19 +198,38 @@ function passesFilters(ev, F) {
 // ===== Carga + render considerando filtros =====
 async function cargarYRenderizarEventos(filtros) {
     try {
+        // CAMBIO CRÍTICO: Obtener las URLs dinámicamente según el userId
+        const API = getAPIUrls();
+
         const [sintomas, citas, tratamientos] = await Promise.allSettled([
             getJSON(API.sintomas), getJSON(API.citas), getJSON(API.tratamientos)
         ]);
 
         const events = [];
-        if (sintomas.status === "fulfilled" && Array.isArray(sintomas.value)) {
-            events.push(...sintomas.value.map(mapSintoma));
+
+        // Procesar síntomas
+        if (sintomas.status === "fulfilled") {
+            // Puede ser un array directo o un objeto Page con content
+            const sintomasData = Array.isArray(sintomas.value)
+                ? sintomas.value
+                : (sintomas.value.content || []);
+            events.push(...sintomasData.map(mapSintoma));
         }
-        if (citas.status === "fulfilled" && Array.isArray(citas.value)) {
-            events.push(...citas.value.map(mapCita));
+
+        // Procesar citas
+        if (citas.status === "fulfilled") {
+            const citasData = Array.isArray(citas.value)
+                ? citas.value
+                : (citas.value.content || []);
+            events.push(...citasData.map(mapCita));
         }
-        if (tratamientos.status === "fulfilled" && Array.isArray(tratamientos.value)) {
-            events.push(...tratamientos.value.map(mapTratamiento));
+
+        // Procesar tratamientos
+        if (tratamientos.status === "fulfilled") {
+            const tratamientosData = Array.isArray(tratamientos.value)
+                ? tratamientos.value
+                : (tratamientos.value.content || []);
+            events.push(...tratamientosData.map(mapTratamiento));
         }
 
         // aplica filtros del formulario (si hay)

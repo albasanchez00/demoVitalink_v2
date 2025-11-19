@@ -1,10 +1,14 @@
 package com.ceatformacion.demovitalink_v2.controller;
 
+import com.ceatformacion.demovitalink_v2.dto.ArchiveRequest;
 import com.ceatformacion.demovitalink_v2.dto.ConversacionDTO;
+import com.ceatformacion.demovitalink_v2.dto.ConversacionDetalles;
+import com.ceatformacion.demovitalink_v2.dto.MuteRequest;
 import com.ceatformacion.demovitalink_v2.model.Conversacion;
 import com.ceatformacion.demovitalink_v2.model.Mensaje;
 import com.ceatformacion.demovitalink_v2.model.Usuarios;
 import com.ceatformacion.demovitalink_v2.repository.ConversacionRepository;
+import com.ceatformacion.demovitalink_v2.repository.MensajeRepository;
 import com.ceatformacion.demovitalink_v2.repository.UsuariosRepository;
 import com.ceatformacion.demovitalink_v2.services.ChatService;
 import org.springframework.data.domain.Page;
@@ -25,31 +29,40 @@ import java.util.stream.Collectors;
 public class ChatRestController {
 
     private final ConversacionRepository convRepo;
+    private final MensajeRepository mensajeRepo;  // ✅ AÑADIDO
     private final ChatService chat;
-    private final com.ceatformacion.demovitalink_v2.repository.UsuariosRepository usuariosRepo;
+    private final UsuariosRepository usuariosRepo;
 
     public ChatRestController(ConversacionRepository convRepo,
-                              ChatService chat,
-                              com.ceatformacion.demovitalink_v2.repository.UsuariosRepository usuariosRepo) {
+                              ChatService chat, UsuariosRepository usuariosRepo, MensajeRepository mensajeRepo) {
         this.convRepo = convRepo;
         this.chat = chat;
         this.usuariosRepo = usuariosRepo;
+        this.mensajeRepo = mensajeRepo;
     }
 
     /**
      * 📋 Lista las conversaciones del usuario autenticado
      * GET /api/chat/conversaciones
      */
+
     @GetMapping("/conversaciones")
     @Transactional(readOnly = true)
-    public List<ConversacionRow> mias(Principal principal) {
+    public List<ConversacionRow> mias(
+            Principal principal,
+            @RequestParam(defaultValue = "false") Boolean archived  // ✅ AÑADIR
+    ) {
         if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
         Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
-        List<Conversacion> conversaciones = convRepo.findConversacionesDeMiembro(userId);
-
+        List<Conversacion> conversaciones;
+        if (archived) {
+            conversaciones = convRepo.findConversacionesArchivadas(userId);
+        } else {
+            conversaciones = convRepo.findConversacionesDeMiembroConFiltro(userId, false);
+        }
         return conversaciones.stream()
                 .map(c -> toRowWithUnread(c, userId))
                 .collect(Collectors.toList());
@@ -188,7 +201,6 @@ public class ChatRestController {
     }
 
     // ===== Mappers / DTOs internos =====
-
     private ConversacionRow toRowWithUnread(Conversacion c, Integer userId) {
         long unreadCount = chat.contarNoLeidosEnConversacion(c.getId(), userId);
 
@@ -198,7 +210,9 @@ public class ChatRestController {
                 safe(c.getServicio()),
                 c.getMiembros() != null ? c.getMiembros().size() : 0,
                 c.getCreadoEn(),
-                unreadCount
+                unreadCount,
+                c.getMuted() != null ? c.getMuted() : false,      // ✅ AÑADIDO
+                c.getArchived() != null ? c.getArchived() : false // ✅ AÑADIDO
         );
     }
 
@@ -216,12 +230,170 @@ public class ChatRestController {
             String servicio,
             int miembrosCount,
             LocalDateTime creadoEn,
-            long unreadCount
+            long unreadCount,
+            boolean muted,      // ✅ AÑADIDO
+            boolean archived    // ✅ AÑADIDO
     ) {}
 
     public record UnreadCountResponse(long total) {}
 
     private static String safe(String s) {
         return s == null ? "" : s;
+    }
+
+    @PutMapping("/conversaciones/{id}/silenciar")
+    @Transactional
+    public ResponseEntity<Void> silenciarConversacion(
+            @PathVariable Integer id,
+            @RequestBody MuteRequest request,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        convRepo.setMuted(id, request.muted());
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 📁 Archivar/Desarchivar conversación
+     * PUT /api/chat/conversaciones/{id}/archivar
+     * Body: { "archived": true }
+     */
+    @PutMapping("/conversaciones/{id}/archivar")
+    @Transactional
+    public ResponseEntity<Void> archivarConversacion(
+            @PathVariable Integer id,
+            @RequestBody ArchiveRequest request,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        convRepo.setArchived(id, request.archived());
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 🗑️ Limpiar historial de conversación
+     * DELETE /api/chat/conversaciones/{id}/historial
+     */
+    @DeleteMapping("/conversaciones/{id}/historial")
+    @Transactional
+    public ResponseEntity<Void> limpiarHistorial(
+            @PathVariable Integer id,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        mensajeRepo.deleteByConversacionId(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * ℹ️ Obtener detalles completos de una conversación
+     * GET /api/chat/conversaciones/{id}/detalles
+     */
+    @GetMapping("/conversaciones/{id}/detalles")
+    @Transactional(readOnly = true)
+    public ResponseEntity<ConversacionDetalles> obtenerDetalles(
+            @PathVariable Integer id,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        Conversacion conv = convRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        long totalMensajes = mensajeRepo.countByConversacion_Id(id);
+        long noLeidos = chat.contarNoLeidosEnConversacion(id, userId);
+
+        List<String> miembros = conv.getMiembros().stream()
+                .map(u -> chat.nombreParaMostrar(u))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new ConversacionDetalles(
+                conv.getId(),
+                conv.getTipo(),
+                conv.getServicio(),
+                conv.getMuted(),
+                conv.getArchived(),
+                conv.getCreadoEn(),
+                miembros,
+                totalMensajes,
+                noLeidos
+        ));
+    }
+
+    /**
+     * 🔍 Buscar mensajes en una conversación
+     * GET /api/chat/conversaciones/{id}/buscar?q=hola&page=0&size=20
+     */
+    @GetMapping("/conversaciones/{id}/buscar")
+    @Transactional(readOnly = true)
+    public Page<MensajeRow> buscar(
+            Principal principal,
+            @PathVariable Integer id,
+            @RequestParam String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer userId = chat.obtenerIdDesdePrincipal(principal.getName());
+
+        if (!convRepo.pertenece(id, userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        Page<Mensaje> mensajes = mensajeRepo.buscarEnConversacion(
+                id,
+                q,
+                org.springframework.data.domain.PageRequest.of(page, size)
+        );
+
+        List<MensajeRow> dtos = mensajes.getContent().stream()
+                .map(m -> new MensajeRow(
+                        m.getId(),
+                        chat.nombreParaMostrar(m.getRemitente()),
+                        m.getContenido(),
+                        m.getCreadoEn(),
+                        chat.estaLeido(m.getId(), userId)
+                ))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, mensajes.getPageable(), mensajes.getTotalElements());
     }
 }

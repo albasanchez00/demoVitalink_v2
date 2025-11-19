@@ -4,6 +4,7 @@ import com.ceatformacion.demovitalink_v2.model.Mensaje;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -33,4 +34,23 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Integer> {
         limit 1
         """)
     Mensaje findUltimoMensaje(@Param("convId") Integer convId);
+    /**
+     * ✅ NUEVO: Elimina TODOS los mensajes de una conversación
+     * Usado para "Limpiar historial"
+     */
+    @Modifying
+    @Query("DELETE FROM Mensaje m WHERE m.conversacion.id = :convId")
+    void deleteByConversacionId(@Param("convId") Integer convId);
+
+    /**
+     * ✅ CORRECCIÓN: Búsqueda case-insensitive con CAST
+     */
+    @Query("SELECT m FROM Mensaje m WHERE m.conversacion.id = :convId " +
+            "AND LOWER(CAST(m.contenido AS string)) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "ORDER BY m.creadoEn DESC")
+    Page<Mensaje> buscarEnConversacion(
+            @Param("convId") Integer convId,
+            @Param("query") String query,
+            Pageable pageable
+    );
 }

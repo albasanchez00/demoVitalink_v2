@@ -29,24 +29,68 @@ public class CitasRestController {
         return "pedirCita"; // sin la extensión .html
     }
 
+    /**
+     * Obtener citas del usuario autenticado
+     */
     @GetMapping
-    public List<Map<String, Object>> obtenerCitasDelUsuarioAutenticado() {
+    public List<Map<String, Object>> obtenerCitasDelUsuarioAutenticado(
+            @RequestParam(value = "userId", required = false) Integer userId
+    ) {
+        // Si viene userId y el usuario es médico, devolver las citas de ese paciente
+        if (userId != null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            UsuariosDetails userDetails = (UsuariosDetails) auth.getPrincipal();
+
+            // Solo permitir a médicos ver citas de otros usuarios
+            if (userDetails.getUsuario().getRol().name().equals("MEDICO") ||
+                    userDetails.getUsuario().getRol().name().equals("ADMIN")) {
+
+                Usuarios paciente = new Usuarios();
+                paciente.setId_usuario(userId);
+
+                List<Citas> citas = citasService.obtenerCitasPorUsuario(paciente);
+                return mapearCitas(citas);
+            }
+        }
+
+        // Si no viene userId o no es médico, devolver las citas del usuario autenticado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UsuariosDetails userDetails = (UsuariosDetails) auth.getPrincipal();
         Usuarios usuario = userDetails.getUsuario();
 
         List<Citas> citas = citasService.obtenerCitasPorUsuario(usuario);
+        return mapearCitas(citas);
+    }
 
+    /**
+     * Mapea las citas a un formato JSON amigable
+     */
+    private List<Map<String, Object>> mapearCitas(List<Citas> citas) {
         return citas.stream().map(cita -> {
             Map<String, Object> evento = new HashMap<>();
             evento.put("id", cita.getId_cita());
-            evento.put("title", cita.getTitulo());
-            evento.put("description", cita.getDescripcion());
+            evento.put("titulo", cita.getTitulo());
+            evento.put("descripcion", cita.getDescripcion());
+            evento.put("fecha", cita.getFecha() != null ? cita.getFecha().toString() : null);
+            evento.put("hora", cita.getHora() != null ? cita.getHora().toString() : null);
 
-            String start = LocalDateTime.of(cita.getFecha(), cita.getHora()).toString();
-            String end = LocalDateTime.of(cita.getFecha(), cita.getHora().plusHours(1)).toString();
-            evento.put("start", start);
-            evento.put("end", end);
+            // Para compatibilidad con el formato anterior
+            if (cita.getFecha() != null && cita.getHora() != null) {
+                String start = LocalDateTime.of(cita.getFecha(), cita.getHora()).toString();
+                String end = LocalDateTime.of(cita.getFecha(), cita.getHora().plusHours(1)).toString();
+                evento.put("start", start);
+                evento.put("end", end);
+                evento.put("fechaHora", start); // Para el mapper del historial.js
+            }
+
+            // Info del médico si existe
+            if (cita.getMedico() != null) {
+                evento.put("especialista", cita.getMedico().getCliente() != null
+                        ? cita.getMedico().getCliente().getNombre() + " " + cita.getMedico().getCliente().getApellidos()
+                        : cita.getMedico().getUsername());
+            }
+
+            evento.put("estado", cita.getEstado() != null ? cita.getEstado().name() : null);
 
             return evento;
         }).collect(Collectors.toList());

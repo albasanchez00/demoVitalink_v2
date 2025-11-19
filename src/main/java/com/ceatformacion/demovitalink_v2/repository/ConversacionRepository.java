@@ -170,4 +170,47 @@ public interface ConversacionRepository extends JpaRepository<Conversacion, Inte
        order by c.creadoEn desc
        """)
     List<Object[]> findConversacionesConNoLeidos(@Param("userId") Integer userId);
+
+    /**
+     * ✅ NUEVO: Silenciar conversación
+     */
+    @Modifying
+    @Query("UPDATE Conversacion c SET c.muted = :muted WHERE c.id = :id")
+    void setMuted(@Param("id") Integer id, @Param("muted") Boolean muted);
+
+    /**
+     * ✅ NUEVO: Archivar conversación
+     */
+    @Modifying
+    @Query("UPDATE Conversacion c SET c.archived = :archived WHERE c.id = :id")
+    void setArchived(@Param("id") Integer id, @Param("archived") Boolean archived);
+
+    /**
+     * ✅ NUEVO: Busca conversaciones con filtro de archivadas
+     */
+    @Query("""
+   select distinct c
+   from Conversacion c
+   join c.miembros m
+   where m.id_usuario = :userId
+     and (:includeArchived = true OR c.archived = false)
+   order by c.creadoEn desc
+   """)
+    List<Conversacion> findConversacionesDeMiembroConFiltro(
+            @Param("userId") Integer userId,
+            @Param("includeArchived") Boolean includeArchived
+    );
+
+    /**
+     * ✅ NUEVO: Solo conversaciones archivadas del usuario
+     */
+    @Query("""
+   select distinct c
+   from Conversacion c
+   join c.miembros m
+   where m.id_usuario = :userId 
+     and c.archived = true
+   order by c.creadoEn desc
+   """)
+    List<Conversacion> findConversacionesArchivadas(@Param("userId") Integer userId);
 }

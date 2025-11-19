@@ -530,44 +530,111 @@
             }
         });
 
+        // ✅ 1. SILENCIAR CONVERSACIÓN
         document.getElementById('mute-conv').addEventListener('click', function(){
-            alert('Funcionalidad: Silenciar conversación\n(Próximamente)');
+            if (!currentConvId) return;
+
+            if (confirm('¿Silenciar esta conversación?\n\nNo recibirás notificaciones, pero los mensajes seguirán llegando.')) {
+                fetch(`/api/chat/conversaciones/${currentConvId}/silenciar`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ muted: true })
+                })
+                    .then(resp => {
+                        if (!resp.ok) throw new Error('Error al silenciar');
+                        alert('✅ Conversación silenciada');
+                        cargarConversaciones();
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('❌ No se pudo silenciar la conversación');
+                    });
+            }
+
             $optionsMenu().classList.remove('active');
         });
 
+        // ✅ 2. ARCHIVAR CONVERSACIÓN
         document.getElementById('archive-conv').addEventListener('click', function(){
-            alert('Funcionalidad: Archivar conversación\n(Próximamente)');
+            if (!currentConvId) return;
+
+            if (confirm('¿Archivar esta conversación?\n\nSe moverá a la sección de archivados.')) {
+                fetch(`/api/chat/conversaciones/${currentConvId}/archivar`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ archived: true })
+                })
+                    .then(resp => {
+                        if (!resp.ok) throw new Error('Error al archivar');
+                        alert('✅ Conversación archivada');
+                        currentConvId = null;
+                        renderEmptyMensajes('Selecciona una conversación');
+                        cargarConversaciones();
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('❌ No se pudo archivar la conversación');
+                    });
+            }
+
             $optionsMenu().classList.remove('active');
         });
 
+        // ✅ 3. VER DETALLES
         document.getElementById('details-conv').addEventListener('click', function(){
             if (!currentConvId) return;
 
-            fetchJSON('/api/chat/conversaciones').then(function(data){
-                const conv = data.find(c => c.id === currentConvId);
-                if (conv) {
-                    alert(
-                        'Detalles de la conversación:\n\n' +
-                        'ID: ' + conv.id + '\n' +
-                        'Tipo: ' + (conv.tipo || 'DIRECT') + '\n' +
-                        'Servicio: ' + (conv.servicio || 'N/A') + '\n' +
-                        'Miembros: ' + (conv.miembrosCount || 0) + '\n' +
-                        'Mensajes no leídos: ' + (conv.unreadCount || 0)
-                    );
-                }
-            });
+            fetchJSON(`/api/chat/conversaciones/${currentConvId}/detalles`)
+                .then(detalles => {
+                    const info =
+                        '📋 DETALLES DE LA CONVERSACIÓN\n\n' +
+                        'ID: ' + detalles.id + '\n' +
+                        'Tipo: ' + (detalles.tipo || 'DIRECT') + '\n' +
+                        'Servicio: ' + (detalles.servicio || 'CHAT') + '\n\n' +
+                        '👥 Miembros (' + detalles.miembros.length + '):\n' +
+                        detalles.miembros.map(m => '  • ' + m).join('\n') + '\n\n' +
+                        '💬 Total mensajes: ' + detalles.totalMensajes + '\n' +
+                        '📬 No leídos: ' + detalles.noLeidos + '\n\n' +
+                        '🔕 Silenciada: ' + (detalles.muted ? 'Sí' : 'No') + '\n' +
+                        '📁 Archivada: ' + (detalles.archived ? 'Sí' : 'No') + '\n\n' +
+                        '📅 Creada: ' + new Date(detalles.creadoEn).toLocaleString('es-ES');
+
+                    alert(info);
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('❌ No se pudieron cargar los detalles');
+                });
+
             $optionsMenu().classList.remove('active');
         });
 
+        // ✅ 4. LIMPIAR HISTORIAL
         document.getElementById('clear-history').addEventListener('click', function(){
             if (!currentConvId) return;
 
-            if (confirm('¿Estás seguro de que quieres limpiar el historial? Esta acción no se puede deshacer.')) {
-                alert('Funcionalidad: Limpiar historial\n(Próximamente)');
+            if (confirm('⚠️ ¿Estás seguro de que quieres limpiar el historial?\n\n' +
+                'Se eliminarán TODOS los mensajes de esta conversación.\n' +
+                'Esta acción NO se puede deshacer.')) {
+
+                fetch(`/api/chat/conversaciones/${currentConvId}/historial`, {
+                    method: 'DELETE'
+                })
+                    .then(resp => {
+                        if (!resp.ok) throw new Error('Error al limpiar historial');
+                        alert('✅ Historial limpiado');
+                        renderEmptyMensajes('Envía el primer mensaje');
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('❌ No se pudo limpiar el historial');
+                    });
             }
+
             $optionsMenu().classList.remove('active');
         });
 
+        // ✅ 5. ELIMINAR CONVERSACIÓN (ya estaba funcional)
         document.getElementById('delete-conv').addEventListener('click', function(){
             if (!currentConvId) return;
             eliminarConversacion(currentConvId);

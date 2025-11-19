@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mensajería – Admin</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}">
-    <!-- ✅ Reutiliza los mismos estilos de chatMedico_FIXED.html -->
     <link rel="stylesheet" href="/css/style2.css">
 </head>
 <body data-currentuser="admin">
@@ -52,7 +51,46 @@
                     <span id="statusText">en línea</span>
                 </span>
             </div>
+
+            <!-- ✅ NUEVO: Botones de acción -->
+            <div class="actions">
+                <button class="ghost" id="search-btn" title="Buscar">🔍</button>
+                <button class="ghost" id="options-btn" title="Opciones">⋯</button>
+
+                <!-- ✅ NUEVO: Menú de opciones -->
+                <div id="options-menu">
+                    <div class="menu-item" id="mute-conv">
+                        <span class="menu-icon">🔕</span>
+                        <span>Silenciar</span>
+                    </div>
+                    <div class="menu-item" id="archive-conv">
+                        <span class="menu-icon">📁</span>
+                        <span>Archivar</span>
+                    </div>
+                    <div class="menu-item" id="details-conv">
+                        <span class="menu-icon">ℹ️</span>
+                        <span>Ver detalles</span>
+                    </div>
+                    <div class="menu-item" id="clear-history">
+                        <span class="menu-icon">🗑️</span>
+                        <span>Limpiar historial</span>
+                    </div>
+                    <div class="menu-item danger" id="delete-conv">
+                        <span class="menu-icon">❌</span>
+                        <span>Eliminar conversación</span>
+                    </div>
+                </div>
+            </div>
         </header>
+
+        <!-- ✅ NUEVO: Barra de búsqueda -->
+        <div id="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar en la conversación...">
+            <span id="search-results">0 resultados</span>
+            <button class="search-nav-btn" id="prev-result" disabled>↑</button>
+            <button class="search-nav-btn" id="next-result" disabled>↓</button>
+            <button id="close-search">✕</button>
+        </div>
 
         <div id="mensajes" class="chatv2__messages">
             <div class="empty-state">Selecciona una conversación</div>

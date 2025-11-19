@@ -1,5 +1,5 @@
 /* =========================================================================
- *  ADMIN – Chat mejorado con reconexión, typing, lecturas y notificaciones
+ *  ADMIN – Chat mejorado con búsqueda, opciones y funcionalidades completas
  * ========================================================================= */
 (() => {
     const $root = document.getElementById('admin-mensajeria');
@@ -50,6 +50,10 @@
         msgSize: 50,
     };
 
+    // ===== ESTADO DE BÚSQUEDA =====
+    let searchResults = [];
+    let currentSearchIndex = -1;
+
     // ==== Referencias DOM ====
     const $lista = qs('#listaConversaciones', $root);
     const $prev = qs('#prev', $root);
@@ -60,6 +64,10 @@
     const $msgs = qs('#mensajes');
     const $form = qs('#form-msg');
     const $msg = qs('#msg');
+    const $searchBar = qs('#search-bar');
+    const $searchInput = qs('#search-input');
+    const $searchResults = qs('#search-results');
+    const $optionsMenu = qs('#options-menu');
 
     // ==== WebSocket (STOMP) ====
     let stompClient = null;
@@ -228,6 +236,9 @@
         markActive(id);
         if ($title) $title.textContent = 'CHAT';
 
+        // Cerrar búsqueda al cambiar de conversación
+        cerrarBusqueda();
+
         await loadMsgs(true);
         attachStomp(id);
 
@@ -273,7 +284,7 @@
     function renderMsg(m) {
         const mine = isMe(m.remitenteNombre) ? ' me' : '';
         return `
-            <div class="msg${mine}">
+            <div class="msg${mine}" data-content="${esc(m.contenido)}">
                 <strong>${esc(m.remitenteNombre)}</strong><br>
                 ${esc(m.contenido)}
                 <div class="time"><small>${fmt(m.creadoEn)}</small></div>
@@ -416,6 +427,284 @@
             console.log('Audio no disponible');
         }
     }
+
+    // ===== FUNCIONALIDAD BÚSQUEDA =====
+
+    document.getElementById('search-btn')?.addEventListener('click', function(){
+        if (!state.current) {
+            alert('Abre una conversación primero');
+            return;
+        }
+
+        $searchBar.classList.toggle('active');
+
+        if ($searchBar.classList.contains('active')) {
+            $searchInput.focus();
+        } else {
+            cerrarBusqueda();
+        }
+    });
+
+    $searchInput?.addEventListener('input', function(e){
+        const query = e.target.value.trim().toLowerCase();
+
+        if (!query) {
+            limpiarBusqueda();
+            return;
+        }
+
+        buscarEnMensajes(query);
+    });
+
+    function buscarEnMensajes(query) {
+        const mensajes = Array.from($msgs.querySelectorAll('.msg'));
+        searchResults = [];
+
+        // Limpiar highlights previos
+        mensajes.forEach(msg => {
+            const content = msg.dataset.content || '';
+            const remitente = msg.querySelector('strong')?.textContent || '';
+            msg.innerHTML = msg.classList.contains('me')
+                ? esc(content)
+                : '<strong>' + esc(remitente) + '</strong><br>' + esc(content);
+        });
+
+        // Buscar y resaltar
+        mensajes.forEach((msg, index) => {
+            const content = msg.dataset.content || '';
+            if (content.toLowerCase().includes(query)) {
+                searchResults.push({ element: msg, index: index });
+
+                // Resaltar coincidencias
+                const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+                const highlighted = content.replace(regex, '<span class="highlight">$1</span>');
+
+                if (msg.classList.contains('me')) {
+                    msg.innerHTML = highlighted;
+                } else {
+                    const remitente = msg.querySelector('strong')?.textContent || '';
+                    msg.innerHTML = '<strong>' + esc(remitente) + '</strong><br>' + highlighted;
+                }
+            }
+        });
+
+        // Actualizar UI
+        $searchResults.textContent = searchResults.length + ' resultado' + (searchResults.length !== 1 ? 's' : '');
+        document.getElementById('prev-result').disabled = searchResults.length === 0;
+        document.getElementById('next-result').disabled = searchResults.length === 0;
+
+        if (searchResults.length > 0) {
+            currentSearchIndex = 0;
+            navegarAResultado(0);
+        } else {
+            currentSearchIndex = -1;
+        }
+    }
+
+    function navegarAResultado(index) {
+        if (searchResults.length === 0) return;
+
+        // Limpiar highlight activo
+        document.querySelectorAll('.highlight.active').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // Activar nuevo highlight
+        const result = searchResults[index];
+        const highlights = result.element.querySelectorAll('.highlight');
+        if (highlights.length > 0) {
+            highlights[0].classList.add('active');
+        }
+
+        // Scroll al resultado
+        result.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Actualizar contador
+        $searchResults.textContent = `${index + 1} de ${searchResults.length}`;
+    }
+
+    document.getElementById('prev-result')?.addEventListener('click', function(){
+        if (searchResults.length === 0) return;
+        currentSearchIndex = (currentSearchIndex - 1 + searchResults.length) % searchResults.length;
+        navegarAResultado(currentSearchIndex);
+    });
+
+    document.getElementById('next-result')?.addEventListener('click', function(){
+        if (searchResults.length === 0) return;
+        currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+        navegarAResultado(currentSearchIndex);
+    });
+
+    document.getElementById('close-search')?.addEventListener('click', function(){
+        cerrarBusqueda();
+    });
+
+    function cerrarBusqueda() {
+        $searchBar.classList.remove('active');
+        $searchInput.value = '';
+        limpiarBusqueda();
+    }
+
+    function limpiarBusqueda() {
+        // Limpiar highlights
+        const mensajes = Array.from($msgs.querySelectorAll('.msg'));
+        mensajes.forEach(msg => {
+            const content = msg.dataset.content || '';
+            const remitente = msg.querySelector('strong')?.textContent || '';
+            msg.innerHTML = msg.classList.contains('me')
+                ? esc(content)
+                : '<strong>' + esc(remitente) + '</strong><br>' + esc(content);
+        });
+
+        searchResults = [];
+        currentSearchIndex = -1;
+        $searchResults.textContent = '0 resultados';
+        document.getElementById('prev-result').disabled = true;
+        document.getElementById('next-result').disabled = true;
+    }
+
+    // ===== FUNCIONALIDAD OPCIONES =====
+
+    document.getElementById('options-btn')?.addEventListener('click', function(e){
+        e.stopPropagation();
+        if (!state.current) {
+            alert('Abre una conversación primero');
+            return;
+        }
+        $optionsMenu.classList.toggle('active');
+    });
+
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', function(e){
+        if (!e.target.closest('#options-btn') && !e.target.closest('#options-menu')) {
+            $optionsMenu?.classList.remove('active');
+        }
+    });
+
+    // ✅ 1. SILENCIAR CONVERSACIÓN
+    document.getElementById('mute-conv')?.addEventListener('click', function(){
+        if (!state.current) return;
+
+        if (confirm('¿Silenciar esta conversación?\n\nNo recibirás notificaciones, pero los mensajes seguirán llegando.')) {
+            fetch(`/api/admin/chat/conversaciones/${state.current}/silenciar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ muted: true })
+            })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Error al silenciar');
+                    alert('✅ Conversación silenciada');
+                    loadConvs();
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('❌ No se pudo silenciar la conversación');
+                });
+        }
+
+        $optionsMenu.classList.remove('active');
+    });
+
+    // ✅ 2. ARCHIVAR CONVERSACIÓN
+    document.getElementById('archive-conv')?.addEventListener('click', function(){
+        if (!state.current) return;
+
+        if (confirm('¿Archivar esta conversación?\n\nSe moverá a la sección de archivados.')) {
+            fetch(`/api/admin/chat/conversaciones/${state.current}/archivar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ archived: true })
+            })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Error al archivar');
+                    alert('✅ Conversación archivada');
+                    state.current = null;
+                    $msgs.innerHTML = '<div class="empty-state">Selecciona una conversación</div>';
+                    loadConvs();
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('❌ No se pudo archivar la conversación');
+                });
+        }
+
+        $optionsMenu.classList.remove('active');
+    });
+
+    // ✅ 3. VER DETALLES
+    document.getElementById('details-conv')?.addEventListener('click', async function(){
+        if (!state.current) return;
+
+        try {
+            const resp = await fetch(`/api/admin/chat/conversaciones/${state.current}/detalles`);
+            if (!resp.ok) throw new Error('Error al cargar detalles');
+
+            const detalles = await resp.json();
+            const info =
+                '📋 DETALLES DE LA CONVERSACIÓN\n\n' +
+                'ID: ' + detalles.id + '\n' +
+                'Tipo: ' + (detalles.tipo || 'DIRECT') + '\n' +
+                'Servicio: ' + (detalles.servicio || 'CHAT') + '\n\n' +
+                '👥 Miembros (' + detalles.miembros.length + '):\n' +
+                detalles.miembros.map(m => '  • ' + m).join('\n') + '\n\n' +
+                '💬 Total mensajes: ' + detalles.totalMensajes + '\n' +
+                '📬 No leídos: ' + detalles.noLeidos + '\n\n' +
+                '🔕 Silenciada: ' + (detalles.muted ? 'Sí' : 'No') + '\n' +
+                '📁 Archivada: ' + (detalles.archived ? 'Sí' : 'No') + '\n\n' +
+                '📅 Creada: ' + new Date(detalles.creadoEn).toLocaleString('es-ES');
+
+            alert(info);
+        } catch (err) {
+            console.error('Error:', err);
+            alert('❌ No se pudieron cargar los detalles');
+        }
+
+        $optionsMenu.classList.remove('active');
+    });
+
+    // ✅ 4. LIMPIAR HISTORIAL
+    document.getElementById('clear-history')?.addEventListener('click', function(){
+        if (!state.current) return;
+
+        if (confirm('⚠️ ¿Estás seguro de que quieres limpiar el historial?\n\n' +
+            'Se eliminarán TODOS los mensajes de esta conversación.\n' +
+            'Esta acción NO se puede deshacer.')) {
+
+            fetch(`/api/admin/chat/conversaciones/${state.current}/historial`, {
+                method: 'DELETE'
+            })
+                .then(resp => {
+                    if (!resp.ok) throw new Error('Error al limpiar historial');
+                    alert('✅ Historial limpiado');
+                    $msgs.innerHTML = '<div class="empty-state">No hay mensajes en esta conversación.</div>';
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('❌ No se pudo limpiar el historial');
+                });
+        }
+
+        $optionsMenu.classList.remove('active');
+    });
+
+    // ✅ 5. ELIMINAR CONVERSACIÓN
+    document.getElementById('delete-conv')?.addEventListener('click', async function(){
+        if (!state.current) return;
+
+        if (confirm('¿Eliminar esta conversación?')) {
+            try {
+                await fetch(`/api/admin/chat/conversaciones/${state.current}`, { method: 'DELETE' });
+                state.current = null;
+                $msgs.innerHTML = '<div class="empty-state">Selecciona una conversación</div>';
+                await loadConvs();
+            } catch (err) {
+                console.error('Error:', err);
+                alert('No se pudo eliminar la conversación');
+            }
+        }
+
+        $optionsMenu.classList.remove('active');
+    });
 
     // ==== Inicialización ====
     connectWebSocket();
