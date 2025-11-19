@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
@@ -21,6 +21,7 @@
                     <li><a th:href="@{/usuarios/panelUsuario}" class="btn btn-volver">← Volver</a></li>
                     <li><a href="#" class="us-tab is-active" data-tab="medicos">Médicos</a></li>
                     <li><a href="#" class="us-tab" data-tab="pacientes">Pacientes</a></li>
+                    <li><a href="#" class="us-tab" data-tab="clientes">Clientes</a></li>
                 </ul>
             </nav>
         </section>
@@ -79,6 +80,52 @@
                 </form>
             </div>
         </div>
+        <!-- ====== CLIENTES ====== -->
+        <section id="usuarios-clientes" class="card card--soft" style="display:none;">
+            <header class="card__head"><h3>Gestión de Clientes</h3></header>
+
+            <div class="grid-2" style="display:grid; grid-template-columns: 2fr 1fr; gap:12px; align-items:center;">
+                <div>
+                    <div class="input-group">
+                        <input id="qCli" type="search" placeholder="nombre, email o teléfono…">
+                        <button id="btnCliBuscar" type="button">Buscar</button>
+                    </div>
+                </div>
+
+                <form id="formCliCrear" class="form-inline" autocomplete="off">
+                    <div class="input-group">
+                        <input name="nombre" required minlength="2" placeholder="Nombre">
+                        <input name="email" required type="email" placeholder="Email">
+                        <button type="submit">Crear cliente</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-wrap" style="margin-top:12px;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Usuario Asociado</th>
+                        <th style="width:200px">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyClientes"></tbody>
+                </table>
+            </div>
+
+            <div class="pager">
+                <button id="cliPrev">«</button>
+                <span id="cliPageInfo" class="pill pill--muted">—</span>
+                <button id="cliNext">»</button>
+                <select id="cliSize" style="margin-left:auto;">
+                    <option value="10">10</option><option value="20">20</option><option value="50">50</option>
+                </select>
+            </div>
+        </section>
         <!-- ====== PACIENTES ====== -->
         <section id="usuarios-pacientes" class="card card--soft" style="display:none;">
             <header class="card__head"><h3>Gestión de Pacientes</h3></header>
@@ -123,6 +170,7 @@
 <script th:src="@{/js/admin-panel.js}"></script>     <!-- maneja los tabs .us-tab -->
 <script th:src="@{/js/admin-medicos.js}"></script>   <!-- carga y CRUD de médicos -->
 <script th:src="@{/js/admin-pacientes.js}"></script> <!-- lista y asigna médico a paciente -->
+<script th:src="@{/js/admin-clientes.js}"></script>  <!-- gestión de clientes -->
 <script th:src="@{/js/sccript.js}"></script> <!-- lista y asigna médico a paciente -->
 </body>
 </html>

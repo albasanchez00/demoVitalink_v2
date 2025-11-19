@@ -38,4 +38,19 @@ public interface ClientesRepository extends JpaRepository<Clientes, Integer> {
     //Panel Admin
     Page<Clientes> findAll(Pageable pageable);
     Page<Clientes> findByNombreContainingIgnoreCaseOrApellidosContainingIgnoreCase(String n, String a, Pageable pageable);
+
+    /**
+     * Busca clientes por nombre, apellidos, email o teléfono
+     * Utilizado en el panel de administración para búsqueda dinámica
+     *
+     * @param q término de búsqueda
+     * @param pageable configuración de paginación
+     * @return página de clientes que coinciden con la búsqueda
+     */
+    @Query("SELECT c FROM Clientes c WHERE " +
+            "LOWER(c.nombre) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+            "LOWER(c.apellidos) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+            "LOWER(c.correoElectronico) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
+            "c.telefono LIKE CONCAT('%', :q, '%')")
+    Page<Clientes> buscarPorNombreEmailOTelefono(@Param("q") String q, Pageable pageable);
 }
