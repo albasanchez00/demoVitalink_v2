@@ -662,9 +662,8 @@ body.dark-theme header {
 #form-sintomas button:hover { background-color: var(--color-secundary-button);}
 .filtro-Registro{ display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; width: 100%; height: auto; gap: 100px;}
 /* Contenedor de filtros */
-#filtros { width:  20%; margin-top: 20px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;}
+#filtros { width:  100%; margin: 20px 0; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;}
 #filtros label { flex: 1; min-width: 200px;}
-
 /* Historial de síntomas */
 #registros { width:  40%; margin-top: 20px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd;}
 .tabla_Registros { width: 100%; border-collapse: collapse;}
@@ -2580,7 +2579,7 @@ body.dark-theme #admin-citas .acciones .btn-sec:hover {
 
 /* Layout base del panel */
 .section-config{ width: min(100%, 1100px); margin: 24px auto; background: var(--color_blanco, #fff); border: 1px solid #e6ebf1; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.06); padding: 0 16px 22px; }
-.section-config .config__head{ margin: 0 -16px 14px; padding: 18px 18px; background: #15384c; /* tu barra */ color: #fff; border-radius: 12px 12px 0 0; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.section-config .config__head{ margin: 0 -16px 14px; padding: 18px 18px; background: var(--color_primario); /* tu barra */ color: #fff; border-radius: 12px 12px 0 0; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .section-config .config__actions{ display:flex; gap:10px; flex-wrap:wrap; }
 
 /* Tabs */
@@ -2674,7 +2673,7 @@ body.dark-theme #admin-citas .acciones .btn-sec:hover {
 
 /* ---------- Cabecera y tabs (coherencia) ---------- */
 #admin-config.section-config{ width: min(100%, 1100px); margin: 24px auto; background: var(--color_blanco, #fff); border: 1px solid #e6ebf1; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.06); padding: 0 16px 22px; }
-#admin-config .config__head{ margin: 0 -16px 14px; padding: 18px; background: #15384c; color:#fff; border-radius: 12px 12px 0 0; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+#admin-config .config__head{ margin: 0 -16px 14px; padding: 18px; background: var(--color_primario); color:#fff; border-radius: 12px 12px 0 0; display:flex; justify-content:space-between; align-items:center; gap:12px; }
 #admin-config .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin: 6px 0 10px; }
 #admin-config .tabs [role="tab"]{ border: 1px solid #d8e2ea; background:#f6f9fc; padding:.5rem .75rem; border-radius: 10px; font-weight:600; cursor:pointer; }
 #admin-config .tabs [role="tab"][aria-selected="true"]{ background: var(--color_primario, #1b5bff); color:#fff; border-color: transparent; }

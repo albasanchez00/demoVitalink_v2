@@ -1210,6 +1210,12 @@ main{
 
 
 /*Inciio Pagina Registro*/
+.section_title_registro{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
 .section_form_registro form {
     display: flex;
     flex-wrap: wrap;
@@ -1273,6 +1279,8 @@ main{
     color: #000;
     transform: scale(1.02);
 }
+.btn{background:#fff; color:var(--color_fondo); border:0;}
+.btn-secondary{background:#f7f9fb; border:1px solid #dfe3eb; border-radius:8px; padding:6px 10px; font-weight:600; cursor:pointer; color: #0f172a;}
 /* Inicio Responsive Desktop Registro */
 @media (min-width: 768px) {
     .section_form_registro {

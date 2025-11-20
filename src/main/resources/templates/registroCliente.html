@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro VitaLink</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
-    <script th:src="@{/js/script.js}" defer></script>
-    <script th:src="@{/js/register.js}" defer></script>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
     <section>
@@ -18,10 +15,10 @@
             <section class="section_main_registro">
 
                 <section class="section_form_registro">
-                    <div>
+                    <div class="section_title_registro">
                         <h2 th:text="${cliente?.idCliente == 0 ? 'Nuevo Cliente' : 'Editar Cliente'}"></h2>
-                        <a th:href="@{/listaClientes}" class="btn-listUser">Lista Usuarios</a>
-                        <a th:href="@{/usuarios/registroUsuario}" class="btn-listUser">Registrar Usuarios</a>
+                        <a th:href="@{/usuariosAdmin}" class="btn btn-secondary">← Volver</a>
+                        <a th:href="@{/usuarios/registroUsuario}" class="btn btn-secondary">Crear Usuario</a>
                     </div>
                     <form id="form-registro" th:action="@{/guardarCliente}" method="POST" th:object="${cliente}">
                         <p>
@@ -151,5 +148,9 @@
 
         <div th:replace="~{fragments/footer :: footer}"></div>
     </section>
+
+<script th:src="@{/js/sccript.js}" defer></script>
+<script th:src="@{/js/register.js}" defer></script>
+<script src="/js/darkTheme.js" defer></script>
 </body>
 </html>

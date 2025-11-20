@@ -92,13 +92,11 @@
                     </div>
                 </div>
 
-                <form id="formCliCrear" class="form-inline" autocomplete="off">
-                    <div class="input-group">
-                        <input name="nombre" required minlength="2" placeholder="Nombre">
-                        <input name="email" required type="email" placeholder="Email">
-                        <button type="submit">Crear cliente</button>
-                    </div>
-                </form>
+                <div style="text-align: right;">
+                    <a th:href="@{/registroCliente}" class="btn btn-secondary">
+                        👤 Crear Cliente
+                    </a>
+                </div>
             </div>
 
             <div class="table-wrap" style="margin-top:12px;">
