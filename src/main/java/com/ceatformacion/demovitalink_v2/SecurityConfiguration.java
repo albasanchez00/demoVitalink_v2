@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                 // LOGIN
                 .requestMatchers(HttpMethod.GET,  "/usuarios/inicioSesion").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/inicioSesion").permitAll()
+                .requestMatchers(HttpMethod.POST, "/docs/**").permitAll()
                 .requestMatchers("/error").permitAll()
 
                 // Chat (solo personal interno)
@@ -52,6 +53,7 @@ public class SecurityConfiguration {
                 //Acceso al crud
                 .requestMatchers(HttpMethod.GET,"/serviciosCliente").permitAll()
                 .requestMatchers(HttpMethod.GET,"/serviciosEmpresa").permitAll()
+                .requestMatchers(HttpMethod.GET,"/demo").permitAll()
                 .requestMatchers(HttpMethod.POST,"/recordatorios").permitAll()
                 .requestMatchers(HttpMethod.POST,"/historialPaciente").permitAll()
                 .requestMatchers(HttpMethod.POST,"/registroSintomas").permitAll()

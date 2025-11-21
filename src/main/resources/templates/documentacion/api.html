@@ -1,0 +1,518 @@
+<!-- templates/documentacion/api.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>API Reference - VitaLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="docs-container">
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+        <h3>📚 Documentación VitaLink</h3>
+        <ul>
+            <li><a href="/docs">🏠 Inicio</a></li>
+            <li><a href="/docs/usuario">👤 Guía de Usuario</a></li>
+            <li><a href="/docs/medico">👨‍⚕️ Guía para Médicos</a></li>
+            <li><a href="/docs/api" class="active">🔧 API Reference</a></li>
+            <li><a href="/docs/faq">❓ Preguntas Frecuentes</a></li>
+        </ul>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="docs-content">
+        <h1>🔧 API Reference - VitaLink v2</h1>
+        <p>Documentación completa de los endpoints REST disponibles en VitaLink.</p>
+
+        <!-- Información Base -->
+        <div class="alert info">
+            <strong>Base URL:</strong> <code>http://localhost:8080/api</code><br>
+            <strong>Autenticación:</strong> Spring Security con sesión<br>
+            <strong>Content-Type:</strong> <code>application/json</code>
+        </div>
+
+        <!-- Tabs de navegación -->
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('auth')">Autenticación</button>
+            <button class="tab-button" onclick="showTab('citas')">Citas</button>
+            <button class="tab-button" onclick="showTab('tratamientos')">Tratamientos</button>
+            <button class="tab-button" onclick="showTab('sintomas')">Síntomas</button>
+            <button class="tab-button" onclick="showTab('chat')">Chat</button>
+            <button class="tab-button" onclick="showTab('recordatorios')">Recordatorios</button>
+            <button class="tab-button" onclick="showTab('admin')">Admin</button>
+        </div>
+
+        <!-- AUTENTICACIÓN -->
+        <div id="auth" class="tab-content active">
+            <h2>🔐 Autenticación</h2>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/login</span>
+                <p>Iniciar sesión en el sistema</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "username": "usuario@email.com",
+  "password": "contraseña123"
+}</pre>
+                <h4>Response:</h4>
+                <pre class="response-example">{
+  "id": 1,
+  "email": "usuario@email.com",
+  "rol": "USER",
+  "token": "session-token-aqui"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/registro</span>
+                <p>Registrar nuevo usuario</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "nombre": "Juan Pérez",
+  "email": "juan@email.com",
+  "password": "contraseña123",
+  "telefono": "555-0123",
+  "rol": "USER"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/logout</span>
+                <p>Cerrar sesión actual</p>
+            </div>
+        </div>
+
+        <!-- CITAS -->
+        <div id="citas" class="tab-content">
+            <h2>📅 Gestión de Citas</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/citas</span>
+                <p>Obtener todas las citas del usuario</p>
+                <h4>Query Parameters:</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Requerido</th>
+                    </tr>
+                    <tr>
+                        <td>estado</td>
+                        <td>String</td>
+                        <td>PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA</td>
+                        <td>No</td>
+                    </tr>
+                    <tr>
+                        <td>fecha</td>
+                        <td>Date</td>
+                        <td>Filtrar por fecha (YYYY-MM-DD)</td>
+                        <td>No</td>
+                    </tr>
+                </table>
+                <h4>Response:</h4>
+                <pre class="response-example">[
+  {
+    "id": 1,
+    "medicoId": 2,
+    "pacienteId": 3,
+    "fecha": "2024-12-20",
+    "hora": "10:00",
+    "duracion": 60,
+    "estado": "CONFIRMADA",
+    "descripcion": "Consulta general",
+    "notas": "Primera visita"
+  }
+]</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/citas</span>
+                <p>Crear nueva cita</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "medicoId": 2,
+  "fecha": "2024-12-20",
+  "hora": "10:00",
+  "duracion": 60,
+  "descripcion": "Dolor de cabeza persistente"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="endpoint-path">/api/citas/{id}</span>
+                <p>Actualizar cita existente</p>
+                <h4>Path Parameters:</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>Long</td>
+                        <td>ID de la cita</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="endpoint">
+                <span class="method patch">PATCH</span>
+                <span class="endpoint-path">/api/citas/{id}/estado</span>
+                <p>Cambiar estado de cita</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "estado": "CONFIRMADA"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="endpoint-path">/api/citas/{id}</span>
+                <p>Eliminar cita</p>
+            </div>
+        </div>
+
+        <!-- TRATAMIENTOS -->
+        <div id="tratamientos" class="tab-content">
+            <h2>💊 Tratamientos</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/tratamientos</span>
+                <p>Listar tratamientos del paciente</p>
+                <h4>Query Parameters:</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>activos</td>
+                        <td>Boolean</td>
+                        <td>Filtrar solo tratamientos activos</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/tratamientos</span>
+                <p>Crear nuevo tratamiento (Solo médicos)</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "pacienteId": 3,
+  "nombreMedicamento": "Ibuprofeno",
+  "dosis": "400mg",
+  "frecuencia": "Cada 8 horas",
+  "duracionDias": 7,
+  "fechaInicio": "2024-12-15",
+  "interaccionAlimentos": "Tomar con comidas",
+  "observaciones": "Si hay molestias estomacales, suspender"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="endpoint-path">/api/tratamientos/{id}</span>
+                <p>Actualizar tratamiento</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="endpoint-path">/api/tratamientos/{id}</span>
+                <p>Eliminar tratamiento</p>
+            </div>
+        </div>
+
+        <!-- SÍNTOMAS -->
+        <div id="sintomas" class="tab-content">
+            <h2>🩺 Registro de Síntomas</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/sintomas</span>
+                <p>Listar síntomas del paciente</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/sintomas</span>
+                <p>Registrar nuevo síntoma</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "zona": "CABEZA",
+  "descripcion": "Dolor punzante en la sien derecha, aumenta con la luz",
+  "intensidad": 7,
+  "fecha": "2024-12-15T14:30:00"
+}</pre>
+                <h4>Zonas Corporales Válidas:</h4>
+                <ul>
+                    <li><code>CABEZA</code></li>
+                    <li><code>CUELLO</code></li>
+                    <li><code>TORAX</code></li>
+                    <li><code>ABDOMEN</code></li>
+                    <li><code>ESPALDA</code></li>
+                    <li><code>BRAZOS</code></li>
+                    <li><code>MANOS</code></li>
+                    <li><code>PIERNAS</code></li>
+                    <li><code>PIES</code></li>
+                    <li><code>GENERAL</code></li>
+                </ul>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/sintomas/{id}</span>
+                <p>Obtener detalle de síntoma</p>
+            </div>
+        </div>
+
+        <!-- CHAT -->
+        <div id="chat" class="tab-content">
+            <h2>💬 Sistema de Chat</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/chat/conversaciones</span>
+                <p>Listar conversaciones del usuario</p>
+                <h4>Response:</h4>
+                <pre class="response-example">[
+  {
+    "id": 1,
+    "participantes": ["Dr. García", "Juan Pérez"],
+    "ultimoMensaje": "Hola, ¿cómo se encuentra?",
+    "fecha": "2024-12-15T10:30:00",
+    "noLeidos": 2,
+    "archivada": false
+  }
+]</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/chat/conversaciones</span>
+                <p>Crear nueva conversación</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "receptorId": 5,
+  "tipo": "DIRECTA"
+}</pre>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/chat/mensajes/{conversacionId}</span>
+                <p>Obtener mensajes de una conversación</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/chat/mensajes</span>
+                <p>Enviar mensaje</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "conversacionId": 1,
+  "contenido": "Buenos días doctor, tengo una consulta..."
+}</pre>
+            </div>
+
+            <h3>WebSocket Endpoints</h3>
+            <div class="alert info">
+                <strong>Conexión WebSocket:</strong> <code>ws://localhost:8080/ws-chat</code><br>
+                <strong>Enviar mensaje:</strong> <code>/app/chat.send</code><br>
+                <strong>Suscribirse:</strong> <code>/topic/messages/{conversacionId}</code>
+            </div>
+        </div>
+
+        <!-- RECORDATORIOS -->
+        <div id="recordatorios" class="tab-content">
+            <h2>⏰ Recordatorios</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/recordatorios</span>
+                <p>Listar recordatorios del usuario</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/recordatorios</span>
+                <p>Crear nuevo recordatorio</p>
+                <h4>Request Body:</h4>
+                <pre class="response-example">{
+  "tipo": "MEDICAMENTO",
+  "titulo": "Tomar Ibuprofeno",
+  "descripcion": "400mg con desayuno",
+  "fechaHora": "2024-12-20T08:00:00",
+  "repeticion": "DAILY",
+  "canal": ["INAPP", "EMAIL"]
+}</pre>
+                <h4>Tipos de Recordatorio:</h4>
+                <ul>
+                    <li><code>MEDICAMENTO</code></li>
+                    <li><code>CITA</code></li>
+                    <li><code>TRATAMIENTO</code></li>
+                    <li><code>OTRO</code></li>
+                </ul>
+                <h4>Repetición:</h4>
+                <ul>
+                    <li><code>NONE</code> - Sin repetición</li>
+                    <li><code>DAILY</code> - Diario</li>
+                    <li><code>WEEKLY</code> - Semanal</li>
+                    <li><code>MONTHLY</code> - Mensual</li>
+                </ul>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="endpoint-path">/api/recordatorios/{id}</span>
+                <p>Actualizar recordatorio</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="endpoint-path">/api/recordatorios/{id}</span>
+                <p>Eliminar recordatorio</p>
+            </div>
+        </div>
+
+        <!-- ADMINISTRACIÓN -->
+        <div id="admin" class="tab-content">
+            <h2>👨‍💼 Administración (Solo Admin)</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/admin/usuarios</span>
+                <p>Listar todos los usuarios</p>
+                <h4>Query Parameters:</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                    <tr>
+                        <td>rol</td>
+                        <td>String</td>
+                        <td>Filtrar por rol: USER, MEDICO, ADMIN</td>
+                    </tr>
+                    <tr>
+                        <td>activo</td>
+                        <td>Boolean</td>
+                        <td>Filtrar usuarios activos/inactivos</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/api/admin/usuarios</span>
+                <p>Crear nuevo usuario</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <span class="endpoint-path">/api/admin/usuarios/{id}</span>
+                <p>Actualizar usuario</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="endpoint-path">/api/admin/usuarios/{id}</span>
+                <p>Eliminar usuario</p>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/api/admin/estadisticas</span>
+                <p>Obtener KPIs del sistema</p>
+                <h4>Response:</h4>
+                <pre class="response-example">{
+  "totalUsuarios": 150,
+  "usuariosActivos": 120,
+  "citasHoy": 15,
+  "citasSemana": 78,
+  "tratamientosActivos": 45,
+  "tasaCumplimiento": 0.85
+}</pre>
+            </div>
+        </div>
+
+        <!-- Códigos de Estado -->
+        <section style="margin-top: 50px;">
+            <h2>📊 Códigos de Estado HTTP</h2>
+            <table class="params-table">
+                <tr>
+                    <th>Código</th>
+                    <th>Significado</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><code>200</code></td>
+                    <td>OK</td>
+                    <td>Petición exitosa</td>
+                </tr>
+                <tr>
+                    <td><code>201</code></td>
+                    <td>Created</td>
+                    <td>Recurso creado exitosamente</td>
+                </tr>
+                <tr>
+                    <td><code>400</code></td>
+                    <td>Bad Request</td>
+                    <td>Datos inválidos en la petición</td>
+                </tr>
+                <tr>
+                    <td><code>401</code></td>
+                    <td>Unauthorized</td>
+                    <td>No autenticado</td>
+                </tr>
+                <tr>
+                    <td><code>403</code></td>
+                    <td>Forbidden</td>
+                    <td>Sin permisos para esta acción</td>
+                </tr>
+                <tr>
+                    <td><code>404</code></td>
+                    <td>Not Found</td>
+                    <td>Recurso no encontrado</td>
+                </tr>
+                <tr>
+                    <td><code>500</code></td>
+                    <td>Server Error</td>
+                    <td>Error interno del servidor</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+</div>
+
+<script>
+    function showTab(tabName) {
+        // Ocultar todos los tabs
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Ocultar todos los botones activos
+        const buttons = document.querySelectorAll('.tab-button');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        // Mostrar el tab seleccionado
+        document.getElementById(tabName).classList.add('active');
+
+        // Activar el botón correspondiente
+        event.target.classList.add('active');
+    }
+</script>
+</body>
+</html>

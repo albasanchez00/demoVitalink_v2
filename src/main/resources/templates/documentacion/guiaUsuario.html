@@ -1,0 +1,107 @@
+<!-- src/main/resources/templates/documentacion/usuario.html -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía de Usuario - VitaLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="docs-container">
+    <!-- En documentacion/guiaUsuario.html -->
+    <aside class="docs-sidebar">
+        <!-- Mismo menú que en layout.html -->
+        <h3>📚 Documentación</h3>
+        <ul>
+            <li><a href="/docs">🏠 Inicio</a></li>
+            <li><a href="/docs/usuario" class="active">👤 Guía de Usuario</a></li>
+            <li><a href="/docs/medico">👨‍⚕️ Guía para Médicos</a></li>
+            <li><a href="/docs/api">🔧 API Reference</a></li>
+            <li><a href="/docs/faq">❓ Preguntas Frecuentes</a></li>
+        </ul>
+    </aside>
+
+    <main class="docs-content">
+        <h1>Guía de Usuario - Pacientes</h1>
+
+        <section>
+            <h2>1. Registro y Primer Acceso</h2>
+            <div class="step-by-step">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div>
+                        <h4>Crear tu cuenta</h4>
+                        <p>Accede a /registro y completa tus datos personales</p>
+                        <img src="/media/docs/registro.png" alt="Registro">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div>
+                        <h4>Verificar email</h4>
+                        <p>Revisa tu correo y confirma tu cuenta</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div>
+                        <h4>Completar perfil</h4>
+                        <p>Añade información médica relevante</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>2. Gestión de Citas</h2>
+            <h3>Solicitar una cita</h3>
+            <div class="code-example">
+                    <pre>
+1. Ve a "Citas" → "Nueva Cita"
+2. Selecciona:
+   - Médico disponible
+   - Fecha preferida
+   - Hora disponible
+3. Describe el motivo
+4. Confirmar solicitud
+                    </pre>
+            </div>
+
+            <div class="alert info">
+                <strong>💡 Tip:</strong> Recibirás una notificación cuando el médico confirme tu cita.
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Registro de Síntomas</h2>
+            <p>Es importante registrar tus síntomas para un mejor seguimiento médico.</p>
+
+            <h3>Zonas Corporales Disponibles:</h3>
+            <ul class="body-zones">
+                <li>🧠 CABEZA</li>
+                <li>🫁 TORAX</li>
+                <li>🤰 ABDOMEN</li>
+                <li>🦵 EXTREMIDADES</li>
+                <li>🔄 GENERAL</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Chat con tu Médico</h2>
+            <div class="feature-box">
+                <h3>💬 Características del Chat</h3>
+                <ul>
+                    <li>✅ Mensajes en tiempo real</li>
+                    <li>✅ Confirmación de lectura</li>
+                    <li>✅ Historial de conversaciones</li>
+                    <li>✅ Notificaciones instantáneas</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

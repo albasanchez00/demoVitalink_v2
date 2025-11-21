@@ -13,12 +13,14 @@
           <li><a th:href="@{/}" class="menu">Inicio</a></li>
           <li><a th:href="@{/serviciosCliente}" class="menu">Servicios Cliente</a></li>
           <li><a th:href="@{/serviciosEmpresa}" class="menu">Servicios Empresa</a></li>
-          <li><a href="#" class="menu">Documentación</a></li>
+          <li><a href="#" class="menu" title="Información del producto" target="_blank">Documentación</a></li>
           <li><a th:href="@{/contacto}" class="menu">Contacto</a></li>
         </ul>
       </nav>
     </section>
-
+    <section class="section_demo">
+        <a th:href="@{/demo}" title="Solicitar Demostración" class="btn-demo">📧 Solicitar demo</a>
+    </section>
     <section class="section_user">
       <a th:href="@{/inicioSesion}"><img th:src="@{/media/icons/user-rounded-icon.svg}" alt="icon user" class="header_img">Inicio Sesión</a>
     </section>

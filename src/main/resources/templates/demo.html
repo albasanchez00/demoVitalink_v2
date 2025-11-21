@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitar Demo - VitaLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="demo-page">
+    <div class="container">
+        <div class="demo-content">
+            <div class="demo-info">
+                <h1>Solicita tu Demo Personalizada</h1>
+                <p class="lead">Descubre cómo VitaLink puede revolucionar tu práctica médica</p>
+
+                <div class="demo-benefits">
+                    <h3>¿Qué incluye la demo?</h3>
+                    <ul>
+                        <li>✅ Demostración personalizada de 30 minutos</li>
+                        <li>✅ Configuración adaptada a tus necesidades</li>
+                        <li>✅ Respuesta a todas tus preguntas</li>
+                        <li>✅ Propuesta de implementación</li>
+                        <li>✅ Presupuesto personalizado</li>
+                        <li>✅ Período de prueba gratuito de 14 días</li>
+                    </ul>
+                </div>
+
+                <div class="testimonial">
+                    <blockquote>
+                        "VitaLink ha transformado completamente nuestra clínica.
+                        Ahorramos 3 horas diarias en gestión administrativa."
+                    </blockquote>
+                    <cite>- Dra. María García, Clínica Salud Plus</cite>
+                </div>
+            </div>
+
+            <div class="demo-form-container">
+                <form action="/demo" method="POST" class="demo-form">
+                    <h2>Completa tus datos</h2>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre Completo *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="empresa">Clínica/Hospital *</label>
+                        <input type="text" id="empresa" name="empresa" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cargo">Cargo</label>
+                        <select id="cargo" name="cargo">
+                            <option>Director/a</option>
+                            <option>Médico/a</option>
+                            <option>Administrador/a</option>
+                            <option>IT Manager</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Corporativo *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Teléfono *</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tamano">Tamaño de la organización</label>
+                        <select id="tamano" name="tamano">
+                            <option>1-5 profesionales</option>
+                            <option>6-20 profesionales</option>
+                            <option>21-50 profesionales</option>
+                            <option>50+ profesionales</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensaje">¿Cuáles son tus principales necesidades?</label>
+                        <textarea id="mensaje" name="mensaje" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-check demo-check">
+                        <input type="checkbox" id="acepto" required>
+                        <label for="acepto">Acepto la política de privacidad</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Solicitar Demo Ahora
+                    </button>
+
+                    <p class="form-note">
+                        * Te contactaremos en menos de 24 horas hábiles
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

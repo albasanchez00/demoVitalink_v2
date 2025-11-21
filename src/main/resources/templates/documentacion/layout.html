@@ -1,0 +1,89 @@
+<!-- src/main/resources/templates/documentacion/index.html -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentación - VitaLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="docs-container">
+    <!-- Sidebar de navegación -->
+    <!-- En documentacion/layout.html -->
+    <aside class="docs-sidebar">
+        <h3>📚 Documentación</h3>
+        <ul>
+            <li><a href="/docs">🏠 Inicio</a></li>
+            <li><a href="/docs/usuario">👤 Guía de Usuario</a></li>
+            <li><a href="/docs/medico">👨‍⚕️ Guía para Médicos</a></li>
+            <li><a href="/docs/api">🔧 API Reference</a></li>
+            <li><a href="/docs/faq">❓ Preguntas Frecuentes</a></li>
+        </ul>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="docs-content">
+        <h1>Bienvenido a la Documentación de VitaLink</h1>
+
+        <div class="quick-start">
+            <h2>🚀 Inicio Rápido</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Para Pacientes</h3>
+                    <p>Aprende a gestionar tus citas, síntomas y tratamientos</p>
+                    <a href="/docs/usuario" class="btn">Ver Guía</a>
+                </div>
+
+                <div class="card">
+                    <h3>Para Médicos</h3>
+                    <p>Gestiona pacientes, citas y tratamientos</p>
+                    <a href="/docs/medico" class="btn">Ver Guía</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQs -->
+        <section id="faq">
+            <h2>❓ Preguntas Frecuentes</h2>
+
+            <details>
+                <summary>¿Cómo agendo una cita?</summary>
+                <p>
+                    1. Ve a la sección "Citas" en el menú<br>
+                    2. Haz clic en "Nueva Cita"<br>
+                    3. Selecciona el médico y fecha<br>
+                    4. Confirma tu cita
+                </p>
+            </details>
+
+            <details>
+                <summary>¿Cómo registro mis síntomas?</summary>
+                <p>
+                    1. Accede a "Mis Síntomas"<br>
+                    2. Haz clic en "Registrar Síntoma"<br>
+                    3. Selecciona la zona corporal<br>
+                    4. Describe tu síntoma y guarda
+                </p>
+            </details>
+
+            <details>
+                <summary>¿Cómo contacto con mi médico?</summary>
+                <p>
+                    Usa el chat en tiempo real disponible en tu panel.
+                    Ve a "Mensajes" y selecciona a tu médico.
+                </p>
+            </details>
+        </section>
+    </main>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/help-widget.js}"></script>
+
+</body>
+</html>
