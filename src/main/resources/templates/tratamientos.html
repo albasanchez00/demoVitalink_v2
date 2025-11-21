@@ -5,102 +5,243 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro Tratamientos</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
-    <link rel="stylesheet" href="./css/style2.css">
-    <script src="../static/js/tratamientos.js"></script>
-    <script src="/js/darkTheme.js" defer></script>
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
-    <section class="contenedor">
-        <div th:replace="fragments/header :: header"></div>
+<div th:replace="fragments/header :: header"></div>
 
-        <main id="main-tratamientos">
-            <section class="section-tratamientos">
-                <h2>Nuevo Tratamiento</h2>
-                <form id="formulario-tratamientos" th:action="@{/guardarTratamiento}" method="post" th:object="${tratamiento}">
-                <label for="nombre_tratamiento">Nombre del medicamento:</label>
-                <input type="text" id="nombre_tratamiento" th:field="*{nombre_tratamiento}" required>
+<main id="main-tratamientos">
+    <!-- Formulario de nuevo tratamiento -->
+    <section class="trat-section">
+        <div class="trat-header">
+            <h2>💊 Nuevo Tratamiento</h2>
+            <p class="trat-subtitle">Registra la información del medicamento y su dosificación</p>
+        </div>
 
-                <label for="forma_farmaceutica">Forma farmacéutica:</label>
-                <select id="forma_farmaceutica" th:field="*{formula}">
-                  <option value=""></option>
-                  <option value="tableta">Tableta</option>
-                  <option value="jarabe">Jarabe</option>
-                  <option value="inyectable">Inyectable</option>
-                </select>
+        <form id="formulario-tratamientos" class="trat-form" th:action="@{/guardarTratamiento}" method="post" th:object="${tratamiento}">
 
-                <label for="dosis">Dosis (ej. 500 mg):</label>
-                <input type="text" id="dosis" th:field="*{dosis}" required>
+            <!-- Información básica del medicamento -->
+            <div class="trat-form-group">
+                <label for="nombre_tratamiento">
+                    <span class="label-icon">💊</span>
+                    Nombre del medicamento
+                </label>
+                <input type="text" id="nombre_tratamiento" th:field="*{nombre_tratamiento}" placeholder="Ej: Paracetamol" required>
+            </div>
 
-                <label for="frecuencia">Frecuencia:</label>
-                <input type="text" id="frecuencia" th:field="*{frecuencia}" placeholder="ej. Cada 8h, 1 vez al día">
-
-                <label for="duracion">Duración (días):</label>
-                <input type="number" id="duracion" th:field="*{duracion}" min="1" required>
-
-                <label for="inicio">Fecha de inicio:</label>
-                <input type="date" id="inicio" th:field="*{fecha_inicio}" required>
-
-                  <label for="fin">Fecha de fin:</label>
-                <input type="date" id="fin" th:field="*{fecha_fin}" required>
-
-                <label class="lb-checkbox"><input type="checkbox" id="con_alimentos" th:field="*{toma_alimentos}"> Tomar con alimentos</label>
-
-                <label for="observaciones">Observaciones:</label>
-                <textarea id="observaciones" th:field="*{observaciones}"></textarea>
-
-                <label for="estado">Estado:</label>
-                <select id="estado" th:field="*{estado_tratamiento}">
-                  <option value="activo">Activo</option>
-                  <option value="finalizado">Finalizado</option>
-                </select>
-
-                <label for="relacion_sintomas">Síntomas o diagnóstico relacionado:</label>
-                <input type="text" id="relacion_sintomas" th:field="*{sintomas}" placeholder="ej. Presión alta, dolor de cabeza">
-
-                <button type="submit">Guardar tratamiento</button>
-              </form>
-            </section>
-            <section class="section_tabla_tratamientos">
-                <h2>💊 Tratamientos Registrados</h2>
-
-                <div>
-                    <table class="tabla-tratamientos">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Medicamento</th>
-                            <th>Formula</th>
-                            <th>Dosis</th>
-                            <th>Frecuencia</th>
-                            <th>Inicio</th>
-                            <th>Fin</th>
-                            <th>Con alimentos</th>
-                            <th>Observaciones</th>
-                            <th>Estado</th>
-                            <th>Relacionados</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="tratamiento : ${tratamientos}">
-                            <td th:text="${tratamiento.id_tratamiento}"></td>
-                            <td th:text="${tratamiento.nombre_tratamiento}"></td>
-                            <td th:text="${tratamiento.formula}"></td>
-                            <td th:text="${tratamiento.dosis}"></td>
-                            <td th:text="${tratamiento.frecuencia}"></td>
-                            <td th:text="${tratamiento.fecha_inicio}"></td>
-                            <td th:text="${tratamiento.fecha_fin}"></td>
-                            <td th:text="${tratamiento.toma_alimentos}"></td>
-                            <td th:text="${tratamiento.observaciones}"></td>
-                            <td th:text="${tratamiento.estado_tratamiento}"></td>
-                            <td th:text="${tratamiento.sintomas}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <!-- Forma, dosis y duración en 3 columnas -->
+            <div class="trat-form-row--triple">
+                <div class="trat-form-group">
+                    <label for="forma_farmaceutica">
+                        <span class="label-icon">📦</span>
+                        Forma farmacéutica
+                    </label>
+                    <select id="forma_farmaceutica" th:field="*{formula}">
+                        <option value="">Seleccionar...</option>
+                        <option value="tableta">Tableta</option>
+                        <option value="jarabe">Jarabe</option>
+                        <option value="inyectable">Inyectable</option>
+                        <option value="capsula">Cápsula</option>
+                        <option value="crema">Crema</option>
+                        <option value="gotas">Gotas</option>
+                    </select>
                 </div>
-            </section>
-          </main>
 
-        <div th:replace="fragments/footer :: footer"></div>
+                <div class="trat-form-group">
+                    <label for="dosis">
+                        <span class="label-icon">⚖️</span>
+                        Dosis
+                    </label>
+                    <input type="text" id="dosis" th:field="*{dosis}" placeholder="Ej: 500 mg" required>
+                </div>
+
+                <div class="trat-form-group">
+                    <label for="duracion">
+                        <span class="label-icon">📅</span>
+                        Duración (días)
+                    </label>
+                    <input type="number" id="duracion" th:field="*{duracion}" min="1" placeholder="Ej: 7" required>
+                </div>
+            </div>
+
+            <!-- Frecuencia -->
+            <div class="trat-form-group">
+                <label for="frecuencia">
+                    <span class="label-icon">🕐</span>
+                    Frecuencia
+                </label>
+                <input type="text" id="frecuencia" th:field="*{frecuencia}" placeholder="Ej: Cada 8h, 1 vez al día">
+            </div>
+
+            <!-- Fechas -->
+            <div class="trat-form-row">
+                <div class="trat-form-group">
+                    <label for="inicio">
+                        <span class="label-icon">🗓️</span>
+                        Fecha de inicio
+                    </label>
+                    <input type="date" id="inicio" th:field="*{fecha_inicio}" required>
+                </div>
+
+                <div class="trat-form-group">
+                    <label for="fin">
+                        <span class="label-icon">🏁</span>
+                        Fecha de fin
+                    </label>
+                    <input type="date" id="fin" th:field="*{fecha_fin}" required>
+                </div>
+            </div>
+
+            <!-- Checkbox -->
+            <div class="trat-form-group">
+                <label class="trat-checkbox">
+                    <input type="checkbox" id="con_alimentos" th:field="*{toma_alimentos}">
+                    <span class="checkbox-label">
+                                <span class="label-icon">🍽️</span>
+                                Tomar con alimentos
+                            </span>
+                </label>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="trat-form-group">
+                <label for="observaciones">
+                    <span class="label-icon">📝</span>
+                    Observaciones
+                </label>
+                <textarea id="observaciones" th:field="*{observaciones}" rows="3" placeholder="Notas adicionales sobre el tratamiento..."></textarea>
+            </div>
+
+            <!-- Estado y síntomas -->
+            <div class="trat-form-row">
+                <div class="trat-form-group">
+                    <label for="estado">
+                        <span class="label-icon">🔄</span>
+                        Estado
+                    </label>
+                    <select id="estado" th:field="*{estado_tratamiento}">
+                        <option value="activo">Activo</option>
+                        <option value="finalizado">Finalizado</option>
+                    </select>
+                </div>
+
+                <div class="trat-form-group">
+                    <label for="relacion_sintomas">
+                        <span class="label-icon">🩺</span>
+                        Síntomas relacionados
+                    </label>
+                    <input type="text" id="relacion_sintomas" th:field="*{sintomas}" placeholder="Ej: Presión alta, dolor de cabeza">
+                </div>
+            </div>
+
+            <!-- Botón submit -->
+            <div class="trat-form-actions">
+                <button type="submit" class="trat-btn-primary">
+                    ✅ Guardar tratamiento
+                </button>
+                <button type="reset" class="trat-btn-secondary">
+                    🔄 Limpiar formulario
+                </button>
+            </div>
+        </form>
     </section>
+
+    <!-- Lista de tratamientos registrados -->
+    <section class="trat-section">
+        <div class="trat-header">
+            <h2>📋 Tratamientos Registrados</h2>
+            <p class="trat-subtitle">Historial completo de medicamentos</p>
+        </div>
+
+        <!-- Contenedor de cards -->
+        <div class="trat-cards-container">
+            <!-- Card por cada tratamiento (Thymeleaf loop) -->
+            <article class="trat-card" th:each="tratamiento : ${tratamientos}"
+                     th:classappend="${tratamiento.estado_tratamiento == 'activo'} ? 'trat-card--activo' : 'trat-card--finalizado'">
+
+                <!-- Header del card -->
+                <div class="trat-card__header">
+                    <div class="trat-card__title-group">
+                        <h3 class="trat-card__title" th:text="${tratamiento.nombre_tratamiento}">Paracetamol</h3>
+                        <span class="trat-badge trat-badge--formula" th:text="${tratamiento.formula}">tableta</span>
+                    </div>
+                    <span class="trat-badge"
+                          th:classappend="${tratamiento.estado_tratamiento == 'activo'} ? 'trat-badge--activo' : 'trat-badge--finalizado'"
+                          th:text="${tratamiento.estado_tratamiento}">
+                                activo
+                            </span>
+                </div>
+
+                <!-- Body del card -->
+                <div class="trat-card__body">
+                    <!-- Dosis y frecuencia -->
+                    <div class="trat-card__info-grid">
+                        <div class="trat-info-item">
+                            <span class="trat-info-label">⚖️ Dosis</span>
+                            <span class="trat-info-value" th:text="${tratamiento.dosis}">500 mg</span>
+                        </div>
+                        <div class="trat-info-item">
+                            <span class="trat-info-label">🕐 Frecuencia</span>
+                            <span class="trat-info-value" th:text="${tratamiento.frecuencia}">cada 8h</span>
+                        </div>
+                        <div class="trat-info-item">
+                            <span class="trat-info-label">📅 Duración</span>
+                            <span class="trat-info-value" th:text="${tratamiento.duracion} + ' días'">7 días</span>
+                        </div>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="trat-card__dates">
+                        <div class="trat-date-item">
+                            <span class="trat-date-label">Inicio</span>
+                            <span class="trat-date-value" th:text="${tratamiento.fecha_inicio}">2025-09-04</span>
+                        </div>
+                        <span class="trat-date-arrow">→</span>
+                        <div class="trat-date-item">
+                            <span class="trat-date-label">Fin</span>
+                            <span class="trat-date-value" th:text="${tratamiento.fecha_fin}">2025-09-15</span>
+                        </div>
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="trat-card__details">
+                        <div class="trat-detail-row" th:if="${tratamiento.toma_alimentos}">
+                            <span class="trat-detail-icon">🍽️</span>
+                            <span class="trat-detail-text">Tomar con alimentos</span>
+                        </div>
+                        <div class="trat-detail-row" th:if="${tratamiento.sintomas != null and tratamiento.sintomas != ''}">
+                            <span class="trat-detail-icon">🩺</span>
+                            <span class="trat-detail-text">
+                                        <strong>Relacionado:</strong>
+                                        <span th:text="${tratamiento.sintomas}">Presión alta</span>
+                                    </span>
+                        </div>
+                        <div class="trat-detail-row" th:if="${tratamiento.observaciones != null and tratamiento.observaciones != ''}">
+                            <span class="trat-detail-icon">📝</span>
+                            <span class="trat-detail-text" th:text="${tratamiento.observaciones}">Reposo durante 3 días</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer con ID -->
+                <div class="trat-card__footer">
+                    <span class="trat-card__id">ID: <span th:text="${tratamiento.id_tratamiento}">1</span></span>
+                </div>
+            </article>
+
+            <!-- Mensaje si no hay tratamientos -->
+            <div class="trat-empty" th:if="${#lists.isEmpty(tratamientos)}">
+                <div class="trat-empty__icon">💊</div>
+                <p class="trat-empty__text">No hay tratamientos registrados aún</p>
+                <p class="trat-empty__subtext">Comienza agregando tu primer medicamento usando el formulario de arriba</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script th:src="@{/js/darkTheme.js}" defer></script>
+<script th:src="@{/js/tratamientos.js}"></script>
 </body>
 </html>

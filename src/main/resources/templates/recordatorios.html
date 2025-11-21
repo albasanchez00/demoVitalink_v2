@@ -6,10 +6,7 @@
     <title>Recordatorios Paciente</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <meta name="description" content="Panel de usuario con recordatorios y gestión médica para mejorar el seguimiento de tratamientos.">
-    <link rel="stylesheet" href="/css/style2.css">
-    <script src="/js/darkTheme.js" defer></script>
-    <!-- IMPORTANTE: la ruta correcta al JS del módulo -->
-    <script src="/js/recordatoriosUsuario.js" defer></script>
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
 <section class="contenedor">
@@ -39,16 +36,6 @@
                         </label>
 
                         <label>
-                            Repetición:
-                            <select id="repeticion" name="repeticion">
-                                <option value="NONE">Una vez</option>
-                                <option value="DAILY">Diario</option>
-                                <option value="WEEKLY">Semanal</option>
-                                <option value="MONTHLY">Mensual</option>
-                            </select>
-                        </label>
-
-                        <label>
                             Canal:
                             <select id="canal" name="canal">
                                 <option value="INAPP">In-App</option>
@@ -63,10 +50,25 @@
                                 <option value="">Sin vínculo</option>
                             </select>
                         </label>
+
+                        <label>
+                            Repetición:
+                            <select id="repeticion" name="repeticion">
+                                <option value="NONE">Una vez</option>
+                                <option value="DAILY">Diario</option>
+                                <option value="WEEKLY">Semanal</option>
+                                <option value="MONTHLY">Mensual</option>
+                            </select>
+                        </label>
                     </div>
 
                     <div class="rec-grid-2">
-                        <label for="fecha">Fecha:</label>
+                        <label for="fecha">
+                            Fecha de inicio:
+                            <small style="font-size: 0.85em; color: #666;">
+                                (Para recurrentes, marca desde cuándo empieza)
+                            </small>
+                        </label>
                         <input type="date" id="fecha" name="fecha" required>
 
                         <label for="hora">Hora:</label>
@@ -86,7 +88,7 @@
             </section>
 
             <!-- Listado y filtros -->
-            <section id="calendario">
+            <section id="rec-activos">
                 <h2>Recordatorios Activos</h2>
 
                 <ul class="rec-chips">
@@ -109,6 +111,8 @@
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
+
 <script th:src="@{/js/recordatoriosUsuario.js}"></script>
+<script th:src="@{/js/darkTheme.js}" defer></script>
 </body>
 </html>

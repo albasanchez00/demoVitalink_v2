@@ -2588,7 +2588,7 @@ body {
 
 .btn-demo {
     background: var(--public-primary);
-    color: white !important;
+    color: white;
     padding: 10px 20px;
     border-radius: 25px;
 }

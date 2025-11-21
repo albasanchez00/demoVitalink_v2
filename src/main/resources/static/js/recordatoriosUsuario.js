@@ -21,8 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let cache = [];
 
     // ====== Helpers ======
-    // LocalDateTime sin zona → "YYYY-MM-DDTHH:mm:00"
-    const toISO = (fecha, hora) => `${fecha}T${hora}:00`;
+    // ✅ Validar que fecha y hora existan
+    const toISO = (fecha, hora) => {
+        if (!fecha || !hora) {
+            throw new Error("Fecha y hora son obligatorias");
+        }
+        return `${fecha}T${hora}:00`;
+    };
 
     const parseISOToInputs = (iso) => {
         const d = new Date(iso);
@@ -51,26 +56,47 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!res.ok) throw new Error("Error listando");
         return res.json();
     }
+
     async function apiCrear(dto) {
+        console.log('📤 POST /api/recordatorios:', dto);
+
         const res = await fetch(`/api/recordatorios`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "same-origin",
             body: JSON.stringify(dto),
         });
-        if (!res.ok) throw new Error("Error creando");
-        return res.json();
+
+        const responseText = await res.text();
+
+        if (!res.ok) {
+            console.error('❌ Error del servidor (status ' + res.status + '):', responseText);
+            throw new Error("Error creando: " + responseText);
+        }
+
+        return JSON.parse(responseText);
     }
+
     async function apiActualizar(id_recordatorio, dto) {
+        console.log('📤 PUT /api/recordatorios/' + id_recordatorio + ':', dto);
+
         const res = await fetch(`/api/recordatorios/${id_recordatorio}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             credentials: "same-origin",
             body: JSON.stringify(dto),
         });
-        if (!res.ok) throw new Error("Error actualizando");
-        return res.json();
+
+        const responseText = await res.text();
+
+        if (!res.ok) {
+            console.error('❌ Error del servidor (status ' + res.status + '):', responseText);
+            throw new Error("Error actualizando: " + responseText);
+        }
+
+        return JSON.parse(responseText);
     }
+
     async function apiToggle(id_recordatorio, value) {
         const res = await fetch(`/api/recordatorios/${id_recordatorio}/completado?value=${value}`, {
             method: "PATCH",
@@ -79,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!res.ok) throw new Error("Error toggling");
         return res.json();
     }
+
     async function apiEliminar(id_recordatorio) {
         const res = await fetch(`/api/recordatorios/${id_recordatorio}`, {
             method: "DELETE",
@@ -86,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         if (!res.ok) throw new Error("Error eliminando");
     }
+
     async function apiVinculos(id_usuario) {
         const res = await fetch(`/api/recordatorios/vinculos-activos?id_usuario=${id_usuario}`, {
             credentials: "same-origin",
@@ -207,41 +235,72 @@ document.addEventListener("DOMContentLoaded", () => {
         const id_usuario = getIdUsuario();
         if (!Number.isInteger(id_usuario)) return alert("No se encontró id_usuario");
 
+        // ✅ Validar campos obligatorios
+        const titulo = form.titulo.value.trim();
+        const fecha = form.fecha.value;
+        const hora = form.hora.value;
+
+        if (!titulo) {
+            return alert("El título es obligatorio");
+        }
+        if (!fecha) {
+            return alert("La fecha es obligatoria");
+        }
+        if (!hora) {
+            return alert("La hora es obligatoria");
+        }
+
+        // Parsear vínculo
         const vinc = form.vinculo.value || "";
         let vinculoTipo = null, vinculoId = null;
         if (vinc.includes(":")) {
             const [t, id] = vinc.split(":");
             vinculoTipo = t || null;
-            vinculoId = id ? parseInt(id, 10) : null; // Integer nullable
+            vinculoId = id ? parseInt(id, 10) : null;
             if (Number.isNaN(vinculoId)) vinculoId = null;
         }
 
-        const dto = {
-            id_recordatorio: form.editId.value ? parseInt(form.editId.value, 10) : 0, // int en tu modelo; 0 = crear
+        // ✅ Construir fechaHora con validación
+        let fechaHora;
+        try {
+            fechaHora = toISO(fecha, hora);
+        } catch (err) {
+            return alert(err.message);
+        }
+
+        // Construir DTO
+        const dtoBase = {
             id_usuario,
-            titulo: form.titulo.value.trim(),
+            titulo,
             tipo: form.tipo.value,
-            fechaHora: toISO(form.fecha.value, form.hora.value),
+            fechaHora,
             repeticion: form.repeticion.value || "NONE",
             canal: form.canal.value || "INAPP",
             vinculoTipo,
-            vinculoId, // puede ir null
-            descripcion: form.descripcion.value.trim(),
+            vinculoId,
+            descripcion: form.descripcion.value.trim() || null,
             completado: false
         };
 
+        console.log('📦 DTO final a enviar:', dtoBase);
+
         try {
-            if (dto.id_recordatorio && dto.id_recordatorio > 0) {
-                await apiActualizar(dto.id_recordatorio, dto);
+            const editId = form.editId.value ? parseInt(form.editId.value, 10) : null;
+
+            if (editId) {
+                // PUT: Incluir id_recordatorio
+                await apiActualizar(editId, { ...dtoBase, id_recordatorio: editId });
             } else {
-                await apiCrear(dto);
+                // POST: Enviar con id_recordatorio = 0
+                await apiCrear({ id_recordatorio: 0, ...dtoBase });
             }
+
             form.reset();
             form.editId.value = "";
             await cargarLista();
         } catch (e2) {
             console.error("Error creando/actualizando:", e2);
-            alert("No se pudo guardar el recordatorio");
+            alert("No se pudo guardar el recordatorio. Revisa la consola para más detalles.");
         }
     });
 
@@ -261,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 await cargarLista();
             } catch (err) {
                 console.error(err);
-                el.checked = !el.checked; // revertir visualmente si falló
+                el.checked = !el.checked;
             }
         }
 
