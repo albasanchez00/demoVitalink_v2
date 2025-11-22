@@ -5,26 +5,29 @@
     <title>Tratamientos del paciente (Médico)</title>
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/style2.css}"/>
+    <link rel="stylesheet" th:href="@{/css/tratamientos-cards.css}"/>
     <script src="/js/darkTheme.js" defer></script>
     <script src="/js/sccript.js" defer></script>
 </head>
 <body>
 <div th:replace="fragments/header :: header"></div>
 
-<div class="page-container">
+<div class="tratamientos-page">
 
     <!-- Header Section -->
-    <div class="header-section">
-        <div class="header-content">
-            <div class="header-title">
-                <h1>
-                    <span>💊</span>
+    <div class="tratamientos-header">
+        <div class="tratamientos-header-content">
+            <div class="tratamientos-title-section">
+                <h1 class="tratamientos-title">
+                    <span class="tratamientos-icon">💊</span>
                     Tratamientos del Paciente
                 </h1>
+                <p class="tratamientos-subtitle">Gestión y seguimiento de tratamientos médicos</p>
             </div>
-            <div class="patient-selector">
+
+            <div class="tratamientos-patient-selector">
                 <label for="patient-select">Paciente:</label>
-                <select id="patient-select">
+                <select id="patient-select" class="patient-select-input">
                     <option>Todos</option>
                     <option selected>Juan Pérez</option>
                     <option>María García</option>
@@ -34,187 +37,380 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-        <a th:href="@{/usuarios/panelUsuario}" class="btn btn-secondary">
-            <span>⬅</span>
+    <!-- Action Bar -->
+    <div class="tratamientos-actions">
+        <a th:href="@{/usuarios/panelUsuario}" class="btn-action btn-secondary">
+            <span class="btn-icon">←</span>
             Volver al panel
         </a>
-        <a th:href="@{/medico/nuevo}" class="btn btn-primary">
-            <span>+</span>
+
+        <div class="tratamientos-stats">
+            <div class="stat-item">
+                <span class="stat-value">2</span>
+                <span class="stat-label">Activos</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">3</span>
+                <span class="stat-label">Finalizados</span>
+            </div>
+        </div>
+
+        <a th:href="@{/medico/nuevo}" class="btn-action btn-primary">
+            <span class="btn-icon">+</span>
             Nuevo tratamiento
         </a>
     </div>
 
-    <!-- Success Alert (example) -->
+    <!-- Success Alert -->
     <div class="alert alert-success" style="display: none;">
-        <span>✓</span>
+        <span class="alert-icon">✓</span>
         Tratamiento guardado correctamente
     </div>
 
-    <!-- Table Container -->
-    <div class="table-container">
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Medicamento</th>
-                    <th>Fórmula</th>
-                    <th>Dosis</th>
-                    <th>Frecuencia</th>
-                    <th>Inicio</th>
-                    <th>Fin</th>
-                    <th>Con Alimentos</th>
-                    <th>Observaciones</th>
-                    <th>Estado</th>
-                    <th>Síntomas</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td data-label="ID">1</td>
-                    <td data-label="Medicamento">Paracetamol</td>
-                    <td data-label="Fórmula">tableta</td>
-                    <td data-label="Dosis">500mg</td>
-                    <td data-label="Frecuencia">cada 8h</td>
-                    <td data-label="Inicio">2025-09-04</td>
-                    <td data-label="Fin">2025-09-15</td>
-                    <td data-label="Con Alimentos">true</td>
-                    <td data-label="Observaciones">Reposo durante 3 días</td>
-                    <td data-label="Estado">
-                        <span class="status-pill status-finalizado">Finalizado</span>
-                    </td>
-                    <td data-label="Síntomas">N/R</td>
-                    <td data-label="Acciones">
-                        <div class="action-cell">
-                            <a href="#" class="btn-table btn-edit">
-                                <span>✏</span>
-                                Editar
-                            </a>
-                            <button class="btn-table btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
-                                <span>🗑</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-label="ID">2</td>
-                    <td data-label="Medicamento">Nolotil</td>
-                    <td data-label="Fórmula">jarabe</td>
-                    <td data-label="Dosis">1g</td>
-                    <td data-label="Frecuencia">cada 6h, 2 veces días</td>
-                    <td data-label="Inicio">2025-07-15</td>
-                    <td data-label="Fin">2025-07-22</td>
-                    <td data-label="Con Alimentos">true</td>
-                    <td data-label="Observaciones">Ninguna</td>
-                    <td data-label="Estado">
-                        <span class="status-pill status-activo">activo</span>
-                    </td>
-                    <td data-label="Síntomas">Presion alta</td>
-                    <td data-label="Acciones">
-                        <div class="action-cell">
-                            <a href="#" class="btn-table btn-edit">
-                                <span>✏</span>
-                                Editar
-                            </a>
-                            <button class="btn-table btn-complete">
-                                <span>✓</span>
-                                Finalizar
-                            </button>
-                            <button class="btn-table btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
-                                <span>🗑</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-label="ID">4</td>
-                    <td data-label="Medicamento">Ibuprofeno</td>
-                    <td data-label="Fórmula">inyectable</td>
-                    <td data-label="Dosis">500mg</td>
-                    <td data-label="Frecuencia">cada 2h</td>
-                    <td data-label="Inicio">2025-07-23</td>
-                    <td data-label="Fin">2025-07-26</td>
-                    <td data-label="Con Alimentos">true</td>
-                    <td data-label="Observaciones">Ninguna</td>
-                    <td data-label="Estado">
-                        <span class="status-pill status-finalizado">Finalizado</span>
-                    </td>
-                    <td data-label="Síntomas">N/R</td>
-                    <td data-label="Acciones">
-                        <div class="action-cell">
-                            <a href="#" class="btn-table btn-edit">
-                                <span>✏</span>
-                                Editar
-                            </a>
-                            <button class="btn-table btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
-                                <span>🗑</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-label="ID">5</td>
-                    <td data-label="Medicamento">Quiste poliquístico</td>
-                    <td data-label="Fórmula">tableta</td>
-                    <td data-label="Dosis">2mg</td>
-                    <td data-label="Frecuencia">1 al día</td>
-                    <td data-label="Inicio">2025-09-18</td>
-                    <td data-label="Fin">2026-09-18</td>
-                    <td data-label="Con Alimentos">false</td>
-                    <td data-label="Observaciones">Realizar la toma antes de dormir</td>
-                    <td data-label="Estado">
-                        <span class="status-pill status-finalizado">Finalizado</span>
-                    </td>
-                    <td data-label="Síntomas">Quiste poliquístico</td>
-                    <td data-label="Acciones">
-                        <div class="action-cell">
-                            <a href="#" class="btn-table btn-edit">
-                                <span>✏</span>
-                                Editar
-                            </a>
-                            <button class="btn-table btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
-                                <span>🗑</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td data-label="ID">6</td>
-                    <td data-label="Medicamento">sibila</td>
-                    <td data-label="Fórmula">tableta</td>
-                    <td data-label="Dosis">32mg</td>
-                    <td data-label="Frecuencia">cada 24 horas</td>
-                    <td data-label="Inicio">2025-10-01</td>
-                    <td data-label="Fin">2025-10-22</td>
-                    <td data-label="Con Alimentos">true</td>
-                    <td data-label="Observaciones">Ninguna</td>
-                    <td data-label="Estado">
-                        <span class="status-pill status-finalizado">Finalizado</span>
-                    </td>
-                    <td data-label="Síntomas">quiste</td>
-                    <td data-label="Acciones">
-                        <div class="action-cell">
-                            <a href="#" class="btn-table btn-edit">
-                                <span>✏</span>
-                                Editar
-                            </a>
-                            <button class="btn-table btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
-                                <span>🗑</span>
-                                Eliminar
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <!-- Filters -->
+    <div class="tratamientos-filters">
+        <button class="filter-btn active" data-filter="todos">
+            Todos <span class="filter-count">5</span>
+        </button>
+        <button class="filter-btn" data-filter="activo">
+            Activos <span class="filter-count">2</span>
+        </button>
+        <button class="filter-btn" data-filter="finalizado">
+            Finalizados <span class="filter-count">3</span>
+        </button>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="tratamientos-grid">
+
+        <!-- Card 1 - Finalizado -->
+        <div class="tratamiento-card" data-estado="finalizado">
+            <div class="card-header">
+                <div class="card-title-section">
+                    <h3 class="card-medicamento">Paracetamol</h3>
+                    <span class="badge badge-finalizado">Finalizado</span>
+                </div>
+                <span class="card-id">#1</span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Fórmula</span>
+                        <span class="info-value">Tableta</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dosis</span>
+                        <span class="info-value info-highlight">500mg</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frecuencia</span>
+                        <span class="info-value">Cada 8h</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Con alimentos</span>
+                        <span class="info-value">
+                            <span class="badge-mini badge-yes">Sí</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-dates">
+                    <div class="date-item">
+                        <span class="date-label">Inicio</span>
+                        <span class="date-value">04/09/2025</span>
+                    </div>
+                    <span class="date-separator">→</span>
+                    <div class="date-item">
+                        <span class="date-label">Fin</span>
+                        <span class="date-value">15/09/2025</span>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Síntomas tratados</span>
+                    <span class="section-value">N/R</span>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Observaciones</span>
+                    <p class="section-text">Reposo durante 3 días</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-btn btn-edit">
+                    <span>✏</span> Editar
+                </button>
+                <button class="card-btn btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
+                    <span>🗑</span> Eliminar
+                </button>
+            </div>
         </div>
+
+        <!-- Card 2 - Activo -->
+        <div class="tratamiento-card" data-estado="activo">
+            <div class="card-header">
+                <div class="card-title-section">
+                    <h3 class="card-medicamento">Nolotil</h3>
+                    <span class="badge badge-activo">Activo</span>
+                </div>
+                <span class="card-id">#2</span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Fórmula</span>
+                        <span class="info-value">Jarabe</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dosis</span>
+                        <span class="info-value info-highlight">1g</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frecuencia</span>
+                        <span class="info-value">Cada 6h, 2 veces días</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Con alimentos</span>
+                        <span class="info-value">
+                            <span class="badge-mini badge-yes">Sí</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-dates">
+                    <div class="date-item">
+                        <span class="date-label">Inicio</span>
+                        <span class="date-value">15/07/2025</span>
+                    </div>
+                    <span class="date-separator">→</span>
+                    <div class="date-item">
+                        <span class="date-label">Fin</span>
+                        <span class="date-value">22/07/2025</span>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Síntomas tratados</span>
+                    <span class="section-value section-highlight">Presión alta</span>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Observaciones</span>
+                    <p class="section-text">Ninguna</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-btn btn-edit">
+                    <span>✏</span> Editar
+                </button>
+                <button class="card-btn btn-complete">
+                    <span>✓</span> Finalizar
+                </button>
+                <button class="card-btn btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
+                    <span>🗑</span> Eliminar
+                </button>
+            </div>
+        </div>
+
+        <!-- Card 3 - Finalizado -->
+        <div class="tratamiento-card" data-estado="finalizado">
+            <div class="card-header">
+                <div class="card-title-section">
+                    <h3 class="card-medicamento">Ibuprofeno</h3>
+                    <span class="badge badge-finalizado">Finalizado</span>
+                </div>
+                <span class="card-id">#4</span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Fórmula</span>
+                        <span class="info-value">Inyectable</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dosis</span>
+                        <span class="info-value info-highlight">500mg</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frecuencia</span>
+                        <span class="info-value">Cada 2h</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Con alimentos</span>
+                        <span class="info-value">
+                            <span class="badge-mini badge-yes">Sí</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-dates">
+                    <div class="date-item">
+                        <span class="date-label">Inicio</span>
+                        <span class="date-value">23/07/2025</span>
+                    </div>
+                    <span class="date-separator">→</span>
+                    <div class="date-item">
+                        <span class="date-label">Fin</span>
+                        <span class="date-value">26/07/2025</span>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Síntomas tratados</span>
+                    <span class="section-value">N/R</span>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Observaciones</span>
+                    <p class="section-text">Ninguna</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-btn btn-edit">
+                    <span>✏</span> Editar
+                </button>
+                <button class="card-btn btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
+                    <span>🗑</span> Eliminar
+                </button>
+            </div>
+        </div>
+
+        <!-- Card 4 - Finalizado -->
+        <div class="tratamiento-card" data-estado="finalizado">
+            <div class="card-header">
+                <div class="card-title-section">
+                    <h3 class="card-medicamento">Quiste poliquístico</h3>
+                    <span class="badge badge-finalizado">Finalizado</span>
+                </div>
+                <span class="card-id">#5</span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Fórmula</span>
+                        <span class="info-value">Tableta</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dosis</span>
+                        <span class="info-value info-highlight">2mg</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frecuencia</span>
+                        <span class="info-value">1 al día</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Con alimentos</span>
+                        <span class="info-value">
+                            <span class="badge-mini badge-no">No</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-dates">
+                    <div class="date-item">
+                        <span class="date-label">Inicio</span>
+                        <span class="date-value">18/09/2025</span>
+                    </div>
+                    <span class="date-separator">→</span>
+                    <div class="date-item">
+                        <span class="date-label">Fin</span>
+                        <span class="date-value">18/09/2026</span>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Síntomas tratados</span>
+                    <span class="section-value section-highlight">Quiste poliquístico</span>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Observaciones</span>
+                    <p class="section-text">Realizar la toma antes de dormir</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-btn btn-edit">
+                    <span>✏</span> Editar
+                </button>
+                <button class="card-btn btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
+                    <span>🗑</span> Eliminar
+                </button>
+            </div>
+        </div>
+
+        <!-- Card 5 - Finalizado -->
+        <div class="tratamiento-card" data-estado="finalizado">
+            <div class="card-header">
+                <div class="card-title-section">
+                    <h3 class="card-medicamento">Sibila</h3>
+                    <span class="badge badge-finalizado">Finalizado</span>
+                </div>
+                <span class="card-id">#6</span>
+            </div>
+
+            <div class="card-body">
+                <div class="card-info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Fórmula</span>
+                        <span class="info-value">Tableta</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dosis</span>
+                        <span class="info-value info-highlight">32mg</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frecuencia</span>
+                        <span class="info-value">Cada 24 horas</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Con alimentos</span>
+                        <span class="info-value">
+                            <span class="badge-mini badge-yes">Sí</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-dates">
+                    <div class="date-item">
+                        <span class="date-label">Inicio</span>
+                        <span class="date-value">01/10/2025</span>
+                    </div>
+                    <span class="date-separator">→</span>
+                    <div class="date-item">
+                        <span class="date-label">Fin</span>
+                        <span class="date-value">22/10/2025</span>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Síntomas tratados</span>
+                    <span class="section-value section-highlight">Quiste</span>
+                </div>
+
+                <div class="card-section">
+                    <span class="section-label">Observaciones</span>
+                    <p class="section-text">Ninguna</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="card-btn btn-edit">
+                    <span>✏</span> Editar
+                </button>
+                <button class="card-btn btn-delete" onclick="return confirm('¿Seguro que deseas eliminar este tratamiento?')">
+                    <span>🗑</span> Eliminar
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -229,6 +425,28 @@
             document.querySelector('.alert-success').style.display = 'none';
         }, 5000);
     }
+
+    // Filter functionality
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            const filter = this.dataset.filter;
+            const cards = document.querySelectorAll('.tratamiento-card');
+
+            cards.forEach(card => {
+                if (filter === 'todos') {
+                    card.style.display = 'block';
+                } else {
+                    const estado = card.dataset.estado;
+                    card.style.display = estado === filter ? 'block' : 'none';
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
