@@ -5,7 +5,7 @@
     <title>Configuración</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
-    <link rel="stylesheet" href="/css/style2.css">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
 <section class="contenedor">
@@ -54,7 +54,9 @@
                     <div class="preview">
                         <small>Previsualización logo/icono</small>
                         <div id="brandPreview" class="brand-preview">
-                            <picture class="contPreviewImg"><img class="brandPreviewImg" src="/media/logo_IA_Medica.svg" alt="Logo"></picture>
+                            <picture class="contPreviewImg">
+                                <img id="brandPreviewImg" class="brandPreviewImg" src="/media/logo_IA_Medica.svg" alt="Logo">
+                            </picture>
                             <span id="brandPreviewName">VitaLink</span>
                         </div>
                     </div>
