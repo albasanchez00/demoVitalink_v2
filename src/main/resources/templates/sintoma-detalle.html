@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Síntoma - VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+
+    <style>
+        .detalle-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .detalle-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detalle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .detalle-header h1 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .detalle-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .detalle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detalle-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detalle-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detalle-valor {
+            font-size: 1.125rem;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .detalle-descripcion {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .detalle-descripcion .detalle-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .detalle-descripcion .detalle-valor {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .chip-tipo {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .chip-zona {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 640px) {
+            .detalle-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .detalle-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .detalle-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+
+    <main id="main_panelUser">
+        <section class="section_main" sec:authorize="isAuthenticated()">
+            <div class="detalle-container">
+
+                <!-- Alertas -->
+                <div th:if="${success}" class="alert alert-success">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${success}">Operación exitosa</span>
+                </div>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${error}">Error</span>
+                </div>
+
+                <div th:if="${soloLectura}" class="alert alert-warning">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Estás viendo este síntoma en modo solo lectura</span>
+                </div>
+
+                <!-- Card principal -->
+                <div class="detalle-card">
+                    <!-- Header con acciones -->
+                    <div class="detalle-header">
+                        <h1>Detalle del Síntoma</h1>
+                        <div class="detalle-actions">
+                            <a th:href="@{/usuarios/historialPaciente}" class="btn btn_linea">
+                                ← Volver al historial
+                            </a>
+                            <a th:if="${!soloLectura}"
+                               th:href="@{/sintomas/{id}/editar(id=${sintoma.id_sintoma})}"
+                               class="btn btn_primario">
+                                ✏️ Editar
+                            </a>
+                            <button th:if="${!soloLectura}"
+                                    type="button"
+                                    class="btn btn_peligro"
+                                    onclick="mostrarModalEliminar()">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grid de información -->
+                    <div class="detalle-grid">
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Tipo de Síntoma</span>
+                            <span class="chip-tipo" th:text="${sintoma.tipo}">DOLOR</span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${sintoma.zona != null}">
+                            <span class="detalle-label">Zona Corporal</span>
+                            <span class="chip-tipo chip-zona" th:text="${sintoma.zona}">CABEZA</span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Fecha de Registro</span>
+                            <span class="detalle-valor"
+                                  th:text="${#temporals.format(sintoma.fechaRegistro, 'dd/MM/yyyy HH:mm')}">
+                                12/09/2024 10:30
+                            </span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${sintoma.usuario != null}">
+                            <span class="detalle-label">Paciente</span>
+                            <span class="detalle-valor"
+                                  th:text="${sintoma.usuario.cliente != null ?
+                                           sintoma.usuario.cliente.nombre + ' ' + sintoma.usuario.cliente.apellidos :
+                                           sintoma.usuario.username}">
+                                Juan Pérez
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="detalle-descripcion" th:if="${sintoma.descripcion != null and !#strings.isEmpty(sintoma.descripcion)}">
+                        <div class="detalle-label">Descripción Detallada</div>
+                        <div class="detalle-valor" th:text="${sintoma.descripcion}">
+                            Descripción del síntoma...
+                        </div>
+                    </div>
+
+                    <!-- Si no hay descripción -->
+                    <div th:if="${sintoma.descripcion == null or #strings.isEmpty(sintoma.descripcion)}"
+                         class="detalle-descripcion" style="background: #f3f4f6; border-left-color: #9ca3af;">
+                        <div class="detalle-valor" style="color: #6b7280; font-style: italic;">
+                            Sin descripción adicional
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal-overlay" id="modalEliminar">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">¿Eliminar síntoma?</h3>
+        <p>Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este síntoma?</p>
+        <form th:action="@{/sintomas/{id}/eliminar(id=${sintoma.id_sintoma})}" method="post">
+            <div class="modal-actions">
+                <button type="button" class="btn btn_linea" onclick="cerrarModalEliminar()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn_peligro">
+                    Eliminar definitivamente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function mostrarModalEliminar() {
+        document.getElementById('modalEliminar').classList.add('active');
+    }
+
+    function cerrarModalEliminar() {
+        document.getElementById('modalEliminar').classList.remove('active');
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalEliminar').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalEliminar();
+        }
+    });
+</script>
+</body>
+</html>

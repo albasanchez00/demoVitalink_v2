@@ -35,7 +35,8 @@ const lista = document.querySelector(".hist-lista");
 function clearClientEvents() {
     lista?.querySelectorAll("li[data-js='true']").forEach(li => li.remove());
 }
-function liEvento({ fecha, tipo, titulo, descripcion, zona, intensidad, urlDetalle, urlEditar }) {
+// ✅ CAMBIO: Eliminado parámetro 'intensidad' y su línea de renderizado
+function liEvento({ fecha, tipo, titulo, descripcion, zona, urlDetalle, urlEditar }) {
     const li = document.createElement("li");
     li.className = "hist-item";
     li.dataset.js = "true";
@@ -52,7 +53,6 @@ function liEvento({ fecha, tipo, titulo, descripcion, zona, intensidad, urlDetal
       <h4>${titulo ?? ""}</h4>
       ${descripcion ? `<p>${descripcion}</p>` : ""}
       ${zona ? `<div class="hist-meta"><span><strong>Zona:</strong> ${zona}</span></div>` : ""}
-      ${Number.isFinite(intensidad) ? `<div class="hist-meta"><span><strong>Intensidad:</strong> ${intensidad}</span></div>` : ""}
       <div class="hist-item-actions">
         ${[urlDetalle ? `<a class="link" href="${urlDetalle}">Ver</a>` : "", urlEditar ? `<a class="link" href="${urlEditar}">Editar</a>` : ""]
         .filter(Boolean).join('<span> · </span>')}
@@ -62,19 +62,27 @@ function liEvento({ fecha, tipo, titulo, descripcion, zona, intensidad, urlDetal
 }
 
 // ===== Adapters =====
+// ✅ CAMBIO: Eliminada la asignación de 'intensidad' (ya no se devuelve ni se usa)
 function mapSintoma(s) {
     const dtRaw = s.fechaRegistro || s.fecha || s.createdAt || s.fechaSintoma || s.fechaHora || null;
     const d = parseDateFlexible(dtRaw);
+
+    // Extraer la zona correctamente (puede ser null, string o enum)
+    let zonaTexto = null;
+    if (s.zona) {
+        // Si es un objeto enum, extraer el name o value
+        zonaTexto = typeof s.zona === 'string' ? s.zona : (s.zona.name || s.zona);
+    }
+
     return {
         fechaISO: d ? d.toISOString() : null,
         fecha: formatDateLocal(d),
         tipo: "SINTOMA",
-        titulo: (s.zona && s.zona.toString().trim().toUpperCase()) || s.titulo || "Síntoma",
+        titulo: zonaTexto ? zonaTexto.toString().trim().toUpperCase() : (s.titulo || "Síntoma"),
         descripcion: s.descripcion || s.detalle || "",
-        zona: s.zona || null,
-        intensidad: Number.isFinite(s.intensidad) ? s.intensidad : null,
-        urlDetalle: s.id ? `/sintomas/${s.id}` : null,
-        urlEditar: s.id ? `/sintomas/${s.id}/editar` : null,
+        zona: zonaTexto,
+        urlDetalle: s.id_sintoma ? `/sintomas/${s.id_sintoma}` : (s.id ? `/sintomas/${s.id}` : null),
+        urlEditar: s.id_sintoma ? `/sintomas/${s.id_sintoma}/editar` : (s.id ? `/sintomas/${s.id}/editar` : null),
     };
 }
 function mapCita(c) {
@@ -91,7 +99,6 @@ function mapCita(c) {
         titulo: c.titulo || c.motivo || "Cita",
         descripcion: desc || "",
         zona: null,
-        intensidad: null,
         urlDetalle: c.id ? `/citas/${c.id}` : null,
         urlEditar: c.id ? `/citas/${c.id}/editar` : null,
     };
@@ -106,7 +113,6 @@ function mapTratamiento(t) {
         titulo: `${t.nombre || t.titulo || "Tratamiento"}${t.estado ? ` · ${t.estado}` : ""}`,
         descripcion: desc,
         zona: null,
-        intensidad: null,
         urlDetalle: t.id ? `/tratamientos/${t.id}` : null,
         urlEditar: t.id ? `/tratamientos/${t.id}/editar` : null,
     };
@@ -122,16 +128,20 @@ function getAPIUrls() {
     // Leer userId del window.USER_ID (inyectado por Thymeleaf)
     const userId = window.USER_ID;
 
-    // Si hay un userId válido (y no es 0), usar las rutas del médico
-    if (userId && userId !== 0) {
-        console.log(`[Historial] Cargando datos para userId: ${userId}`);
+    // Leer el usuario autenticado actual (si está disponible)
+    // Esto debería inyectarse desde Thymeleaf también
+    const currentUserId = window.CURRENT_USER_ID; // Añadir en HTML
+
+    // Si hay userId Y es diferente del usuario actual → endpoint de médico
+    if (userId && userId !== 0 && currentUserId && userId !== currentUserId) {
+        console.log(`[Historial] Cargando datos para paciente ${userId} (vista médico)`);
         return {
             sintomas: `/api/medico/sintomas/${userId}`,
-            citas: `/api/citas?userId=${userId}`, // Ajusta según tu API de citas
-            tratamientos: `/api/tratamientos?userId=${userId}`, // Ajusta según tu API de tratamientos
+            citas: `/api/citas?userId=${userId}`,
+            tratamientos: `/api/tratamientos?userId=${userId}`,
         };
     } else {
-        // Sin userId válido, usar las rutas del usuario autenticado
+        // Sin userId válido O viendo su propio historial → usar rutas propias
         console.log("[Historial] Cargando datos del usuario autenticado (/mios)");
         return {
             sintomas: "/api/sintomas/mios",
@@ -148,6 +158,7 @@ async function getJSON(url) {
 }
 
 // ===== Filtros =====
+// ✅ CAMBIO: Mantenemos el filtro de intensidad por si se usa en el futuro, pero no afectará
 function readFiltersFromForm() {
     const f = new FormData(document.querySelector(".hist-form"));
     const tipo = (f.get("tipo") || "").toUpperCase(); // "", "SINTOMA", "TRATAMIENTO", "CITA"
@@ -181,10 +192,11 @@ function passesFilters(ev, F) {
         if (!z.includes(F.zona)) return false;
     }
 
-    // intensidad exacta (si se pide y el evento es síntoma)
-    if (Number.isFinite(F.intensidad)) {
-        if (!Number.isFinite(ev.intensidad) || ev.intensidad !== F.intensidad) return false;
-    }
+    // ✅ NOTA: Filtro de intensidad deshabilitado (ya no existe el campo)
+    // Si en el futuro se añade intensidad a la BD, descomentar:
+    // if (Number.isFinite(F.intensidad)) {
+    //     if (!Number.isFinite(ev.intensidad) || ev.intensidad !== F.intensidad) return false;
+    // }
 
     // estado tratamiento (si se pide y el evento es tratamiento: buscamos en el título " · ESTADO" o en desc)
     if (F.estadoTratamiento && ev.tipo === "TRATAMIENTO") {

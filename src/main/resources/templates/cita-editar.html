@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Cita - VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+
+    <style>
+        .editar-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .editar-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .editar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .editar-header h1 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-help {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        @media (max-width: 640px) {
+            .editar-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+
+    <main id="main_panelUser">
+        <section class="section_main" sec:authorize="isAuthenticated()">
+            <div class="editar-container">
+
+                <!-- Alertas -->
+                <div th:if="${error}" class="alert alert-error">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${error}">Error</span>
+                </div>
+
+                <!-- Card de edición -->
+                <div class="editar-card">
+                    <!-- Header -->
+                    <div class="editar-header">
+                        <h1>Editar Cita</h1>
+                        <a th:href="@{/citas/{id}(id=${cita.id_cita})}" class="btn btn_linea">
+                            ← Cancelar
+                        </a>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form th:action="@{/citas/{id}/editar(id=${cita.id_cita})}"
+                          method="post"
+                          th:object="${cita}">
+
+                        <!-- Título -->
+                        <div class="form-group">
+                            <label for="titulo">
+                                Título de la cita
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text"
+                                   id="titulo"
+                                   name="titulo"
+                                   class="form-control"
+                                   th:field="*{titulo}"
+                                   placeholder="Ej: Consulta de control, Revisión anual..."
+                                   required>
+                            <small class="form-help">
+                                Un título breve que identifique el motivo de la cita
+                            </small>
+                        </div>
+
+                        <!-- Fecha y Hora -->
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="fecha">
+                                    Fecha
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="date"
+                                       id="fecha"
+                                       name="fecha"
+                                       class="form-control"
+                                       th:value="${#temporals.format(cita.fecha, 'yyyy-MM-dd')}"
+                                       required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hora">
+                                    Hora
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="time"
+                                       id="hora"
+                                       name="hora"
+                                       class="form-control"
+                                       th:value="${#temporals.format(cita.hora, 'HH:mm')}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Duración y Médico -->
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="duracionMinutos">
+                                    Duración (minutos)
+                                    <span class="required">*</span>
+                                </label>
+                                <input type="number"
+                                       id="duracionMinutos"
+                                       name="duracionMinutos"
+                                       class="form-control"
+                                       th:field="*{duracionMinutos}"
+                                       min="15"
+                                       max="240"
+                                       step="15"
+                                       required>
+                                <small class="form-help">
+                                    Duración estimada de la consulta
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="medico">
+                                    Médico
+                                </label>
+                                <select id="medico"
+                                        name="medico.id_usuario"
+                                        class="form-control">
+                                    <option value="0">Sin asignar</option>
+                                    <option th:each="med : ${medicos}"
+                                            th:value="${med.id_usuario}"
+                                            th:text="${med.cliente != null ? med.cliente.nombre + ' ' + med.cliente.apellidos : med.username}"
+                                            th:selected="${cita.medico != null && med.id_usuario == cita.medico.id_usuario}">
+                                        Dr. Juan Pérez
+                                    </option>
+                                </select>
+                                <small class="form-help">
+                                    Profesional que atenderá la cita
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="form-group">
+                            <label for="descripcion">
+                                Motivo / Descripción
+                            </label>
+                            <textarea id="descripcion"
+                                      name="descripcion"
+                                      class="form-control"
+                                      th:field="*{descripcion}"
+                                      placeholder="Describe el motivo de la consulta, síntomas a tratar, o cualquier información relevante..."></textarea>
+                            <small class="form-help">
+                                Información adicional sobre la cita que puede ser útil para el médico
+                            </small>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="form-actions">
+                            <a th:href="@{/citas/{id}(id=${cita.id_cita})}"
+                               class="btn btn_linea">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn_primario">
+                                💾 Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+
+<script>
+    // Validación del formulario antes de enviar
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const titulo = document.getElementById('titulo').value.trim();
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const duracion = document.getElementById('duracionMinutos').value;
+
+        if (!titulo || !fecha || !hora || !duracion) {
+            e.preventDefault();
+            alert('Por favor, completa todos los campos obligatorios marcados con *');
+            return false;
+        }
+
+        // Validar que la fecha no sea en el pasado
+        const fechaSeleccionada = new Date(fecha + 'T' + hora);
+        const ahora = new Date();
+
+        if (fechaSeleccionada < ahora) {
+            e.preventDefault();
+            alert('No puedes programar una cita en el pasado');
+            return false;
+        }
+
+        // Validar duración razonable
+        const duracionNum = parseInt(duracion);
+        if (duracionNum < 15 || duracionNum > 240) {
+            e.preventDefault();
+            alert('La duración debe estar entre 15 y 240 minutos');
+            return false;
+        }
+    });
+
+    // Establecer fecha mínima como hoy
+    const inputFecha = document.getElementById('fecha');
+    const hoy = new Date().toISOString().split('T')[0];
+    inputFecha.setAttribute('min', hoy);
+</script>
+</body>
+</html>

@@ -78,7 +78,7 @@ public class SecurityConfiguration {
                         "/clientes/**",
                         "/medico/**"
                 ).hasAnyRole("MEDICO","ADMIN")
-                .requestMatchers("/api/medico/**").hasAnyRole("MEDICO","ADMIN")
+                .requestMatchers("/api/medico/**").authenticated() // Cualquier usuario autenticado
                 .requestMatchers("/api/medico/config/**").hasRole("MEDICO")
 
                 .requestMatchers(HttpMethod.GET,"/pedirCita").hasRole("USER")

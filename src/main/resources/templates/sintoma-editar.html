@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Síntoma - VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+
+    <style>
+        .editar-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .editar-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .editar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .editar-header h1 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+            margin-left: 0.25rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-help {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        @media (max-width: 640px) {
+            .editar-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+
+    <main id="main_panelUser">
+        <section class="section_main" sec:authorize="isAuthenticated()">
+            <div class="editar-container">
+
+                <!-- Alertas -->
+                <div th:if="${error}" class="alert alert-error">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${error}">Error</span>
+                </div>
+
+                <!-- Card de edición -->
+                <div class="editar-card">
+                    <!-- Header -->
+                    <div class="editar-header">
+                        <h1>Editar Síntoma</h1>
+                        <a th:href="@{/sintomas/{id}(id=${sintoma.id_sintoma})}" class="btn btn_linea">
+                            ← Cancelar
+                        </a>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form th:action="@{/sintomas/{id}/editar(id=${sintoma.id_sintoma})}"
+                          method="post"
+                          th:object="${sintoma}">
+
+                        <!-- Tipo de Síntoma -->
+                        <div class="form-group">
+                            <label for="tipo">
+                                Tipo de Síntoma
+                                <span class="required">*</span>
+                            </label>
+                            <select id="tipo"
+                                    name="tipo"
+                                    class="form-control"
+                                    th:field="*{tipo}"
+                                    required>
+                                <option value="">Selecciona un tipo</option>
+                                <option th:each="tipo : ${tiposSintoma}"
+                                        th:value="${tipo}"
+                                        th:text="${tipo}"
+                                        th:selected="${tipo == sintoma.tipo}">
+                                    DOLOR
+                                </option>
+                            </select>
+                            <small class="form-help">
+                                Selecciona el tipo de síntoma que mejor describe tu condición
+                            </small>
+                        </div>
+
+                        <!-- Zona Corporal -->
+                        <div class="form-group">
+                            <label for="zona">
+                                Zona Corporal
+                                <span class="required">*</span>
+                            </label>
+                            <select id="zona"
+                                    name="zona"
+                                    class="form-control"
+                                    th:field="*{zona}"
+                                    required>
+                                <option value="">Selecciona una zona</option>
+                                <option th:each="zona : ${zonasCorporales}"
+                                        th:value="${zona}"
+                                        th:text="${zona}"
+                                        th:selected="${zona == sintoma.zona}">
+                                    CABEZA
+                                </option>
+                            </select>
+                            <small class="form-help">
+                                Indica la zona del cuerpo donde sientes el síntoma
+                            </small>
+                        </div>
+
+                        <!-- Fecha de Registro -->
+                        <div class="form-group">
+                            <label for="fechaRegistro">
+                                Fecha y Hora del Síntoma
+                                <span class="required">*</span>
+                            </label>
+                            <input type="datetime-local"
+                                   id="fechaRegistro"
+                                   name="fechaRegistro"
+                                   class="form-control"
+                                   th:value="${#temporals.format(sintoma.fechaRegistro, 'yyyy-MM-dd\'T\'HH:mm')}"
+                                   required>
+                            <small class="form-help">
+                                Indica cuándo comenzaste a sentir este síntoma
+                            </small>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="form-group">
+                            <label for="descripcion">
+                                Descripción Detallada
+                                <span class="required">*</span>
+                            </label>
+                            <textarea id="descripcion"
+                                      name="descripcion"
+                                      class="form-control"
+                                      th:field="*{descripcion}"
+                                      placeholder="Describe el síntoma con el mayor detalle posible. Incluye: cómo comenzó, intensidad (leve/moderada/intensa), si va y viene, qué lo mejora o empeora, síntomas asociados, etc."
+                                      required></textarea>
+                            <small class="form-help">
+                                💡 Incluye la intensidad del dolor/molestia en tu descripción. Cuanto más detallada sea, mejor podrá ayudarte tu médico.
+                            </small>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="form-actions">
+                            <a th:href="@{/sintomas/{id}(id=${sintoma.id_sintoma})}"
+                               class="btn btn_linea">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn_primario">
+                                💾 Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+
+<script>
+    // Validación del formulario antes de enviar
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const tipo = document.getElementById('tipo').value;
+        const zona = document.getElementById('zona').value;
+        const fecha = document.getElementById('fechaRegistro').value;
+        const descripcion = document.getElementById('descripcion').value.trim();
+
+        if (!tipo || !zona || !fecha || !descripcion) {
+            e.preventDefault();
+            alert('Por favor, completa todos los campos obligatorios marcados con *');
+            return false;
+        }
+
+        // Validar que la fecha no sea futura
+        const fechaSeleccionada = new Date(fecha);
+        const ahora = new Date();
+
+        if (fechaSeleccionada > ahora) {
+            e.preventDefault();
+            alert('La fecha del síntoma no puede ser futura');
+            return false;
+        }
+    });
+</script>
+</body>
+</html>

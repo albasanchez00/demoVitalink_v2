@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CitasService {
@@ -24,7 +25,16 @@ public class CitasService {
     public List<Citas> obtenerCitasPorUsuario(Usuarios usuario) {
         return citasRepository.findCitasByUsuario(usuario);
     }
-    // ----------------------------
+
+    // ===== NUEVO: Obtener cita por ID =====
+    public Optional<Citas> obtenerPorId(int idCita) {
+        return citasRepository.findById(idCita);
+    }
+
+    // ===== NUEVO: Eliminar cita =====
+    public void eliminar(int idCita) {
+        citasRepository.deleteById(idCita);
+    }
 
     // === NUEVO: agenda por médico (devuelve entidades) ===
     public List<Citas> listarAgendaDelMedico(int idMedico,

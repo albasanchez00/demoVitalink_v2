@@ -10,7 +10,7 @@
     <meta name="_csrf" th:content="${_csrf.token}">
     <meta name="_csrf_header" th:content="${_csrf.headerName}">
 
-    <link rel="stylesheet" href="/css/style2.css" />
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
 </head>
 <body>
 <section class="contenedor">
@@ -18,7 +18,6 @@
 
     <!-- data-user-id por si tu JS lo quiere leer desde el DOM -->
     <main id="main_panelUser" th:with="uid=${userId}" th:attr="data-user-id=${uid}">
-        <!-- Si no tienes el dialecto spring-security para thymeleaf, cambia sec:authorize por th:if="${true}" -->
         <section class="section_main hist-wrap" sec:authorize="isAuthenticated()">
 
             <!-- Header -->
@@ -62,25 +61,26 @@
 
                     <!-- Toggle avanzado -->
                     <div class="hist-adv-toggle">
-                        <button type="button" class="link" id="btnFiltrosAvanzados">Filtros avanzados</button>
+                        <button type="button" class="link" id="btnFiltrosAvanzados">
+                            <span id="toggleText">Mostrar filtros avanzados</span>
+                            <span id="toggleIcon">▼</span>
+                        </button>
                     </div>
 
-                    <!-- Si mostrarAvanzados es true -> visible, en cualquier otro caso -> hidden -->
+                    <!-- Filtros avanzados (colapsables) -->
                     <div class="hist-avanzados" id="bloqueAvanzados"
                          th:attr="hidden=${(filtro != null and filtro.mostrarAvanzados != null and filtro.mostrarAvanzados) ? null : 'hidden'}">
                         <div class="hist-grid-3">
                             <div>
-                                <label for="zona">Zona</label>
-                                <input type="text" id="zona" name="zona"
+                                <label for="zona">Zona Corporal</label>
+                                <input type="text"
+                                       id="zona"
+                                       name="zona"
+                                       placeholder="Ej: CABEZA, ABDOMEN..."
                                        th:value="${filtro != null ? filtro.zona : null}" />
                             </div>
                             <div>
-                                <label for="intensidad">Intensidad</label>
-                                <input type="number" id="intensidad" name="intensidad" min="1" max="10"
-                                       th:value="${filtro != null ? filtro.intensidad : null}" />
-                            </div>
-                            <div>
-                                <label for="estadoTratamiento">Estado</label>
+                                <label for="estadoTratamiento">Estado Tratamiento</label>
                                 <select id="estadoTratamiento" name="estadoTratamiento">
                                     <option value=""
                                             th:selected="${filtro == null or filtro.estadoTratamiento == null or filtro.estadoTratamiento == ''}">Todos</option>
@@ -97,7 +97,6 @@
 
                     <div class="hist-actions">
                         <button type="submit" class="btn btn_primario">Aplicar filtros</button>
-                        <!-- Limpiar → usa la misma ruta de la vista -->
                         <a class="btn btn_linea" th:href="@{/usuarios/historialPaciente}">Limpiar</a>
                     </div>
                 </form>
@@ -106,6 +105,7 @@
             <!-- Timeline -->
             <section class="hist-timeline card">
                 <ul class="hist-lista">
+                    <!-- Eventos renderizados por servidor (si los hay) -->
                     <li class="hist-item" th:each="e : ${eventos}">
                         <div class="hist-fecha" th:text="${#temporals.format(e.fecha,'dd/MM/yyyy HH:mm')}">12/09/2025 10:30</div>
                         <div class="hist-tipo">
@@ -120,9 +120,7 @@
                             <div class="hist-meta" th:if="${e.zona != null}">
                                 <span><strong>Zona:</strong> <span th:text="${e.zona}">—</span></span>
                             </div>
-                            <div class="hist-meta" th:if="${e.intensidad != null}">
-                                <span><strong>Intensidad:</strong> <span th:text="${e.intensidad}">—</span></span>
-                            </div>
+                            <!-- ✅ ELIMINADO: línea de intensidad -->
 
                             <div class="hist-item-actions">
                                 <a th:href="${e.urlDetalle}" class="link">Ver</a>
@@ -134,18 +132,17 @@
                 </ul>
 
                 <!-- Mensaje vacío -->
-                <p th:if="${page != null and page.totalElements == 0}" class="text_center">
-                    No hay registros para los filtros seleccionados.
+                <p th:if="${eventos == null or #lists.isEmpty(eventos)}" class="text_center">
+                    No hay registros para mostrar.
                 </p>
 
-                <!-- Paginación (solo si hay elementos) -->
+                <!-- Paginación (si se implementa) -->
                 <div class="hist-paginacion" th:if="${page != null and page.totalElements > 0}">
                     <form th:action="@{/usuarios/historialPaciente}" method="get" style="display:flex; gap:.5rem; align-items:center;">
                         <input type="hidden" name="desde" th:value="${filtro != null ? filtro.desde : null}" />
                         <input type="hidden" name="hasta" th:value="${filtro != null ? filtro.hasta : null}" />
                         <input type="hidden" name="tipo" th:value="${filtro != null ? filtro.tipo : null}" />
                         <input type="hidden" name="zona" th:value="${filtro != null ? filtro.zona : null}" />
-                        <input type="hidden" name="intensidad" th:value="${filtro != null ? filtro.intensidad : null}" />
                         <input type="hidden" name="estadoTratamiento" th:value="${filtro != null ? filtro.estadoTratamiento : null}" />
                         <input type="hidden" name="size" th:value="${page.size}" />
 
@@ -166,7 +163,36 @@
 <script th:inline="javascript">
     window.USER_ID = /*[[${userId}]]*/ 0;
 </script>
-<!-- Tu JS para comportamiento extra (colapsar filtros, etc.) -->
-<script src="/js/historial.js"></script>
+
+<!-- JavaScript para toggle de filtros avanzados -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnToggle = document.getElementById('btnFiltrosAvanzados');
+        const bloqueAvanzados = document.getElementById('bloqueAvanzados');
+        const toggleText = document.getElementById('toggleText');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (btnToggle && bloqueAvanzados) {
+            btnToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const isHidden = bloqueAvanzados.hasAttribute('hidden');
+
+                if (isHidden) {
+                    bloqueAvanzados.removeAttribute('hidden');
+                    toggleText.textContent = 'Ocultar filtros avanzados';
+                    toggleIcon.textContent = '▲';
+                } else {
+                    bloqueAvanzados.setAttribute('hidden', '');
+                    toggleText.textContent = 'Mostrar filtros avanzados';
+                    toggleIcon.textContent = '▼';
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Tu JS para cargar eventos dinámicamente -->
+<script th:src="@{/js/historial.js}" defer></script>
 </body>
 </html>
