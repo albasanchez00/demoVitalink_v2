@@ -38,6 +38,7 @@
             </div>
 
             <button id="btnBuscar" type="button" class="btn_primario">Buscar</button>
+            <button id="btnLimpiar" type="button" class="btn_secundario">Limpiar</button>
         </div>
     </div>
 
@@ -64,7 +65,55 @@
         </select>
     </div>
 </section>
+<!-- Modal Ver Cita -->
+<div id="modalCita" class="modal-overlay">
+    <div class="modal-cita">
+        <button class="modal-close" id="btnCerrarModal">&times;</button>
 
+        <div class="modal-header">
+            <span class="modal-id">Cita #<span id="mc-id"></span></span>
+            <span id="mc-estado" class="badge-estado"></span>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-row">
+                <div class="modal-field">
+                    <span class="field-label">👤 Paciente</span>
+                    <span id="mc-paciente" class="field-value"></span>
+                </div>
+                <div class="modal-field">
+                    <span class="field-label">🩺 Médico</span>
+                    <span id="mc-medico" class="field-value"></span>
+                </div>
+            </div>
+
+            <div class="modal-field full">
+                <span class="field-label">📋 Título</span>
+                <span id="mc-titulo" class="field-value"></span>
+            </div>
+
+            <div class="modal-row">
+                <div class="modal-field">
+                    <span class="field-label">📅 Fecha</span>
+                    <span id="mc-fecha" class="field-value"></span>
+                </div>
+                <div class="modal-field">
+                    <span class="field-label">🕐 Hora</span>
+                    <span id="mc-hora" class="field-value"></span>
+                </div>
+            </div>
+
+            <div class="modal-field full" id="mc-desc-wrap" style="display:none;">
+                <span class="field-label">📝 Descripción</span>
+                <span id="mc-descripcion" class="field-value desc"></span>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-modal secondary" id="btnCerrarModalFooter">Cerrar</button>
+        </div>
+    </div>
+</div>
 <script src="/js/admin-citas.js"></script>
 </body>
 </html>

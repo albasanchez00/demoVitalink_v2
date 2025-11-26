@@ -2046,7 +2046,7 @@ thead { background-color: #f5f5f5;}
 /* Filtros admin ultra-compactos */
 #admin-citas {
     width: 100%;
-    max-width: 1150px;
+    max-width: 1200px;
     margin: 25px auto;
     padding: 0 1rem 3rem;
     color: var(--color_texto);
@@ -2070,7 +2070,7 @@ thead { background-color: #f5f5f5;}
     background: var(--color_blanco);
     border: 1px solid #e6ebf1;
     border-radius: 14px;
-    padding: 18px 20px;
+    padding: 20px 10px;
     box-shadow: 0 6px 18px rgba(15,23,42,.06);
     margin-bottom: 18px;
     display: flex;
@@ -2296,6 +2296,241 @@ body.dark-theme #admin-citas .acciones .btn-sec {
 }
 body.dark-theme #admin-citas .acciones .btn-sec:hover {
     background: #444;
+}
+/* ===========================
+   MODAL VER CITA
+   =========================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-cita {
+    background: #fff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.modal-overlay.active .modal-cita {
+    transform: translateY(0) scale(1);
+}
+
+/* Header */
+.modal-header {
+    background: linear-gradient(135deg, var(--color_primario), var(--color_secundario));
+    padding: 20px 50px 20px 24px; /* Más padding a la derecha para el botón X */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.modal-id {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modal-close {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    background: rgba(255,255,255,0.35);
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Body */
+.modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal-field.full {
+    grid-column: 1 / -1;
+}
+
+.field-label {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field-value {
+    font-size: 1rem;
+    color: var(--color_texto);
+    font-weight: 500;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+.field-value.desc {
+    min-height: 60px;
+    white-space: pre-wrap;
+}
+
+/* Badges estado en modal */
+.modal-header .badge-estado {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: 10px; /* Espacio extra antes del botón X */
+}
+
+.badge-estado.PENDIENTE { background: #fef3c7; color: #92400e; }
+.badge-estado.CONFIRMADA { background: #dbeafe; color: #1e40af; }
+.badge-estado.ATENDIDA { background: #d1fae5; color: #065f46; }
+.badge-estado.CANCELADA { background: #fee2e2; color: #991b1b; }
+#admin-citas .filtros .btn_secundario {
+    height: 38px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--color_texto);
+    border: 1px solid #d9e1ea;
+    cursor: pointer;
+    padding: 0 16px;
+    transition: all 0.2s ease;
+}
+
+#admin-citas .filtros .btn_secundario:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+body.dark-theme #admin-citas .filtros .btn_secundario {
+    background: #404040;
+    color: #e5e7eb;
+    border-color: #555;
+}
+
+body.dark-theme #admin-citas .filtros .btn_secundario:hover {
+    background: #4a4a4a;
+}
+/* Footer */
+.modal-footer {
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-modal.secondary {
+    background: #e2e8f0;
+    color: var(--color_texto);
+}
+
+.btn-modal.secondary:hover {
+    background: #cbd5e1;
+}
+
+.btn-modal.primary {
+    background: linear-gradient(135deg, var(--color_primario), var(--color_secundario));
+    color: #fff;
+}
+
+.btn-modal.primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* Dark mode */
+body.dark-theme .modal-cita {
+    background: #1e1e1e;
+}
+
+body.dark-theme .field-value {
+    background: #2a2a2a;
+    border-color: #404040;
+    color: #e5e7eb;
+}
+
+body.dark-theme .modal-footer {
+    background: #252525;
+    border-color: #404040;
+}
+
+body.dark-theme .btn-modal.secondary {
+    background: #404040;
+    color: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .modal-row {
+        grid-template-columns: 1fr;
+    }
+    .modal-cita {
+        margin: 16px;
+    }
 }
 /* ===========================
    ADMIN — PAGINA REPORTES
