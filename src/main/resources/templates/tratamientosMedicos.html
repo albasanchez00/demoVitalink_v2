@@ -24,11 +24,13 @@
 
             <div class="tratamientos-patient-selector">
                 <label for="patient-select">Paciente:</label>
-                <select id="patient-select" class="patient-select-input">
-                    <option>Todos</option>
-                    <option selected>Juan Pérez</option>
-                    <option>María García</option>
-                    <option>Carlos López</option>
+                <select id="patient-select" class="patient-select-input" onchange="filtrarPorPaciente(this.value)">
+                    <option value="" th:selected="${idSeleccionado == null}">Todos</option>
+                    <option th:each="u : ${usuarios}"
+                            th:value="${u.id_usuario}"
+                            th:text="${u.cliente != null ? u.cliente.nombre + ' ' + u.cliente.apellidos : u.username}"
+                            th:selected="${idSeleccionado != null and idSeleccionado == u.id_usuario}">
+                    </option>
                 </select>
             </div>
         </div>
@@ -43,11 +45,11 @@
 
         <div class="tratamientos-stats">
             <div class="stat-item">
-                <span class="stat-value">2</span>
+                <span class="stat-value" th:text="${totalActivos}">0</span>
                 <span class="stat-label">Activos</span>
             </div>
             <div class="stat-item">
-                <span class="stat-value">3</span>
+                <span class="stat-value" th:text="${totalFinalizados}">0</span>
                 <span class="stat-label">Finalizados</span>
             </div>
         </div>
@@ -67,13 +69,13 @@
     <!-- Filters -->
     <div class="tratamientos-filters">
         <button class="filter-btn active" data-filter="todos">
-            Todos <span class="filter-count">5</span>
+            Todos <span class="filter-count" th:text="${#lists.size(tratamientos)}">0</span>
         </button>
         <button class="filter-btn" data-filter="activo">
-            Activos <span class="filter-count">2</span>
+            Activos <span class="filter-count" th:text="${totalActivos}">0</span>
         </button>
         <button class="filter-btn" data-filter="finalizado">
-            Finalizados <span class="filter-count">3</span>
+            Finalizados <span class="filter-count" th:text="${totalFinalizados}">0</span>
         </button>
     </div>
 
@@ -444,6 +446,15 @@
             });
         });
     });
+
+    // Filtrar por paciente
+    function filtrarPorPaciente(idUsuario) {
+        if (idUsuario === '' || idUsuario === null) {
+            window.location.href = '/medico/tratamientos';
+        } else {
+            window.location.href = '/medico/tratamientos?id_usuario=' + idUsuario;
+        }
+    }
 </script>
 <script th:src="@{/js/darkTheme.js}" defer></script>
 <script th:src="@{/js/sccript.js}" defer></script>

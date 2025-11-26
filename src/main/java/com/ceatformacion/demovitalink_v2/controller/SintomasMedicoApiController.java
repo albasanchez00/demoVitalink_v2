@@ -36,7 +36,7 @@ public class SintomasMedicoApiController {
      * ⚠️ TEMPORAL: Sin restricción de rol para debug
      */
     @Transactional(readOnly = true) // ← AÑADIDO para resolver LazyInitializationException
-    @GetMapping("/{userId}")
+    @GetMapping("/simple/{userId}")  // Cambiar de "/{userId}" a "/simple/{userId}"
     public ResponseEntity<List<SintomasDTO>> obtenerSintomasPorPaciente(
             @PathVariable("userId") int userId,
             @AuthenticationPrincipal UsuariosDetails auth

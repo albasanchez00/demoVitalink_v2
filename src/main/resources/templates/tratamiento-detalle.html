@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle del Tratamiento - VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+
+    <style>
+        .detalle-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .detalle-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detalle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .detalle-header h1 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .detalle-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .detalle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detalle-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detalle-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detalle-valor {
+            font-size: 1.125rem;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .detalle-descripcion {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .detalle-descripcion .detalle-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .detalle-descripcion .detalle-valor {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .chip-estado {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .chip-activo { background: #d1fae5; color: #065f46; }
+        .chip-pausado { background: #fef3c7; color: #92400e; }
+        .chip-finalizado { background: #e5e7eb; color: #374151; }
+
+        .chip-alimentos {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 640px) {
+            .detalle-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .detalle-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .detalle-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+
+    <main id="main_panelUser">
+        <section class="section_main" sec:authorize="isAuthenticated()">
+            <div class="detalle-container">
+
+                <!-- Alertas -->
+                <div th:if="${success}" class="alert alert-success">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${success}">Operación exitosa</span>
+                </div>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <span th:text="${error}">Error</span>
+                </div>
+
+                <div th:if="${soloLectura}" class="alert alert-warning">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Estás viendo este tratamiento en modo solo lectura</span>
+                </div>
+
+                <!-- Card principal -->
+                <div class="detalle-card">
+                    <!-- Header con acciones -->
+                    <div class="detalle-header">
+                        <h1>Detalle del Tratamiento</h1>
+                        <div class="detalle-actions">
+                            <a th:href="@{/usuarios/historialPaciente}" class="btn btn_linea">
+                                ← Volver al historial
+                            </a>
+                            <a th:if="${!soloLectura && tratamiento.estado_tratamiento != 'finalizado'}"
+                               th:href="@{/tratamientos/{id}/editar(id=${tratamiento.id_tratamiento})}"
+                               class="btn btn_primario">
+                                ✏️ Editar
+                            </a>
+                            <form th:if="${!soloLectura && tratamiento.estado_tratamiento == 'activo'}"
+                                  th:action="@{/tratamientos/{id}/finalizar(id=${tratamiento.id_tratamiento})}"
+                                  method="post"
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn_secundario">
+                                    ✓ Finalizar
+                                </button>
+                            </form>
+                            <button th:if="${!soloLectura}"
+                                    type="button"
+                                    class="btn btn_peligro"
+                                    onclick="mostrarModalEliminar()">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grid de información -->
+                    <div class="detalle-grid">
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Nombre del Tratamiento</span>
+                            <span class="detalle-valor" th:text="${tratamiento.nombre_tratamiento}">Ibuprofeno</span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Estado</span>
+
+                            <!-- Usamos th:switch para determinar la clase CSS -->
+                            <span class="chip-estado"
+                                  th:with="estadoStr=${#strings.toString(tratamiento.estado_tratamiento)}"
+                                  th:classappend="${#strings.equals(estadoStr, 'activo') ? 'chip-activo' :
+                           (#strings.equals(estadoStr, 'pausado') ? 'chip-pausado' :
+                           (#strings.equals(estadoStr, 'finalizado') ? 'chip-finalizado' : 'chip-desconocido'))}"
+                                  th:text="${#strings.capitalize(#strings.toLowerCase(estadoStr))}">Activo</span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Dosis</span>
+                            <span class="detalle-valor" th:text="${tratamiento.dosis ?: '—'}">600mg</span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Frecuencia</span>
+                            <span class="detalle-valor" th:text="${tratamiento.frecuencia ?: '—'}">Cada 8 horas</span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${tratamiento.duracion != null}">
+                            <span class="detalle-label">Duración</span>
+                            <span class="detalle-valor" th:text="${tratamiento.duracion}">7 días</span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${tratamiento.formula != null}">
+                            <span class="detalle-label">Fórmula</span>
+                            <span class="detalle-valor" th:text="${tratamiento.formula}">Oral</span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Con Alimentos</span>
+                            <span class="chip-alimentos">
+                                <span th:text="${tratamiento.toma_alimentos ? '✓ Sí' : '✗ No'}">✓ Sí</span>
+                            </span>
+                        </div>
+
+                        <div class="detalle-campo">
+                            <span class="detalle-label">Fecha de Inicio</span>
+                            <span class="detalle-valor"
+                                  th:text="${tratamiento.fecha_inicio != null ?
+                                           #temporals.format(tratamiento.fecha_inicio, 'dd/MM/yyyy') : '—'}">
+                                01/11/2025
+                            </span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${tratamiento.fecha_fin != null}">
+                            <span class="detalle-label">Fecha de Fin</span>
+                            <span class="detalle-valor"
+                                  th:text="${#temporals.format(tratamiento.fecha_fin, 'dd/MM/yyyy')}">
+                                30/11/2025
+                            </span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${tratamiento.usuario != null && soloLectura}">
+                            <span class="detalle-label">Paciente</span>
+                            <span class="detalle-valor"
+                                  th:text="${tratamiento.usuario.cliente != null ?
+                                           tratamiento.usuario.cliente.nombre + ' ' + tratamiento.usuario.cliente.apellidos :
+                                           tratamiento.usuario.username}">
+                                María García
+                            </span>
+                        </div>
+
+                        <div class="detalle-campo" th:if="${tratamiento.sintomas != null && !#strings.isEmpty(tratamiento.sintomas)}">
+                            <span class="detalle-label">Síntomas Relacionados</span>
+                            <span class="detalle-valor" th:text="${tratamiento.sintomas}">Presión alta</span>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="detalle-descripcion" th:if="${tratamiento.observaciones != null and !#strings.isEmpty(tratamiento.observaciones)}">
+                        <div class="detalle-label">Observaciones</div>
+                        <div class="detalle-valor" th:text="${tratamiento.observaciones}">
+                            Tomar con abundante agua. Evitar alcohol.
+                        </div>
+                    </div>
+
+                    <!-- Si no hay observaciones -->
+                    <div th:if="${tratamiento.observaciones == null or #strings.isEmpty(tratamiento.observaciones)}"
+                         class="detalle-descripcion" style="background: #f3f4f6; border-left-color: #9ca3af;">
+                        <div class="detalle-valor" style="color: #6b7280; font-style: italic;">
+                            Sin observaciones adicionales
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+
+<!-- Modal de confirmación de eliminación -->
+<div class="modal-overlay" id="modalEliminar">
+    <div class="modal-content">
+        <h3 style="margin-top: 0;">¿Eliminar tratamiento?</h3>
+        <p>Esta acción no se puede deshacer. ¿Estás seguro de que deseas eliminar este tratamiento?</p>
+        <form th:action="@{/tratamientos/{id}/eliminar(id=${tratamiento.id_tratamiento})}" method="post">
+            <div class="modal-actions">
+                <button type="button" class="btn btn_linea" onclick="cerrarModalEliminar()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn_peligro">
+                    Eliminar definitivamente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function mostrarModalEliminar() {
+        document.getElementById('modalEliminar').classList.add('active');
+    }
+
+    function cerrarModalEliminar() {
+        document.getElementById('modalEliminar').classList.remove('active');
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalEliminar').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModalEliminar();
+        }
+    });
+</script>
+</body>
+</html>

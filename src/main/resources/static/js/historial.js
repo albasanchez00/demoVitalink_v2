@@ -25,18 +25,29 @@ function parseDateFlexible(dateStr, timeStr) {
     }
     return null;
 }
+
 function formatDateLocal(d) {
     if (!(d instanceof Date) || isNaN(d)) return "—";
-    return d.toLocaleString();
+    return d.toLocaleString("es-ES", {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 // ===== Render =====
 const lista = document.querySelector(".hist-lista");
+
 function clearClientEvents() {
     lista?.querySelectorAll("li[data-js='true']").forEach(li => li.remove());
+    // También ocultar el mensaje de "No hay registros" del servidor
+    const emptyMsg = lista?.querySelector("li:not([data-js])");
+    if (emptyMsg) emptyMsg.style.display = "none";
 }
-// ✅ CAMBIO: Eliminado parámetro 'intensidad' y su línea de renderizado
-function liEvento({ fecha, tipo, titulo, descripcion, zona, urlDetalle, urlEditar }) {
+
+function liEvento({ fecha, tipo, titulo, descripcion, zona, estado, urlDetalle, urlEditar }) {
     const li = document.createElement("li");
     li.className = "hist-item";
     li.dataset.js = "true";
@@ -46,13 +57,15 @@ function liEvento({ fecha, tipo, titulo, descripcion, zona, urlDetalle, urlEdita
             tipo === "TRATAMIENTO" ? '<span class="chip chip-tratamiento">Tratamiento</span>' :
                 '<span class="chip chip-cita">Cita</span>';
 
+    const estadoChip = estado ? `<span class="chip chip-estado">${estado}</span>` : '';
+
     li.innerHTML = `
     <div class="hist-fecha"><small>${fecha || "—"}</small></div>
-    <div class="hist-tipo">${tipoChip}</div>
+    <div class="hist-tipo">${tipoChip} ${estadoChip}</div>
     <div class="hist-contenido">
       <h4>${titulo ?? ""}</h4>
       ${descripcion ? `<p>${descripcion}</p>` : ""}
-      ${zona ? `<div class="hist-meta"><span><strong>Zona:</strong> ${zona}</span></div>` : ""}
+      ${zona ? `<div class="hist-meta"><span><strong>Zona:</strong> ${zona.replace('_', ' ')}</span></div>` : ""}
       <div class="hist-item-actions">
         ${[urlDetalle ? `<a class="link" href="${urlDetalle}">Ver</a>` : "", urlEditar ? `<a class="link" href="${urlEditar}">Editar</a>` : ""]
         .filter(Boolean).join('<span> · </span>')}
@@ -61,206 +74,186 @@ function liEvento({ fecha, tipo, titulo, descripcion, zona, urlDetalle, urlEdita
     return li;
 }
 
-// ===== Adapters =====
-// ✅ CAMBIO: Eliminada la asignación de 'intensidad' (ya no se devuelve ni se usa)
-function mapSintoma(s) {
-    const dtRaw = s.fechaRegistro || s.fecha || s.createdAt || s.fechaSintoma || s.fechaHora || null;
-    const d = parseDateFlexible(dtRaw);
+function showEmptyMessage() {
+    clearClientEvents();
+    const li = document.createElement("li");
+    li.dataset.js = "true";
+    li.innerHTML = `<p class="text_center">No hay registros para mostrar.</p>`;
+    lista?.appendChild(li);
+}
 
-    // Extraer la zona correctamente (puede ser null, string o enum)
-    let zonaTexto = null;
-    if (s.zona) {
-        // Si es un objeto enum, extraer el name o value
-        zonaTexto = typeof s.zona === 'string' ? s.zona : (s.zona.name || s.zona);
+function showErrorMessage(msg) {
+    clearClientEvents();
+    const li = document.createElement("li");
+    li.dataset.js = "true";
+    li.innerHTML = `<p class="text_center" style="color: #c00;">${msg}</p>`;
+    lista?.appendChild(li);
+}
+
+function showLoadingMessage() {
+    clearClientEvents();
+    const li = document.createElement("li");
+    li.dataset.js = "true";
+    li.innerHTML = `<p class="text_center">Cargando historial...</p>`;
+    lista?.appendChild(li);
+}
+
+// ===== Mapeo de eventos desde la API unificada =====
+function mapEvento(e) {
+    const d = parseDateFlexible(e.fecha);
+    return {
+        fechaISO: e.fecha,
+        fecha: formatDateLocal(d),
+        tipo: e.tipo,
+        titulo: e.titulo || "—",
+        descripcion: e.descripcion || "",
+        zona: e.zona || null,
+        estado: e.estado || null,
+        urlDetalle: e.urlDetalle,
+        urlEditar: e.urlEditar
+    };
+}
+
+// ===== API =====
+function getUserId() {
+    // Prioridad: window.USER_ID > data-attribute > null
+    if (window.USER_ID && window.USER_ID !== 0) {
+        return window.USER_ID;
+    }
+    const main = document.querySelector('#main_panelUser');
+    if (main?.dataset?.userId) {
+        return parseInt(main.dataset.userId, 10);
+    }
+    return null;
+}
+
+async function fetchHistorial(filtros = {}) {
+    const userId = getUserId();
+
+    if (!userId) {
+        console.error("[Historial] No se encontró userId válido");
+        showErrorMessage("Error: No se pudo identificar al usuario");
+        return [];
     }
 
-    return {
-        fechaISO: d ? d.toISOString() : null,
-        fecha: formatDateLocal(d),
-        tipo: "SINTOMA",
-        titulo: zonaTexto ? zonaTexto.toString().trim().toUpperCase() : (s.titulo || "Síntoma"),
-        descripcion: s.descripcion || s.detalle || "",
-        zona: zonaTexto,
-        urlDetalle: s.id_sintoma ? `/sintomas/${s.id_sintoma}` : (s.id ? `/sintomas/${s.id}` : null),
-        urlEditar: s.id_sintoma ? `/sintomas/${s.id_sintoma}/editar` : (s.id ? `/sintomas/${s.id}/editar` : null),
-    };
-}
-function mapCita(c) {
-    const d =
-        parseDateFlexible(c.fechaHora) ||
-        parseDateFlexible(c.fechaCita, c.horaCita) ||
-        parseDateFlexible(c.fecha) || null;
-    const desc = [c.descripcion || c.detalle || "", c.especialista ? `Con ${c.especialista}` : (c.lugar || c.ubicacion || "")]
-        .filter(Boolean).join(" · ");
-    return {
-        fechaISO: d ? d.toISOString() : null,
-        fecha: formatDateLocal(d),
-        tipo: "CITA",
-        titulo: c.titulo || c.motivo || "Cita",
-        descripcion: desc || "",
-        zona: null,
-        urlDetalle: c.id ? `/citas/${c.id}` : null,
-        urlEditar: c.id ? `/citas/${c.id}/editar` : null,
-    };
-}
-function mapTratamiento(t) {
-    const d = parseDateFlexible(t.fechaInicio) || parseDateFlexible(t.createdAt) || parseDateFlexible(t.fechaAlta) || null;
-    const desc = [t.dosis, t.frecuencia, t.formula, t.observaciones].filter(Boolean).join(" · ");
-    return {
-        fechaISO: d ? d.toISOString() : null,
-        fecha: formatDateLocal(d),
-        tipo: "TRATAMIENTO",
-        titulo: `${t.nombre || t.titulo || "Tratamiento"}${t.estado ? ` · ${t.estado}` : ""}`,
-        descripcion: desc,
-        zona: null,
-        urlDetalle: t.id ? `/tratamientos/${t.id}` : null,
-        urlEditar: t.id ? `/tratamientos/${t.id}/editar` : null,
-    };
-}
+    // Construir query params
+    const params = new URLSearchParams();
+    params.append('page', filtros.page || 0);
+    params.append('size', filtros.size || 50);
 
-// ===== API - ACTUALIZADO para soportar userId =====
-/**
- * Obtiene las URLs de API según el userId
- * Si userId existe y es válido, usa las rutas del médico con el ID del paciente
- * Si no, usa las rutas "/mios" (del usuario autenticado)
- */
-function getAPIUrls() {
-    // Leer userId del window.USER_ID (inyectado por Thymeleaf)
-    const userId = window.USER_ID;
+    if (filtros.tipo) params.append('tipo', filtros.tipo);
+    if (filtros.desde) params.append('desde', filtros.desde);
+    if (filtros.hasta) params.append('hasta', filtros.hasta);
+    if (filtros.zona) params.append('zona', filtros.zona);
+    if (filtros.estadoTratamiento) params.append('estadoTratamiento', filtros.estadoTratamiento);
 
-    // Leer el usuario autenticado actual (si está disponible)
-    // Esto debería inyectarse desde Thymeleaf también
-    const currentUserId = window.CURRENT_USER_ID; // Añadir en HTML
+    const url = `/api/usuarios/${userId}/historial?${params.toString()}`;
+    console.log("[Historial] Fetching:", url);
 
-    // Si hay userId Y es diferente del usuario actual → endpoint de médico
-    if (userId && userId !== 0 && currentUserId && userId !== currentUserId) {
-        console.log(`[Historial] Cargando datos para paciente ${userId} (vista médico)`);
-        return {
-            sintomas: `/api/medico/sintomas/${userId}`,
-            citas: `/api/citas?userId=${userId}`,
-            tratamientos: `/api/tratamientos?userId=${userId}`,
-        };
-    } else {
-        // Sin userId válido O viendo su propio historial → usar rutas propias
-        console.log("[Historial] Cargando datos del usuario autenticado (/mios)");
-        return {
-            sintomas: "/api/sintomas/mios",
-            citas: "/api/citas",
-            tratamientos: "/api/tratamientos/mios",
-        };
+    const res = await fetch(url, {
+        headers: { Accept: "application/json" },
+        credentials: "same-origin"
+    });
+
+    if (res.status === 401 || res.status === 403) {
+        window.location.href = "/inicioSesion";
+        return [];
     }
-}
 
-async function getJSON(url) {
-    const res = await fetch(url, { headers: { Accept: "application/json" }, credentials: "same-origin" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
 }
 
 // ===== Filtros =====
-// ✅ CAMBIO: Mantenemos el filtro de intensidad por si se usa en el futuro, pero no afectará
 function readFiltersFromForm() {
-    const f = new FormData(document.querySelector(".hist-form"));
-    const tipo = (f.get("tipo") || "").toUpperCase(); // "", "SINTOMA", "TRATAMIENTO", "CITA"
-    const desde = f.get("desde") ? parseDateFlexible(f.get("desde")) : null; // yyyy-MM-dd del input date (depende del navegador)
-    const hasta = f.get("hasta") ? parseDateFlexible(f.get("hasta")) : null;
-    const zona  = (f.get("zona") || "").trim().toLowerCase();
-    const intensidad = f.get("intensidad") ? Number(f.get("intensidad")) : null;
-    const estadoTratamiento = (f.get("estadoTratamiento") || "").toUpperCase();
+    const form = document.querySelector(".hist-form");
+    if (!form) return {};
 
-    // normaliza rango [desde..hasta] para incluir todo el día de "hasta"
-    if (hasta) hasta.setHours(23,59,59,999);
+    const f = new FormData(form);
 
-    return { tipo, desde, hasta, zona, intensidad, estadoTratamiento };
+    return {
+        tipo: (f.get("tipo") || "").toUpperCase() || null,
+        desde: f.get("desde") || null,
+        hasta: f.get("hasta") || null,
+        zona: (f.get("zona") || "").trim().toUpperCase() || null,
+        estadoTratamiento: (f.get("estadoTratamiento") || "").toUpperCase() || null,
+        page: 0,
+        size: 50
+    };
 }
 
-function passesFilters(ev, F) {
-    // tipo
-    if (F.tipo && ev.tipo !== F.tipo) return false;
-
-    // rango de fechas
-    if (F.desde || F.hasta) {
-        const d = ev.fechaISO ? new Date(ev.fechaISO) : null;
-        if (!d || isNaN(d)) return false;
-        if (F.desde && d < F.desde) return false;
-        if (F.hasta && d > F.hasta) return false;
-    }
-
-    // zona (solo síntomas): contiene texto
-    if (F.zona) {
-        const z = (ev.zona || "").toString().toLowerCase();
-        if (!z.includes(F.zona)) return false;
-    }
-
-    // ✅ NOTA: Filtro de intensidad deshabilitado (ya no existe el campo)
-    // Si en el futuro se añade intensidad a la BD, descomentar:
-    // if (Number.isFinite(F.intensidad)) {
-    //     if (!Number.isFinite(ev.intensidad) || ev.intensidad !== F.intensidad) return false;
-    // }
-
-    // estado tratamiento (si se pide y el evento es tratamiento: buscamos en el título " · ESTADO" o en desc)
-    if (F.estadoTratamiento && ev.tipo === "TRATAMIENTO") {
-        const blob = `${ev.titulo} ${ev.descripcion}`.toUpperCase();
-        if (!blob.includes(F.estadoTratamiento)) return false;
-    }
-
-    return true;
-}
-
-// ===== Carga + render considerando filtros =====
-async function cargarYRenderizarEventos(filtros) {
+// ===== Carga + render =====
+async function cargarYRenderizarEventos(filtros = {}) {
     try {
-        // CAMBIO CRÍTICO: Obtener las URLs dinámicamente según el userId
-        const API = getAPIUrls();
+        showLoadingMessage();
 
-        const [sintomas, citas, tratamientos] = await Promise.allSettled([
-            getJSON(API.sintomas), getJSON(API.citas), getJSON(API.tratamientos)
-        ]);
+        const data = await fetchHistorial(filtros);
 
-        const events = [];
+        // La API devuelve un Page con content
+        const eventos = (data.content || []).map(mapEvento);
 
-        // Procesar síntomas
-        if (sintomas.status === "fulfilled") {
-            // Puede ser un array directo o un objeto Page con content
-            const sintomasData = Array.isArray(sintomas.value)
-                ? sintomas.value
-                : (sintomas.value.content || []);
-            events.push(...sintomasData.map(mapSintoma));
+        if (eventos.length === 0) {
+            showEmptyMessage();
+            return;
         }
 
-        // Procesar citas
-        if (citas.status === "fulfilled") {
-            const citasData = Array.isArray(citas.value)
-                ? citas.value
-                : (citas.value.content || []);
-            events.push(...citasData.map(mapCita));
-        }
-
-        // Procesar tratamientos
-        if (tratamientos.status === "fulfilled") {
-            const tratamientosData = Array.isArray(tratamientos.value)
-                ? tratamientos.value
-                : (tratamientos.value.content || []);
-            events.push(...tratamientosData.map(mapTratamiento));
-        }
-
-        // aplica filtros del formulario (si hay)
-        const filtered = filtros ? events.filter(e => passesFilters(e, filtros)) : events;
-
-        // ordena
-        filtered.sort((a, b) => new Date(b.fechaISO || 0) - new Date(a.fechaISO || 0));
-
-        // pinta
+        // Limpiar y pintar
         clearClientEvents();
         const frag = document.createDocumentFragment();
-        filtered.forEach(ev => frag.appendChild(liEvento(ev)));
+        eventos.forEach(ev => frag.appendChild(liEvento(ev)));
         lista?.appendChild(frag);
 
-        const emptyMsg = document.querySelector(".text_center");
-        if (emptyMsg) emptyMsg.style.display = filtered.length > 0 ? "none" : "";
+        // Mostrar info de paginación
+        renderPaginacion(data, filtros);
+
     } catch (e) {
-        console.error("[Historial] Error pintando timeline:", e);
+        console.error("[Historial] Error:", e);
+        showErrorMessage("Error al cargar el historial. Intenta recargar la página.");
     }
+}
+
+// ===== Paginación =====
+function renderPaginacion(pageData, filtros) {
+    let container = document.querySelector(".hist-paginacion");
+
+    if (!container) {
+        container = document.createElement("div");
+        container.className = "hist-paginacion";
+        document.querySelector(".hist-timeline")?.appendChild(container);
+    }
+
+    const { number: currentPage, totalPages, totalElements, size } = pageData;
+
+    if (!totalElements || totalPages <= 1) {
+        container.innerHTML = `<span>Total: ${totalElements || 0} registros</span>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <span>Página ${currentPage + 1} de ${totalPages} (${totalElements} registros)</span>
+        <div class="paginacion-btns">
+            <button class="btn btn_linea" id="btnPrevHist" ${currentPage === 0 ? 'disabled' : ''}>« Anterior</button>
+            <button class="btn btn_linea" id="btnNextHist" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Siguiente »</button>
+        </div>
+    `;
+
+    document.getElementById("btnPrevHist")?.addEventListener("click", () => {
+        if (currentPage > 0) {
+            filtros.page = currentPage - 1;
+            cargarYRenderizarEventos(filtros);
+        }
+    });
+
+    document.getElementById("btnNextHist")?.addEventListener("click", () => {
+        if (currentPage < totalPages - 1) {
+            filtros.page = currentPage + 1;
+            cargarYRenderizarEventos(filtros);
+        }
+    });
 }
 
 // ===== Hook del formulario =====
@@ -269,37 +262,66 @@ function setupFilters() {
     if (!form) return;
 
     form.addEventListener("submit", (ev) => {
-        ev.preventDefault(); // no recargar la página
+        ev.preventDefault();
         const filtros = readFiltersFromForm();
 
-        // actualizar la querystring para que se vea reflejado en la URL
-        const params = new URLSearchParams(new FormData(form));
-        history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+        // Actualizar querystring en la URL
+        const params = new URLSearchParams();
+        // Mantener userId si existe
+        const userId = getUserId();
+        if (userId) params.set("userId", userId);
+        if (filtros.tipo) params.set("tipo", filtros.tipo);
+        if (filtros.desde) params.set("desde", filtros.desde);
+        if (filtros.hasta) params.set("hasta", filtros.hasta);
+        if (filtros.zona) params.set("zona", filtros.zona);
+        if (filtros.estadoTratamiento) params.set("estadoTratamiento", filtros.estadoTratamiento);
+
+        const qs = params.toString();
+        const newUrl = qs ? `${location.pathname}?${qs}` : location.pathname;
+        history.replaceState(null, "", newUrl);
 
         cargarYRenderizarEventos(filtros);
     });
-}
 
-// ===== Carga inicial: respeta querystring si hay =====
-function initialFiltersFromQuery() {
-    const q = new URLSearchParams(location.search);
-    if ([...q.keys()].length === 0) return null;
+    // Botón "Limpiar"
+    const btnLimpiar = form.querySelector('a[href*="historialPaciente"]');
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener("click", (e) => {
+            e.preventDefault();
+            form.reset();
 
-    // sincroniza valores en los inputs si han llegado por URL
-    const form = document.querySelector(".hist-form");
-    if (form) {
-        ["desde","hasta","tipo","zona","intensidad","estadoTratamiento"].forEach(k => {
-            if (q.has(k) && form.elements[k]) form.elements[k].value = q.get(k);
+            const userId = getUserId();
+            const newUrl = userId ? `${location.pathname}?userId=${userId}` : location.pathname;
+            history.replaceState(null, "", newUrl);
+
+            cargarYRenderizarEventos({});
         });
     }
+}
+
+// ===== Carga inicial =====
+function initialFiltersFromQuery() {
+    const q = new URLSearchParams(location.search);
+
+    const form = document.querySelector(".hist-form");
+    if (form) {
+        ["desde", "hasta", "tipo", "zona", "estadoTratamiento"].forEach(k => {
+            if (q.has(k) && form.elements[k]) {
+                form.elements[k].value = q.get(k);
+            }
+        });
+    }
+
     return readFiltersFromForm();
 }
 
-// Boot
+// ===== Boot =====
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("[Historial] Inicializando...");
+    console.log("[Historial] USER_ID:", window.USER_ID);
+
     setupFilters();
 
-    // si hay filtros en la URL, cárgalos; si no, carga todo
     const filtrosIniciales = initialFiltersFromQuery();
     cargarYRenderizarEventos(filtrosIniciales);
 });

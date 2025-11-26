@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/style2.css">
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
 </head>
-<body class="body-msg" data-user="${#authentication.name}">
+<body class="body-msg" th:data-user="${#authentication.name}">
 <div th:replace="~{fragments/header :: header}"></div>
 
 <section id="chat-wrap">

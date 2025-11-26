@@ -97,6 +97,12 @@ public class CitasController {
             // si no viene informada, ponemos un valor razonable (se puede leer del global si prefieres)
             cita.setDuracionMinutos(30);
         }
+// ===== Validaciones mínimas =====
+        if (cita.getMedico() == null || cita.getMedico().getId_usuario() == 0) {
+            ra.addFlashAttribute("err", "Debes seleccionar un médico.");
+            return "redirect:/pedirCita";
+        }
+
 
         // no permitir pasado
         LocalDateTime inicio = LocalDateTime.of(cita.getFecha(), cita.getHora());
@@ -114,14 +120,14 @@ public class CitasController {
         }
 
         // ===== Validación de disponibilidad real =====
+        // 🔧 RESOLVER EL MÉDICO DESDE LA BD
         int idMedico = cita.getMedico().getId_usuario();
-        boolean disponible = disponibilidadService.esValida(
-                idMedico, cita.getFecha(), cita.getHora(), cita.getDuracionMinutos()
-        );
-        if (!disponible) {
-            ra.addFlashAttribute("err", "La hora seleccionada no está disponible para ese médico.");
+        Usuarios medico = usuariosRepository.findById(idMedico).orElse(null);
+        if (medico == null) {
+            ra.addFlashAttribute("err", "El médico seleccionado no existe.");
             return "redirect:/pedirCita";
         }
+        cita.setMedico(medico);
 
         // Guardar
         citasService.guardarCita(cita);

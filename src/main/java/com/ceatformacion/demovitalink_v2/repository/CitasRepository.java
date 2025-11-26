@@ -158,4 +158,7 @@ public interface CitasRepository extends JpaRepository<Citas, Integer> {
            """)
     LocalDate findProximaFecha(@Param("usuarioId") int usuarioId);
 
+
+    @Query("SELECT c FROM Citas c WHERE c.usuario.id_usuario = :userId ORDER BY c.fecha DESC, c.hora DESC")
+    List<Citas> findByUsuarioId(@Param("userId") Integer userId);
 }

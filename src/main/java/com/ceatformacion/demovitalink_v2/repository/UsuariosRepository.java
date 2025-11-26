@@ -58,4 +58,7 @@ public interface UsuariosRepository extends JpaRepository<Usuarios, Integer> {
 """)
     List<Usuarios> findByRolNombre(@Param("nombreRol") String nombreRol);
 
+    // UsuariosRepository.java
+    @Query("SELECT u FROM Usuarios u LEFT JOIN FETCH u.cliente")
+    List<Usuarios> findAllWithCliente();
 }

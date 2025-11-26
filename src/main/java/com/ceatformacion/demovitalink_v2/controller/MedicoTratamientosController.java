@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// MedicoTratamientosController.java
-// MedicoTratamientosController.java
 @Controller
 @RequestMapping("/medico")
 public class MedicoTratamientosController {
@@ -27,14 +25,38 @@ public class MedicoTratamientosController {
     @GetMapping("/tratamientos")
     public String verTratamientosMedico(@RequestParam(value = "id_usuario", required = false) Integer idUsuario,
                                         Model model) {
-        model.addAttribute("usuarios", usuariosRepository.findAll());
+        // Cargar usuarios con sus clientes (forzar carga para evitar LazyInitializationException)
+        List<Usuarios> usuarios = usuariosRepository.findAll();
+        usuarios.forEach(u -> {
+            if (u.getCliente() != null) {
+                u.getCliente().getNombre(); // Forzar carga del cliente
+            }
+        });
+        model.addAttribute("usuarios", usuarios);
+
+        // Obtener tratamientos según filtro
+        List<Tratamientos> tratamientos;
         if (idUsuario != null) {
-            model.addAttribute("tratamientos", tratamientoService.obtenerTratamientosPorIdUsuario(idUsuario));
+            tratamientos = tratamientoService.obtenerTratamientosPorIdUsuario(idUsuario);
             usuariosRepository.findById(idUsuario).ifPresent(u -> model.addAttribute("usuario", u));
             model.addAttribute("idSeleccionado", idUsuario);
         } else {
-            model.addAttribute("tratamientos", tratamientoService.obtenerTodos());
+            tratamientos = tratamientoService.obtenerTodos();
         }
+        model.addAttribute("tratamientos", tratamientos);
+
+        // Contadores precalculados
+        long activos = tratamientos.stream()
+                .filter(t -> "Activo".equals(t.getEstado_tratamiento()))
+                .count();
+        long finalizados = tratamientos.stream()
+                .filter(t -> "Finalizado".equals(t.getEstado_tratamiento()))
+                .count();
+
+        model.addAttribute("totalActivos", activos);
+        model.addAttribute("totalFinalizados", finalizados);
+        model.addAttribute("totalTratamientos", tratamientos.size());
+
         return "tratamientosMedicos";
     }
 
@@ -54,7 +76,6 @@ public class MedicoTratamientosController {
         return "tratamientoNuevo";
     }
 
-    // Soporte /medico/nuevo/{id}
     @GetMapping("/nuevo/{id}")
     public String nuevoTratamientoPath(@PathVariable("id") Integer idUsuario, Model model) {
         return nuevoTratamiento(idUsuario, model);
@@ -74,7 +95,7 @@ public class MedicoTratamientosController {
     public String editarTratamiento(@PathVariable("id") Integer idTratamiento, Model model) {
         Tratamientos t = tratamientoService.buscarPorId(idTratamiento)
                 .orElseThrow(() -> new IllegalArgumentException("Tratamiento no encontrado"));
-        model.addAttribute("usuario", t.getUsuario());   // para el hidden id_usuario y el título
+        model.addAttribute("usuario", t.getUsuario());
         model.addAttribute("tratamiento", t);
         return "tratamientoNuevo";
     }
@@ -100,22 +121,20 @@ public class MedicoTratamientosController {
         Integer idUsuario = original.getUsuario().getId_usuario();
         return "redirect:/medico/tratamientos?id_usuario=" + idUsuario + "&updated=true";
     }
-    // MedicoTratamientosController.java
 
     @PostMapping("/finalizar/{id}")
     public String finalizar(@PathVariable Integer id,
                             @RequestParam(value = "id_usuario", required = false) Integer idUsuario) {
         tratamientoService.finalizar(id);
-        String suffix = (idUsuario != null) ? "?id_usuario="+idUsuario : "";
-        return "redirect:/medico/tratamientos" + suffix + (suffix.isEmpty()? "?":"&") + "finalized=true";
+        String suffix = (idUsuario != null) ? "?id_usuario=" + idUsuario : "";
+        return "redirect:/medico/tratamientos" + suffix + (suffix.isEmpty() ? "?" : "&") + "finalized=true";
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable Integer id,
                            @RequestParam(value = "id_usuario", required = false) Integer idUsuario) {
         tratamientoService.eliminar(id);
-        String suffix = (idUsuario != null) ? "?id_usuario="+idUsuario : "";
-        return "redirect:/medico/tratamientos" + suffix + (suffix.isEmpty()? "?":"&") + "deleted=true";
+        String suffix = (idUsuario != null) ? "?id_usuario=" + idUsuario : "";
+        return "redirect:/medico/tratamientos" + suffix + (suffix.isEmpty() ? "?" : "&") + "deleted=true";
     }
-
 }

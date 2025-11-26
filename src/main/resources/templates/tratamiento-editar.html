@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Tratamiento - VitaLink</title>
+    <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
+
+    <style>
+        .editar-container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .editar-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 2rem; }
+        .editar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; }
+        .editar-header h1 { font-size: 1.75rem; color: #1f2937; margin: 0; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
+        .form-group label .required { color: #ef4444; margin-left: 0.25rem; }
+        .form-control { width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; transition: all 0.2s; box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); }
+        textarea.form-control { min-height: 100px; resize: vertical; font-family: inherit; }
+        select.form-control { cursor: pointer; }
+        .form-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-actions { display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid #e5e7eb; }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; }
+        .checkbox-group input[type="checkbox"] { width: 1.25rem; height: 1.25rem; cursor: pointer; }
+        @media (max-width: 640px) {
+            .form-grid-2 { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column-reverse; }
+        }
+    </style>
+</head>
+<body>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
+    <main id="main_panelUser">
+        <section class="section_main" sec:authorize="isAuthenticated()">
+            <div class="editar-container">
+                <div class="editar-card">
+                    <div class="editar-header">
+                        <h1>Editar Tratamiento</h1>
+                        <a th:href="@{/tratamientos/{id}(id=${tratamiento.id_tratamiento})}" class="btn btn_linea">← Cancelar</a>
+                    </div>
+                    <form th:action="@{/tratamientos/{id}/editar(id=${tratamiento.id_tratamiento})}"
+                          method="post">
+
+                        <div class="form-group">
+                            <label for="nombre">Nombre del Tratamiento <span class="required">*</span></label>
+                            <input type="text" id="nombre" name="nombre_tratamiento" class="form-control"
+                                   th:value="${tratamiento.nombre_tratamiento}" required>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="dosis">Dosis</label>
+                                <input type="text" id="dosis" name="dosis" class="form-control"
+                                       th:value="${tratamiento.dosis}" placeholder="Ej: 600mg, 10ml...">
+                            </div>
+                            <div class="form-group">
+                                <label for="frecuencia">Frecuencia</label>
+                                <input type="text" id="frecuencia" name="frecuencia" class="form-control"
+                                       th:value="${tratamiento.frecuencia}" placeholder="Ej: Cada 8 horas">
+                            </div>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="formula">Fórmula</label>
+                                <input type="text" id="formula" name="formula" class="form-control"
+                                       th:value="${tratamiento.formula}" placeholder="Ej: Oral, Tópico...">
+                            </div>
+                            <div class="form-group">
+                                <label for="duracion">Duración (días)</label>
+                                <input type="text" id="duracion" name="duracion" class="form-control"
+                                       th:value="${tratamiento.duracion}" placeholder="Ej: 7 días">
+                            </div>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="estado">Estado <span class="required">*</span></label>
+                                <select id="estado" name="estado_tratamiento" class="form-control" required>
+                                    <option value="activo" th:selected="${tratamiento.estado_tratamiento == 'activo'}">Activo</option>
+                                    <option value="pausado" th:selected="${tratamiento.estado_tratamiento == 'pausado'}">Pausado</option>
+                                    <option value="finalizado" th:selected="${tratamiento.estado_tratamiento == 'finalizado'}">Finalizado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sintomas">Síntomas relacionados</label>
+                                <input type="text" id="sintomas" name="sintomas" class="form-control"
+                                       th:value="${tratamiento.sintomas}" placeholder="Ej: Presión alta, dolor">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaFin">Fecha de Fin (opcional)</label>
+                            <input type="date" id="fechaFin" name="fecha_fin" class="form-control"
+                                   th:value="${tratamiento.fecha_fin != null ? #temporals.format(tratamiento.fecha_fin, 'yyyy-MM-dd') : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="tomaAlimentos" name="toma_alimentos"
+                                       th:checked="${tratamiento.toma_alimentos}">
+                                <span>Tomar con alimentos</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="observaciones">Observaciones</label>
+                            <textarea id="observaciones" name="observaciones" class="form-control"
+                                      placeholder="Indicaciones especiales, efectos secundarios a vigilar, etc."
+                                      th:text="${tratamiento.observaciones}"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <a th:href="@{/tratamientos/{id}(id=${tratamiento.id_tratamiento})}" class="btn btn_linea">Cancelar</a>
+                            <button type="submit" class="btn btn_primario">💾 Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
+</body>
+</html>
