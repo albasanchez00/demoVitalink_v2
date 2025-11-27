@@ -1,11 +1,12 @@
 /* =========================================================================
- *  CONFIGURACIÓN DEL MÉDICO — JS principal (CORREGIDO)
+ *  CONFIGURACIÓN DEL MÉDICO — JS principal (COMPLETO)
  *  - Tabs accesibles + persistencia pestaña
  *  - Carga inicial (GET /api/medico/config)
  *  - Guardado (PUT /api/medico/config)
  *  - Estado "dirty" + aviso al salir
  *  - Previsualización firma (y hook opcional de upload)
- *  - Agenda + Notificaciones (estructura correcta para DTOs)
+ *  - TODAS las secciones: Perfil, UI, Agenda, Notificaciones,
+ *    Chat, Plantillas, Integraciones, Seguridad, Privacidad, Centro
  *  - Sin dependencias externas
  * ========================================================================= */
 (() => {
@@ -28,6 +29,12 @@
     const formUi = $("#form-ui", root);
     const formAgenda = $("#form-agenda", root);
     const formNotis = $("#form-notis", root);
+    const formChat = $("#form-chat", root);
+    const formPlantillas = $("#form-plantillas", root);
+    const formIntegraciones = $("#form-integraciones", root);
+    const formSeguridad = $("#form-seguridad", root);
+    const formPrivacidad = $("#form-privacidad", root);
+    const formCentro = $("#form-centro", root);
 
     // Firma (imagen)
     const firmaInput = $("#firmaImg", root);
@@ -87,16 +94,14 @@
         }
     }
 
-    /* ------------------------- Build Payload (CORREGIDO) ------------------------- */
-    /**
-     * Construye el payload con la estructura EXACTA que esperan los DTOs del backend:
-     * - AgendaDTO: reglas (objeto), disponibilidad (map), instruccionesPorTipo (map)
-     * - NotificacionesDTO: canales (objeto), eventos (objeto), plantillas (map)
-     */
+    /* ═══════════════════════════════════════════════════════════════
+     * BUILD PAYLOAD FROM FORMS
+     * ═══════════════════════════════════════════════════════════════ */
     function buildPayloadFromForms() {
-        // ═══════════════════════════════════════════════════════════════
+
+        // ─────────────────────────────────────────────────────────────
         // PERFIL
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         const perfil = {
             nombreMostrar: byId("nombreMostrar")?.value || null,
             especialidad: byId("especialidad")?.value || null,
@@ -106,9 +111,9 @@
             firmaImagenUrl: state?.perfil?.firmaImagenUrl || null
         };
 
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         // UI
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         const ui = {
             tema: byId("tema")?.value || "auto",
             idioma: byId("idioma")?.value || "es",
@@ -116,16 +121,15 @@
             home: byId("home")?.value || "dashboard"
         };
 
-        // ═══════════════════════════════════════════════════════════════
-        // AGENDA — Backend espera OBJETOS, no strings JSON
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
+        // AGENDA
+        // ─────────────────────────────────────────────────────────────
         let agenda = null;
         if (formAgenda) {
             const reglasText = byId("reglasJson")?.value?.trim() || "{}";
             const disponibilidadText = byId("disponibilidadJson")?.value?.trim() || "{}";
             const instruccionesText = byId("instruccionesPorTipoJson")?.value?.trim() || "{}";
 
-            // Validar JSONs
             const invalids = [];
             if (!isValidJson(reglasText)) invalids.push("Reglas");
             if (!isValidJson(disponibilidadText)) invalids.push("Disponibilidad");
@@ -135,38 +139,26 @@
                 throw new Error("JSON inválido en: " + invalids.join(", "));
             }
 
-            // Parsear a objetos (lo que espera el DTO)
-            const reglas = parseJsonSafe(reglasText, {
-                antelacionMinHoras: 24,
-                cancelacionMinHoras: 6,
-                overbooking: false
-            });
-
-            const disponibilidad = parseJsonSafe(disponibilidadText, {});
-            const instruccionesPorTipo = parseJsonSafe(instruccionesText, {});
-
             agenda = {
                 duracionGeneralMin: Number(byId("duracion")?.value) || 20,
                 bufferMin: Number(byId("buffer")?.value) || 5,
-                reglas,              // ← Objeto ReglasDTO
-                disponibilidad,      // ← Map<String, List<BloqueDTO>>
-                instruccionesPorTipo // ← Map<String, String>
+                reglas: parseJsonSafe(reglasText, { antelacionMinHoras: 24, cancelacionMinHoras: 6, overbooking: false }),
+                disponibilidad: parseJsonSafe(disponibilidadText, {}),
+                instruccionesPorTipo: parseJsonSafe(instruccionesText, {})
             };
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // NOTIFICACIONES — Backend espera OBJETOS, no strings JSON
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
+        // NOTIFICACIONES
+        // ─────────────────────────────────────────────────────────────
         let notificaciones = null;
         if (formNotis) {
-            // Canales como objeto CanalesDTO
             const canales = {
                 email: !!formNotis.querySelector('input[name="notificaciones.canales.email"]')?.checked,
                 sms: !!formNotis.querySelector('input[name="notificaciones.canales.sms"]')?.checked,
                 inapp: !!formNotis.querySelector('input[name="notificaciones.canales.inapp"]')?.checked
             };
 
-            // Eventos como objeto EventosDTO
             const eventos = {
                 nuevaCita: !!formNotis.querySelector('input[name="notificaciones.eventos.nuevaCita"]')?.checked,
                 cancelacion: !!formNotis.querySelector('input[name="notificaciones.eventos.cancelacion"]')?.checked,
@@ -174,45 +166,162 @@
                 mensaje: !!formNotis.querySelector('input[name="notificaciones.eventos.mensaje"]')?.checked
             };
 
-            // Plantillas como Map<String, String>
             const plantillasText = byId("plantillasJson")?.value?.trim() || "{}";
             if (!isValidJson(plantillasText)) {
                 throw new Error("JSON inválido en: Plantillas de notificaciones");
             }
-            const plantillas = parseJsonSafe(plantillasText, {});
 
             notificaciones = {
-                canales,        // ← Objeto CanalesDTO
-                eventos,        // ← Objeto EventosDTO
+                canales,
+                eventos,
                 silencioDesde: byId("silencioDesde")?.value || "22:00",
                 silencioHasta: byId("silencioHasta")?.value || "07:00",
-                plantillas      // ← Map<String, String>
+                plantillas: parseJsonSafe(plantillasText, {})
             };
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // PAYLOAD FINAL — Estructura ConfigMedicoDTO
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
+        // CHAT / MENSAJERÍA
+        // ─────────────────────────────────────────────────────────────
+        let chat = null;
+        if (formChat) {
+            const respuestasText = byId("respuestasRapidasJson")?.value?.trim() || "{}";
+            if (!isValidJson(respuestasText)) {
+                throw new Error("JSON inválido en: Respuestas rápidas");
+            }
+
+            chat = {
+                estado: byId("estadoChat")?.value || "DISPONIBLE",
+                firmaChat: byId("firmaChat")?.value || null,
+                respuestasRapidas: parseJsonSafe(respuestasText, {})
+            };
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PLANTILLAS (lista)
+        // ─────────────────────────────────────────────────────────────
+        let plantillas = null;
+        if (formPlantillas) {
+            // Por ahora solo una plantilla desde el form
+            // En el futuro se puede hacer una lista dinámica
+            const tipo = byId("tipoPlantilla")?.value || "INFORME";
+            const nombre = byId("nombrePlantilla")?.value?.trim();
+            const contenido = byId("contenidoPlantilla")?.value?.trim();
+
+            if (nombre && contenido) {
+                plantillas = [{
+                    id: state?.plantillas?.[0]?.id || null, // Mantener ID si existe
+                    tipo,
+                    nombre,
+                    contenido
+                }];
+            } else {
+                plantillas = state?.plantillas || [];
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // INTEGRACIONES
+        // ─────────────────────────────────────────────────────────────
+        let integraciones = null;
+        if (formIntegraciones) {
+            const apiKeysText = byId("apiKeysJson")?.value?.trim() || "{}";
+            if (!isValidJson(apiKeysText)) {
+                throw new Error("JSON inválido en: API Keys");
+            }
+
+            integraciones = {
+                googleCalendar: !!formIntegraciones.querySelector('input[name="integraciones.googleCalendar"]')?.checked,
+                outlookCalendar: !!formIntegraciones.querySelector('input[name="integraciones.outlookCalendar"]')?.checked,
+                smsProvider: !!formIntegraciones.querySelector('input[name="integraciones.smsProvider"]')?.checked,
+                apiKeys: parseJsonSafe(apiKeysText, {})
+            };
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // SEGURIDAD
+        // ─────────────────────────────────────────────────────────────
+        let seguridad = null;
+        if (formSeguridad) {
+            const nueva = byId("nuevaPassword")?.value || null;
+            const confirmar = byId("confirmarPassword")?.value || null;
+            const twoFA = !!formSeguridad.querySelector('input[name="seguridad.activar2FA"]')?.checked;
+
+            // Validación local de contraseñas
+            if (nueva && nueva !== confirmar) {
+                throw new Error("Las contraseñas no coinciden");
+            }
+            if (nueva && nueva.length < 6) {
+                throw new Error("La contraseña debe tener al menos 6 caracteres");
+            }
+
+            seguridad = {
+                nuevaPassword: nueva,
+                confirmarPassword: confirmar,
+                activar2FA: twoFA
+            };
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PRIVACIDAD
+        // ─────────────────────────────────────────────────────────────
+        let privacidad = null;
+        if (formPrivacidad) {
+            const visibilidadRadio = formPrivacidad.querySelector('input[name="privacidad.visibilidad"]:checked');
+
+            privacidad = {
+                visibilidad: visibilidadRadio?.value || "PUBLICO",
+                usoDatos: !!formPrivacidad.querySelector('input[name="privacidad.usoDatos"]')?.checked,
+                boletines: !!formPrivacidad.querySelector('input[name="privacidad.boletines"]')?.checked
+            };
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // CENTRO
+        // ─────────────────────────────────────────────────────────────
+        let centro = null;
+        if (formCentro) {
+            const serviciosText = byId("serviciosCentro")?.value?.trim() || "{}";
+            if (!isValidJson(serviciosText)) {
+                throw new Error("JSON inválido en: Servicios del centro");
+            }
+
+            centro = {
+                nombreCentro: byId("nombreCentro")?.value || null,
+                telefonoCentro: byId("telefonoCentro")?.value || null,
+                direccionCentro: byId("direccionCentro")?.value || null,
+                horarioCentro: byId("horarioCentro")?.value || null,
+                servicios: parseJsonSafe(serviciosText, {})
+            };
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // PAYLOAD FINAL
+        // ═════════════════════════════════════════════════════════════
         return {
             perfil,
             ui,
             agenda,
             notificaciones,
+            chat,
+            privacidad,
+            centro,
+            integraciones,
+            seguridad,
+            plantillas,
             version: state?.version || null
         };
     }
 
-    /* ------------------------- Populate Forms (CORREGIDO) ------------------------- */
-    /**
-     * Pobla los formularios desde el state que devuelve el backend.
-     * El backend devuelve objetos parseados, no strings JSON.
-     */
+    /* ═══════════════════════════════════════════════════════════════
+     * POPULATE FORMS FROM STATE
+     * ═══════════════════════════════════════════════════════════════ */
     function populateFromState(data) {
         if (!data) return;
 
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         // PERFIL
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         if (data.perfil) {
             const p = data.perfil;
             if (byId("nombreMostrar")) byId("nombreMostrar").value = p.nombreMostrar || "";
@@ -221,7 +330,6 @@
             if (byId("bio")) byId("bio").value = p.bio || "";
             if (byId("firmaTexto")) byId("firmaTexto").value = p.firmaTexto || "";
 
-            // Firma imagen preview
             if (p.firmaImagenUrl && firmaPreview) {
                 firmaPreview.innerHTML = "";
                 const img = document.createElement("img");
@@ -234,9 +342,9 @@
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         // UI
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
         if (data.ui) {
             const u = data.ui;
             if (byId("tema")) byId("tema").value = u.tema || "auto";
@@ -245,21 +353,16 @@
             if (byId("home")) byId("home").value = u.home || "dashboard";
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // AGENDA — Convertir objetos a JSON strings para los textareas
-        // ═══════════════════════════════════════════════════════════════
+        // ─────────────────────────────────────────────────────────────
+        // AGENDA
+        // ─────────────────────────────────────────────────────────────
         if (data.agenda) {
             const a = data.agenda;
             if (byId("duracion")) byId("duracion").value = a.duracionGeneralMin ?? 20;
             if (byId("buffer")) byId("buffer").value = a.bufferMin ?? 5;
 
-            // Los textareas necesitan JSON string formateado
             if (byId("reglasJson")) {
-                byId("reglasJson").value = prettyJson(a.reglas || {
-                    antelacionMinHoras: 24,
-                    cancelacionMinHoras: 6,
-                    overbooking: false
-                });
+                byId("reglasJson").value = prettyJson(a.reglas || { antelacionMinHoras: 24, cancelacionMinHoras: 6, overbooking: false });
             }
             if (byId("disponibilidadJson")) {
                 byId("disponibilidadJson").value = prettyJson(a.disponibilidad || {});
@@ -269,29 +372,29 @@
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // NOTIFICACIONES — Poblar checkboxes y textarea
-        // ═══════════════════════════════════════════════════════════════
-        if (data.notificaciones) {
+        // ─────────────────────────────────────────────────────────────
+        // NOTIFICACIONES
+        // ─────────────────────────────────────────────────────────────
+        if (data.notificaciones && formNotis) {
             const n = data.notificaciones;
 
-            // Canales (checkboxes)
+            // Canales
             if (n.canales) {
-                const emailCb = formNotis?.querySelector('input[name="notificaciones.canales.email"]');
-                const smsCb = formNotis?.querySelector('input[name="notificaciones.canales.sms"]');
-                const inappCb = formNotis?.querySelector('input[name="notificaciones.canales.inapp"]');
+                const emailCb = formNotis.querySelector('input[name="notificaciones.canales.email"]');
+                const smsCb = formNotis.querySelector('input[name="notificaciones.canales.sms"]');
+                const inappCb = formNotis.querySelector('input[name="notificaciones.canales.inapp"]');
 
                 if (emailCb) emailCb.checked = !!n.canales.email;
                 if (smsCb) smsCb.checked = !!n.canales.sms;
                 if (inappCb) inappCb.checked = !!n.canales.inapp;
             }
 
-            // Eventos (checkboxes)
+            // Eventos
             if (n.eventos) {
-                const nuevaCitaCb = formNotis?.querySelector('input[name="notificaciones.eventos.nuevaCita"]');
-                const cancelacionCb = formNotis?.querySelector('input[name="notificaciones.eventos.cancelacion"]');
-                const noAsisteCb = formNotis?.querySelector('input[name="notificaciones.eventos.noAsiste"]');
-                const mensajeCb = formNotis?.querySelector('input[name="notificaciones.eventos.mensaje"]');
+                const nuevaCitaCb = formNotis.querySelector('input[name="notificaciones.eventos.nuevaCita"]');
+                const cancelacionCb = formNotis.querySelector('input[name="notificaciones.eventos.cancelacion"]');
+                const noAsisteCb = formNotis.querySelector('input[name="notificaciones.eventos.noAsiste"]');
+                const mensajeCb = formNotis.querySelector('input[name="notificaciones.eventos.mensaje"]');
 
                 if (nuevaCitaCb) nuevaCitaCb.checked = !!n.eventos.nuevaCita;
                 if (cancelacionCb) cancelacionCb.checked = !!n.eventos.cancelacion;
@@ -303,9 +406,94 @@
             if (byId("silencioDesde")) byId("silencioDesde").value = n.silencioDesde || "22:00";
             if (byId("silencioHasta")) byId("silencioHasta").value = n.silencioHasta || "07:00";
 
-            // Plantillas (textarea con JSON)
+            // Plantillas notis
             if (byId("plantillasJson")) {
                 byId("plantillasJson").value = prettyJson(n.plantillas || {});
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // CHAT
+        // ─────────────────────────────────────────────────────────────
+        if (data.chat && formChat) {
+            const c = data.chat;
+            if (byId("estadoChat")) byId("estadoChat").value = c.estado || "DISPONIBLE";
+            if (byId("firmaChat")) byId("firmaChat").value = c.firmaChat || "";
+            if (byId("respuestasRapidasJson")) {
+                byId("respuestasRapidasJson").value = prettyJson(c.respuestasRapidas || {});
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PLANTILLAS (primera de la lista)
+        // ─────────────────────────────────────────────────────────────
+        if (data.plantillas && data.plantillas.length > 0 && formPlantillas) {
+            const p = data.plantillas[0];
+            if (byId("tipoPlantilla")) byId("tipoPlantilla").value = p.tipo || "INFORME";
+            if (byId("nombrePlantilla")) byId("nombrePlantilla").value = p.nombre || "";
+            if (byId("contenidoPlantilla")) byId("contenidoPlantilla").value = p.contenido || "";
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // INTEGRACIONES
+        // ─────────────────────────────────────────────────────────────
+        if (data.integraciones && formIntegraciones) {
+            const i = data.integraciones;
+
+            const googleCb = formIntegraciones.querySelector('input[name="integraciones.googleCalendar"]');
+            const outlookCb = formIntegraciones.querySelector('input[name="integraciones.outlookCalendar"]');
+            const smsCb = formIntegraciones.querySelector('input[name="integraciones.smsProvider"]');
+
+            if (googleCb) googleCb.checked = !!i.googleCalendar;
+            if (outlookCb) outlookCb.checked = !!i.outlookCalendar;
+            if (smsCb) smsCb.checked = !!i.smsProvider;
+
+            if (byId("apiKeysJson")) {
+                byId("apiKeysJson").value = prettyJson(i.apiKeys || {});
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // SEGURIDAD
+        // ─────────────────────────────────────────────────────────────
+        if (data.seguridad && formSeguridad) {
+            // Las contraseñas nunca se pueblan por seguridad
+            if (byId("nuevaPassword")) byId("nuevaPassword").value = "";
+            if (byId("confirmarPassword")) byId("confirmarPassword").value = "";
+
+            const twoFACb = formSeguridad.querySelector('input[name="seguridad.activar2FA"]');
+            if (twoFACb) twoFACb.checked = !!data.seguridad.activar2FA;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // PRIVACIDAD
+        // ─────────────────────────────────────────────────────────────
+        if (data.privacidad && formPrivacidad) {
+            const pr = data.privacidad;
+
+            // Visibilidad (radio buttons)
+            const visRadio = formPrivacidad.querySelector(`input[name="privacidad.visibilidad"][value="${pr.visibilidad || 'PUBLICO'}"]`);
+            if (visRadio) visRadio.checked = true;
+
+            // Checkboxes
+            const usoDatosCb = formPrivacidad.querySelector('input[name="privacidad.usoDatos"]');
+            const boletinesCb = formPrivacidad.querySelector('input[name="privacidad.boletines"]');
+
+            if (usoDatosCb) usoDatosCb.checked = !!pr.usoDatos;
+            if (boletinesCb) boletinesCb.checked = !!pr.boletines;
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // CENTRO
+        // ─────────────────────────────────────────────────────────────
+        if (data.centro && formCentro) {
+            const ce = data.centro;
+            if (byId("nombreCentro")) byId("nombreCentro").value = ce.nombreCentro || "";
+            if (byId("telefonoCentro")) byId("telefonoCentro").value = ce.telefonoCentro || "";
+            if (byId("direccionCentro")) byId("direccionCentro").value = ce.direccionCentro || "";
+            if (byId("horarioCentro")) byId("horarioCentro").value = ce.horarioCentro || "";
+            if (byId("serviciosCentro")) {
+                byId("serviciosCentro").value = prettyJson(ce.servicios || {});
             }
         }
     }
@@ -389,22 +577,6 @@
             firmaPreview.appendChild(img);
 
             // TODO: Implementar endpoint de subida si es necesario
-            // try {
-            //   const fd = new FormData();
-            //   fd.append("file", file);
-            //   const res = await fetch("/api/medico/config/firma/imagen", {
-            //     method: "POST",
-            //     body: fd,
-            //     headers: { ...getCsrfHeader() }
-            //   });
-            //   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            //   const { url } = await res.json();
-            //   state.perfil.firmaImagenUrl = url;
-            //   setDirty(true);
-            // } catch (err) {
-            //   console.error("Upload firma falló:", err);
-            //   firmaPreview.textContent = "No se pudo subir la imagen.";
-            // }
         });
     }
 
@@ -414,7 +586,10 @@
             "#reglasJson",
             "#disponibilidadJson",
             "#instruccionesPorTipoJson",
-            "#plantillasJson"
+            "#plantillasJson",
+            "#respuestasRapidasJson",
+            "#apiKeysJson",
+            "#serviciosCentro"
         ];
 
         jsonFields.forEach(sel => {
@@ -459,6 +634,10 @@
 
             // Repoblar formularios con datos normalizados del backend
             populateFromState(state);
+
+            // Limpiar campos de contraseña después de guardar exitoso
+            if (byId("nuevaPassword")) byId("nuevaPassword").value = "";
+            if (byId("confirmarPassword")) byId("confirmarPassword").value = "";
 
             setDirty(false);
         } catch (err) {

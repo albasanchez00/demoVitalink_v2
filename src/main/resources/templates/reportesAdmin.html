@@ -28,6 +28,7 @@
         <button id="btnLimpiar" class="btn--muted">Limpiar</button>
         <button id="btnExportCSV" class="btn--ghost">Exportar CSV Citas</button>
     </div>
+
     <!-- KPIs -->
     <div class="kpis-grid" id="kpis">
         <article class="kpi"><h4>Pacientes activos</h4><strong id="kpiPacAct">—</strong></article>
@@ -112,7 +113,9 @@
         </div>
     </section>
 </section>
+
 <div th:replace="fragments/footer :: footer"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script th:src="@{/js/admin-estadisticas.js}" defer></script>
 </body>

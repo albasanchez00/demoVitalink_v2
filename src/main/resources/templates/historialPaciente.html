@@ -24,6 +24,7 @@
             <header class="hist-header">
                 <h2 class="hist-title">Historial del paciente</h2>
                 <div class="hist-actions">
+                    <a class="btn btn_primario" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
                     <a class="btn btn_primario" th:href="@{/usuarios/registroSintomas}">Registrar síntoma</a>
                     <a class="btn btn_secundario" th:href="@{/tratamientos}">Añadir tratamiento</a>
                     <a class="btn" th:href="@{/pedirCita}">Nueva cita</a>
@@ -31,7 +32,7 @@
             </header>
 
             <!-- Filtros -->
-            <section class="hist-filtros card">
+            <section class="hist-filtros card-hist">
                 <form class="hist-form" th:action="@{/usuarios/historialPaciente}" method="get">
                     <div class="hist-grid-3">
                         <div>

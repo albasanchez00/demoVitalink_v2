@@ -1,7 +1,6 @@
 package com.ceatformacion.demovitalink_v2.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,7 +16,9 @@ public class ConfigMedico {
     @JoinColumn(name = "id_usuario", nullable = false, unique = true)
     private Usuarios medico;
 
+    // ═══════════════════════════════════════════════════════════════
     // PERFIL
+    // ═══════════════════════════════════════════════════════════════
     private String nombreMostrar;
     private String especialidad;
     private String colegiado;
@@ -28,18 +29,63 @@ public class ConfigMedico {
     private String firmaTexto;
     private String firmaImagenUrl;
 
-    // UI
+    // ═══════════════════════════════════════════════════════════════
+    // UI / PREFERENCIAS
+    // ═══════════════════════════════════════════════════════════════
     private String tema;        // auto | light | dark
     private String idioma;      // es | en
     private String zonaHoraria; // Europe/Madrid
     private String home;        // dashboard | agenda | mensajes
+
+    // ═══════════════════════════════════════════════════════════════
+    // CHAT / MENSAJERÍA
+    // ═══════════════════════════════════════════════════════════════
+    private String chatEstado;      // DISPONIBLE | OCUPADO | AUSENTE
+    private String chatFirma;       // "Dr./Dra. {nombre}"
+
+    @Column(columnDefinition = "JSON")
+    private String respuestasRapidasJson;  // {"hola": "Hola...", "gracias": "Gracias..."}
+
+    // ═══════════════════════════════════════════════════════════════
+    // PRIVACIDAD
+    // ═══════════════════════════════════════════════════════════════
+    private String privacidadVisibilidad;  // PUBLICO | LIMITADO | PRIVADO
+    private Boolean privacidadUsoDatos;    // Permitir uso estadístico
+    private Boolean privacidadBoletines;   // Recibir boletines
+
+    // ═══════════════════════════════════════════════════════════════
+    // CENTRO
+    // ═══════════════════════════════════════════════════════════════
+    private String centroNombre;
+    private String centroTelefono;
+    private String centroDireccion;
+    private String centroHorario;
+
+    @Column(columnDefinition = "JSON")
+    private String centroServiciosJson;  // {"cardiologia": true, "pediatria": false, ...}
+
+    // ═══════════════════════════════════════════════════════════════
+    // SEGURIDAD (solo flag 2FA, password se maneja aparte)
+    // ═══════════════════════════════════════════════════════════════
+    private Boolean twoFactorEnabled;
+
+    // ═══════════════════════════════════════════════════════════════
+    // METADATA
+    // ═══════════════════════════════════════════════════════════════
     @Version
     private Integer version;
 
     private LocalDateTime updatedAt;
 
-    @PrePersist @PreUpdate
-    void touch() { this.updatedAt = LocalDateTime.now(); }
+    @PrePersist
+    @PreUpdate
+    void touch() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // GETTERS & SETTERS
+    // ═══════════════════════════════════════════════════════════════
 
     public int getIdConfig() {
         return idConfig;
@@ -57,6 +103,7 @@ public class ConfigMedico {
         this.medico = medico;
     }
 
+    // --- PERFIL ---
     public String getNombreMostrar() {
         return nombreMostrar;
     }
@@ -105,6 +152,7 @@ public class ConfigMedico {
         this.firmaImagenUrl = firmaImagenUrl;
     }
 
+    // --- UI ---
     public String getTema() {
         return tema;
     }
@@ -137,6 +185,107 @@ public class ConfigMedico {
         this.home = home;
     }
 
+    // --- CHAT ---
+    public String getChatEstado() {
+        return chatEstado;
+    }
+
+    public void setChatEstado(String chatEstado) {
+        this.chatEstado = chatEstado;
+    }
+
+    public String getChatFirma() {
+        return chatFirma;
+    }
+
+    public void setChatFirma(String chatFirma) {
+        this.chatFirma = chatFirma;
+    }
+
+    public String getRespuestasRapidasJson() {
+        return respuestasRapidasJson;
+    }
+
+    public void setRespuestasRapidasJson(String respuestasRapidasJson) {
+        this.respuestasRapidasJson = respuestasRapidasJson;
+    }
+
+    // --- PRIVACIDAD ---
+    public String getPrivacidadVisibilidad() {
+        return privacidadVisibilidad;
+    }
+
+    public void setPrivacidadVisibilidad(String privacidadVisibilidad) {
+        this.privacidadVisibilidad = privacidadVisibilidad;
+    }
+
+    public Boolean getPrivacidadUsoDatos() {
+        return privacidadUsoDatos;
+    }
+
+    public void setPrivacidadUsoDatos(Boolean privacidadUsoDatos) {
+        this.privacidadUsoDatos = privacidadUsoDatos;
+    }
+
+    public Boolean getPrivacidadBoletines() {
+        return privacidadBoletines;
+    }
+
+    public void setPrivacidadBoletines(Boolean privacidadBoletines) {
+        this.privacidadBoletines = privacidadBoletines;
+    }
+
+    // --- CENTRO ---
+    public String getCentroNombre() {
+        return centroNombre;
+    }
+
+    public void setCentroNombre(String centroNombre) {
+        this.centroNombre = centroNombre;
+    }
+
+    public String getCentroTelefono() {
+        return centroTelefono;
+    }
+
+    public void setCentroTelefono(String centroTelefono) {
+        this.centroTelefono = centroTelefono;
+    }
+
+    public String getCentroDireccion() {
+        return centroDireccion;
+    }
+
+    public void setCentroDireccion(String centroDireccion) {
+        this.centroDireccion = centroDireccion;
+    }
+
+    public String getCentroHorario() {
+        return centroHorario;
+    }
+
+    public void setCentroHorario(String centroHorario) {
+        this.centroHorario = centroHorario;
+    }
+
+    public String getCentroServiciosJson() {
+        return centroServiciosJson;
+    }
+
+    public void setCentroServiciosJson(String centroServiciosJson) {
+        this.centroServiciosJson = centroServiciosJson;
+    }
+
+    // --- SEGURIDAD ---
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    // --- METADATA ---
     public Integer getVersion() {
         return version;
     }

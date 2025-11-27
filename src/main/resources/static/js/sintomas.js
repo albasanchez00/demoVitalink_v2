@@ -248,4 +248,59 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     console.log("[sintomas.js] cargado");
+
+    // ===========================
+// Filtro por TIPO de síntoma
+// ===========================
+    (() => {
+        const $inputTipo  = document.getElementById('filtro-tipo');
+        const $btnAplicar = document.getElementById('btn-aplicar');
+        const $tbody      = document.getElementById('tbody-sintomas');
+
+        if (!$inputTipo || !$btnAplicar || !$tbody) return;
+
+        const normalizar = (txt) =>
+            (txt || '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // quita tildes
+                .toLowerCase()
+                .trim();
+
+        function aplicarFiltro() {
+            const termino = normalizar($inputTipo.value);
+            const filas = $tbody.querySelectorAll('tr');
+
+            filas.forEach(fila => {
+                // Estructura actual: Fecha | Tipo | Zona | Descripción | Acciones
+                const celdaTipo = fila.querySelector('td[data-col="tipo"]') || fila.children[1];
+                if (!celdaTipo) return;
+
+                const tipoTexto = normalizar(celdaTipo.textContent);
+
+                // Si no hay término mostramos todo
+                if (!termino || tipoTexto.includes(termino)) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+        }
+
+        // Click en "Aplicar"
+        $btnAplicar.addEventListener('click', aplicarFiltro);
+
+        // Enter en el input + limpiar filtro cuando se borra
+        $inputTipo.addEventListener('keyup', (ev) => {
+            if (ev.key === 'Enter') {
+                aplicarFiltro();
+            } else if ($inputTipo.value === '') {
+                aplicarFiltro(); // restablece todas las filas
+            }
+        });
+
+        // Por si quieres llamarlo desde fuera al repintar la tabla:
+        window.filtrarSintomasPorTipo = aplicarFiltro;
+    })();
+
 });
