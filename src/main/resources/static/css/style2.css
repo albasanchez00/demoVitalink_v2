@@ -12,6 +12,7 @@ ul{ list-style: none; }
 .icon{ color:var(--color-primary-button); }
 
 :root{
+    --badge-color: #bcbcbc;
     --c1:#006380;
     --color_fondo: #1B3A57;
     --color_primario: #00b3bd;
@@ -689,194 +690,454 @@ body.dark-theme header {
 /* FIN PÁGINA GESTION DE CITAS */
 
 
-/* INICIO PAGINA REGISTRO SINTOMAS */
-.main_panelUser{ display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 100%; min-height: 100%;}
-.section_Sintomas{ display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: center; align-items: center;
-    h1{ margin: 15px; font-size: 24px;} }
-#form-sintomas { width:  70%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd;
-    textarea { resize: vertical; width: 100%; font-size: 0.95rem;} }
-#form-sintomas input, #form-sintomas select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--color_secundario); border-radius: 5px;}
-#form-sintomas button { grid-column: span 2; background-color: var(--color-primary-button); color: var(--color_blanco); border: none; padding: 10px; font-weight: bold; border-radius: 5px; cursor: pointer;}
-#form-sintomas button:hover { background-color: var(--color-secundary-button);}
-.filtro-Registro{ display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; width: 100%; height: auto; gap: 100px;}
-/* Contenedor de filtros */
-#filtros { width:  100%; margin: 20px 0; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;}
-#filtros label { flex: 1; min-width: 200px;}
-/* Historial de síntomas */
-#registros { width:  40%; margin-top: 20px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd;}
-.tabla_Registros { width: 100%; border-collapse: collapse;}
-.tabla_Registros th, .tabla_Registros td { border: 1px solid #ccc; padding: 8px; text-align: center;}
-/* Gráfico de evolución */
-#graficos { width:  70%; margin-top: 30px; background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd;}
-.modal-contenido .grid select{
-    -webkit-appearance:none;
-    -moz-appearance:none;
-    appearance:none;
-    background-image:none;
-    line-height:1.2;
-    display:block;
-}
-.modal-contenido .grid select:focus{
-    outline:none;
-    text-decoration:none;
-}
-/* Layout general de la página */
+/* =====================================================
+   REGISTRO DE SÍNTOMAS - CSS MEJORADO
+   Añadir al final de style2.css o como bloque independiente
+   ===================================================== */
+
+/* === Layout Principal === */
 #main_registroSintomas {
     min-height: calc(100vh - var(--altura_header) - var(--altura_footer));
     padding: 40px 20px 60px;
-    gap: 1.75rem;
-}
-
-/* Título más protagonista */
-#main_registroSintomas .section_header h1 {
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
-    border-bottom-width: 4px;
-    padding-bottom: 8px;
-}
-
-/* ===== Filtros ===== */
-#main_registroSintomas .filtros {
-    width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-#main_registroSintomas .filtros .form-inline {
+/* === Encabezado === */
+#main_registroSintomas .section_header {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+#main_registroSintomas .header-titulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+#main_registroSintomas .btn-filt-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 40%;
+    justify-content: flex-end;
+    gap: 15px;
+}
+#main_registroSintomas .icono-header {
+    width: 36px;
+    height: 36px;
+    color: var(--color_primario);
+}
+
+#main_registroSintomas .section_header h1 {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    color: var(--color_primario);
+    margin: 0;
+    font-weight: 700;
+}
+
+#main_registroSintomas .subtitulo {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+/* === Panel de Filtros === */
+#main_registroSintomas .filtros-panel {
     width: 100%;
     max-width: 1000px;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: stretch;
-    gap: .75rem;
     background: var(--color_blanco);
-    padding: 14px 20px;
     border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    padding: 1.25rem 1.5rem;
+    border: 1px solid #e2e8f0;
 }
 
-#main_registroSintomas #filtro-tipo {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--color_secundario);
-    font-size: .95rem;
-    background-color: #f9fafb;
+#main_registroSintomas .filtros-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
-#main_registroSintomas .filtros .btn {
-    border-radius: 999px;
-    font-size: .9rem;
+#main_registroSintomas .filtros-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
     font-weight: 600;
-    padding: 0 18px;
-    min-width: 120px;
+    color: #334155;
+    margin: 0;
+}
+
+#main_registroSintomas .filtros-header h3 svg {
+    color: var(--color_primario);
+}
+
+/* Grid de filtros */
+#main_registroSintomas .filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+#main_registroSintomas .filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+#main_registroSintomas .filtro-grupo label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+#main_registroSintomas .filtro-grupo select,
+#main_registroSintomas .filtro-grupo input[type="date"] {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: #f8fafc;
+    color: #334155;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+#main_registroSintomas .filtro-grupo select:hover,
+#main_registroSintomas .filtro-grupo input[type="date"]:hover {
+    border-color: #cbd5e1;
+}
+
+#main_registroSintomas .filtro-grupo select:focus,
+#main_registroSintomas .filtro-grupo input[type="date"]:focus {
+    outline: none;
+    border-color: var(--color_primario);
+    box-shadow: 0 0 0 3px rgba(var(--color_primario_rgb, 0, 128, 128), 0.1);
+    background: var(--color_blanco);
+}
+
+/* Acciones de filtros */
+#main_registroSintomas .filtros-acciones {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#main_registroSintomas .filtros-info {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+#main_registroSintomas #contador-resultados {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* === Botones === */
+#main_registroSintomas .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background .2s ease, transform .1s ease, box-shadow .2s ease;
-}
-
-#main_registroSintomas .filtros .btn-primario {
-    background: var(--color-primary-button);
-    color: var(--color_blanco);
-    box-shadow: 0 8px 18px rgba(0,0,0,.12);
-}
-
-#main_registroSintomas .filtros .btn-primario:hover {
-    background: var(--color-secundary-button);
-}
-
-#main_registroSintomas .filtros .btn:hover {
-    transform: translateY(-1px);
-}
-
-#main_registroSintomas .filtros .btn:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-/* ===== Tabla ===== */
-#main_registroSintomas .tabla-responsive {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    border-radius: 18px;
-    box-shadow: 0 14px 30px rgba(0,0,0,.08);
-    overflow: hidden;
-}
-
-#main_registroSintomas .tabla-tratamientos th,
-#main_registroSintomas .tabla-tratamientos td {
-    text-align: left;
-}
-
-#main_registroSintomas .tabla-tratamientos thead th {
-    background: linear-gradient(90deg, var(--color_primario), var(--color_secundario));
-    font-size: .9rem;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    padding: 12px 16px;
-}
-
-#main_registroSintomas .tabla-tratamientos tbody td {
-    padding: 10px 16px;
-    font-size: .9rem;
-}
-
-#main_registroSintomas .tabla-tratamientos tbody tr:nth-child(even) td {
-    background: #f7fafc;
-}
-
-#main_registroSintomas .tabla-tratamientos tbody tr:hover td {
-    background: #edf6ff;
-}
-
-#main_registroSintomas .tabla-tratamientos td:nth-child(1) {
-    white-space: nowrap; /* fecha compacta */
-    font-weight: 500;
-}
-
-#main_registroSintomas .tabla-tratamientos td:nth-child(2),
-#main_registroSintomas .tabla-tratamientos td:nth-child(3) {
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
     font-weight: 600;
-}
-
-#main_registroSintomas .tabla-tratamientos td:nth-child(4) {
-    max-width: 360px;
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-/* Columna de acciones más limpia */
-#main_registroSintomas .tabla-tratamientos td.acciones {
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
     white-space: nowrap;
 }
 
-#main_registroSintomas .tabla-tratamientos td.acciones .btn {
-    border-radius: 999px;
-    padding-inline: 14px;
+#main_registroSintomas .btn-primario {
+    background: linear-gradient(135deg, var(--color_primario), var(--color_secundario));
+    color: var(--color_blanco);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== Modal ===== */
-#main_registroSintomas .modal-contenido {
-    width: min(95%, 520px);
-    border-radius: 18px;
+#main_registroSintomas .btn-primario:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive */
+#main_registroSintomas .btn-outline {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+#main_registroSintomas .btn-outline:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+#main_registroSintomas .btn-nuevo {
+    padding: 0.65rem 1.25rem;
+}
+
+/* === Tabla === */
+#main_registroSintomas .tabla-responsive {
+    width: 100%;
+    max-width: 1000px;
+    background: var(--color_blanco);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+#main_registroSintomas .tabla-sintomas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#main_registroSintomas .tabla-sintomas thead th {
+    background: linear-gradient(135deg, var(--color_primario), var(--color_secundario));
+    color: var(--color_blanco);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 1rem;
+    text-align: left;
+}
+
+#main_registroSintomas .tabla-sintomas tbody td {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+#main_registroSintomas .tabla-sintomas tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#main_registroSintomas .tabla-sintomas tbody tr:hover td {
+    background: #f8fafc;
+}
+
+/* Columnas específicas */
+#main_registroSintomas .col-fecha {
+    white-space: nowrap;
+    font-weight: 500;
+    color: #475569;
+    font-size: 0.85rem;
+}
+
+#main_registroSintomas .col-desc {
+    max-width: 280px;
+    line-height: 1.4;
+}
+
+#main_registroSintomas .col-acciones {
+    white-space: nowrap;
+}
+
+#main_registroSintomas .texto-muted {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* === Badges de Tipo === */
+#main_registroSintomas .badge-tipo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--badge-color) 15%, transparent);
+    color: var(--badge-color);
+    border: 1px solid color-mix(in srgb, var(--badge-color) 30%, transparent);
+}
+
+/* Fallback para navegadores sin color-mix */
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+    #main_registroSintomas .badge-tipo {
+        background: rgba(100, 116, 139, 0.1);
+        color: #475569;
+        border-color: rgba(100, 116, 139, 0.2);
+    }
+}
+
+/* === Botones de Acción (iconos) === */
+#main_registroSintomas .btn-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+#main_registroSintomas .btn-editar {
+    color: #3b82f6;
+}
+
+#main_registroSintomas .btn-editar:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+#main_registroSintomas .btn-eliminar {
+    color: #ef4444;
+}
+
+#main_registroSintomas .btn-eliminar:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* === Estado Vacío === */
+#main_registroSintomas .estado-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: #94a3b8;
+    text-align: center;
+}
+
+#main_registroSintomas .estado-vacio svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+#main_registroSintomas .estado-vacio p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #64748b;
+    margin: 0 0 0.25rem;
+}
+
+#main_registroSintomas .estado-vacio span {
+    font-size: 0.9rem;
+}
+
+#main_registroSintomas .estado-vacio.oculto {
+    display: none;
+}
+
+/* === Estado Cargando === */
+#main_registroSintomas .cargando {
+    text-align: center;
+    color: #64748b;
+    padding: 2rem !important;
+}
+
+#main_registroSintomas .spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e2e8f0;
+    border-top-color: var(--color_primario);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+#main_registroSintomas .error {
+    color: #ef4444;
+    text-align: center;
+}
+
+/* === Oculto === */
+#main_registroSintomas .oculto {
+    display: none !important;
+}
+
+/* === Responsive === */
 @media (max-width: 900px) {
-    #main_registroSintomas .filtros .form-inline {
+    #main_registroSintomas .filtros-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #main_registroSintomas .filtros-acciones {
+        grid-column: span 2;
+        justify-content: stretch;
+    }
+
+    #main_registroSintomas .filtros-acciones .btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    #main_registroSintomas {
+        padding: 20px 12px 40px;
+    }
+
+    #main_registroSintomas .filtros-panel {
+        padding: 1rem;
+    }
+
+    #main_registroSintomas .filtros-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #main_registroSintomas .filtros-grid {
         grid-template-columns: 1fr;
     }
-    #main_registroSintomas .filtros .btn {
-        width: 100%;
+
+    #main_registroSintomas .filtros-acciones {
+        grid-column: 1;
+        flex-direction: column;
     }
-    #main_registroSintomas .tabla-tratamientos thead th,
-    #main_registroSintomas .tabla-tratamientos tbody td {
-        font-size: .8rem;
-        padding: 8px 10px;
+
+    #main_registroSintomas .tabla-sintomas thead th,
+    #main_registroSintomas .tabla-sintomas tbody td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    #main_registroSintomas .col-desc {
+        max-width: 120px;
+    }
+
+    #main_registroSintomas .btn-icono {
+        width: 30px;
+        height: 30px;
+    }
+
+    #main_registroSintomas .btn-icono svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
+/* === Tabla scroll horizontal en móvil === */
+@media (max-width: 540px) {
+    #main_registroSintomas .tabla-responsive {
+        overflow-x: auto;
+    }
 
+    #main_registroSintomas .tabla-sintomas {
+        min-width: 600px;
+    }
+}
 
 /* INICIO PÁGINA REGISTRO DE TRATAMIENTOS */
 #formulario-tratamientos { background: var(--color_blanco); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 800px; margin: 20px auto;
@@ -1169,37 +1430,932 @@ html, body { min-height: 100%; height: auto; max-width: 100%; overflow-x: clip; 
 }
 /* FIN PAGINA ESTADISTICAS USUARIO */
 
-/* INICIO PAGINA CONFIGURACIÓN USUARIO */
-/* CONTENEDOR PRINCIPAL */
-.config-usuario-container { display: flex; flex-direction: column; align-items: center; gap: 20px;}
-.config-usuario-titulo { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: var(--color_primario);}
+/* ============================================
+   CONFIGURACIÓN DE USUARIO - DISEÑO PROFESIONAL
+   ============================================ */
 
-/* PANEL DE CONFIGURACIÓN */
-.config-usuario-panel { display: flex; gap: 30px; align-items: flex-start; justify-content: center; width: 100%; flex-wrap: wrap;
+/* Variables locales para esta sección */
+#main_configuracionUsuario {
+    --config-bg: #f8fafc;
+    --config-card: #ffffff;
+    --config-border: #e2e8f0;
+    --config-border-hover: #cbd5e1;
+    --config-text: #1e293b;
+    --config-text-muted: #64748b;
+    --config-text-light: #94a3b8;
+    --config-primary: var(--color_primario, #0d9488);
+    --config-primary-light: rgba(13, 148, 136, 0.1);
+    --config-primary-dark: #0f766e;
+    --config-success: #10b981;
+    --config-success-light: rgba(16, 185, 129, 0.1);
+    --config-error: #ef4444;
+    --config-error-light: rgba(239, 68, 68, 0.1);
+    --config-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --config-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --config-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --config-radius: 12px;
+    --config-radius-lg: 16px;
+    --config-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 200px);
 }
-/* MENÚ LATERAL */
-.config-usuario-menu { background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd; display: flex; flex-direction: column; gap: 15px; min-width: 180px;}
-.btn-config { background-color: var(--color-primary-button); color: var(--color_blanco); border: none; padding: 10px; font-weight: bold; border-radius: 5px; cursor: pointer;}
-.btn-config:hover, .btn-config.activo { background-color: var(--color-secundary-button);}
-/* FORMULARIO */
-.config-usuario-formulario { background: var(--color_blanco); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ddd; flex: 1; min-width: 280px; max-width: 600px; display: flex; flex-direction: column; gap: 20px;}
-.config-seccion { display: none; flex-direction: column; gap: 15px;}
-.config-seccion.activa { display: flex;}
-.config-usuario-formulario label { display: flex; flex-direction: column; font-weight: bold; color: #333;}
-.config-usuario-formulario input, .config-usuario-formulario select { padding: 10px; border: 1px solid var(--color_secundario); border-radius: 5px; font-size: 14px; margin-top: 5px;}
-/* BOTÓN GUARDAR */
-.btn-guardar-config { background-color: var(--color-primary-button); color: var(--color_blanco); border: none; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold;}
-.btn-guardar-config:hover { background-color: var(--color-secundary-button);}
-/* MENSAJE CONFIRMACIÓN */
-.config-mensaje { color: green; font-weight: bold; text-align: center;}
-/* RESPONSIVE */
-@media screen and (max-width: 768px) {
-    .config-usuario-panel { flex-direction: column; align-items: center;}
-    .config-usuario-menu { width: 100%; flex-direction: row; justify-content: space-around; flex-wrap: wrap;}
-    .btn-config { width: 45%; margin-bottom: 10px;}
-    .config-usuario-formulario { width: 100%;}
+
+/* Dark theme overrides */
+.dark-theme #main_configuracionUsuario {
+    --config-bg: #0f172a;
+    --config-card: #1e293b;
+    --config-border: #334155;
+    --config-border-hover: #475569;
+    --config-text: #f1f5f9;
+    --config-text-muted: #94a3b8;
+    --config-text-light: #64748b;
+    --config-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --config-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --config-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
 }
-/* FIN PAGINA CONFIGURACIÓN USUARIO */
+
+/* ============================================
+   CONTENEDOR Y HEADER
+   ============================================ */
+
+.config-usuario-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.config-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, var(--config-primary) 0%, var(--config-primary-dark) 100%);
+    border-radius: var(--config-radius-lg);
+    box-shadow: var(--config-shadow-lg);
+    color: white;
+}
+
+.config-header-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.config-header-icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: white;
+}
+
+.config-header-text {
+    flex: 1;
+}
+
+.config-usuario-titulo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    letter-spacing: -0.025em;
+}
+
+.config-usuario-subtitulo {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================
+   PANEL PRINCIPAL (MENU + CONTENIDO)
+   ============================================ */
+
+.config-usuario-panel {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+/* ============================================
+   MENÚ LATERAL
+   ============================================ */
+
+.config-usuario-menu {
+    background: var(--config-card);
+    border-radius: var(--config-radius-lg);
+    box-shadow: var(--config-shadow);
+    border: 1px solid var(--config-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 2rem;
+}
+
+.config-nav {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.config-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--config-transition);
+    text-align: left;
+    width: 100%;
+    color: var(--config-text-muted);
+    position: relative;
+}
+
+.config-nav-item:hover {
+    background: var(--config-primary-light);
+    color: var(--config-primary);
+}
+
+.config-nav-item.activo {
+    background: var(--config-primary-light);
+    color: var(--config-primary);
+    font-weight: 600;
+}
+
+.config-nav-item.activo::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: var(--config-primary);
+    border-radius: 0 4px 4px 0;
+}
+
+.config-nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.config-nav-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+.config-nav-label {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.config-nav-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    color: white;
+    border-radius: 6px;
+}
+
+.config-nav-arrow {
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transition: var(--config-transition);
+    transform: translateX(-4px);
+}
+
+.config-nav-arrow svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+}
+
+.config-nav-item:hover .config-nav-arrow,
+.config-nav-item.activo .config-nav-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Footer del menú con info de cuenta */
+.config-menu-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--config-border);
+    margin-top: auto;
+}
+
+.config-account-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.config-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--config-primary) 0%, var(--config-primary-dark) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.config-account-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.config-account-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--config-text);
+}
+
+.config-account-role {
+    font-size: 0.75rem;
+    color: var(--config-text-muted);
+}
+
+/* ============================================
+   ÁREA DE FORMULARIO
+   ============================================ */
+
+.config-usuario-formulario {
+    background: var(--config-card);
+    border-radius: var(--config-radius-lg);
+    box-shadow: var(--config-shadow);
+    border: 1px solid var(--config-border);
+    min-height: 500px;
+}
+
+.config-seccion {
+    display: none;
+    padding: 2rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.config-seccion.activa {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header de sección */
+.config-section-header {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--config-border);
+}
+
+.config-section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--config-text);
+    margin: 0 0 0.375rem;
+    letter-spacing: -0.025em;
+}
+
+.config-section-header p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--config-text-muted);
+}
+
+.config-section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.config-badge-beta {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.625rem;
+    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+    color: white;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   GRID DE FORMULARIO
+   ============================================ */
+
+.config-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.config-form-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.config-field-full {
+    grid-column: 1 / -1;
+}
+
+.config-field-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--config-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Input wrapper con icono */
+.config-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.config-input-icon {
+    position: absolute;
+    left: 1rem;
+    width: 18px;
+    height: 18px;
+    color: var(--config-text-light);
+    pointer-events: none;
+    transition: var(--config-transition);
+}
+
+.config-input-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+.config-input-wrapper input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    border: 2px solid var(--config-border);
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    color: var(--config-text);
+    background: var(--config-card);
+    transition: var(--config-transition);
+}
+
+.config-input-wrapper input::placeholder {
+    color: var(--config-text-light);
+}
+
+.config-input-wrapper input:hover {
+    border-color: var(--config-border-hover);
+}
+
+.config-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--config-primary);
+    box-shadow: 0 0 0 4px var(--config-primary-light);
+}
+
+.config-input-wrapper input:focus + .config-input-icon,
+.config-input-wrapper:has(input:focus) .config-input-icon {
+    color: var(--config-primary);
+}
+
+/* Toggle password button */
+.config-toggle-password {
+    position: absolute;
+    right: 0.75rem;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--config-text-light);
+    border-radius: 8px;
+    transition: var(--config-transition);
+}
+
+.config-toggle-password:hover {
+    background: var(--config-primary-light);
+    color: var(--config-primary);
+}
+
+.config-toggle-password svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+/* Password strength indicator */
+.config-password-strength {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    height: 6px;
+    background: var(--config-border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+/* Security card */
+.config-security-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--config-primary-light);
+    border-radius: 12px;
+    border: 1px solid rgba(13, 148, 136, 0.2);
+}
+
+.config-security-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--config-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.config-security-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: white;
+}
+
+.config-security-text h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--config-text);
+}
+
+.config-security-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--config-text-muted);
+    line-height: 1.5;
+}
+
+/* ============================================
+   PREFERENCIAS
+   ============================================ */
+
+.config-prefs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.config-pref-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--config-bg);
+    border-radius: 12px;
+    border: 1px solid var(--config-border);
+    transition: var(--config-transition);
+}
+
+.config-pref-item:hover {
+    border-color: var(--config-border-hover);
+}
+
+.config-pref-item-column {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.config-pref-item-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.config-pref-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--config-primary-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.config-pref-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--config-primary);
+}
+
+.config-pref-content {
+    flex: 1;
+}
+
+.config-pref-content h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--config-text);
+}
+
+.config-pref-content p {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--config-text-muted);
+    line-height: 1.4;
+}
+
+/* Switch toggle */
+.config-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.config-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.config-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--config-border);
+    transition: var(--config-transition);
+    border-radius: 14px;
+}
+
+.config-switch-slider::before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: var(--config-transition);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.config-switch input:checked + .config-switch-slider {
+    background-color: var(--config-primary);
+}
+
+.config-switch input:checked + .config-switch-slider::before {
+    transform: translateX(24px);
+}
+
+.config-switch input:focus + .config-switch-slider {
+    box-shadow: 0 0 0 4px var(--config-primary-light);
+}
+
+/* Theme selector */
+.config-theme-selector {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.config-theme-option {
+    flex: 1;
+    cursor: pointer;
+}
+
+.config-theme-option input {
+    display: none;
+}
+
+.config-theme-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem;
+    border: 2px solid var(--config-border);
+    border-radius: 12px;
+    transition: var(--config-transition);
+}
+
+.config-theme-option:hover .config-theme-card {
+    border-color: var(--config-border-hover);
+}
+
+.config-theme-option input:checked + .config-theme-card {
+    border-color: var(--config-primary);
+    background: var(--config-primary-light);
+}
+
+.config-theme-preview {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid var(--config-border);
+    overflow: hidden;
+}
+
+.config-theme-preview-auto {
+    display: flex;
+}
+
+.config-theme-preview-auto .preview-half-light {
+    flex: 1;
+    background: #ffffff;
+}
+
+.config-theme-preview-auto .preview-half-dark {
+    flex: 1;
+    background: #1e293b;
+}
+
+.config-theme-preview-light {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+}
+
+.config-theme-preview-dark {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+}
+
+.config-theme-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--config-text);
+}
+
+.config-theme-option input:checked + .config-theme-card .config-theme-label {
+    color: var(--config-primary);
+}
+
+/* ============================================
+   BOTONES DE ACCIÓN
+   ============================================ */
+
+.config-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--config-border);
+    margin-top: 0.5rem;
+}
+
+.config-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--config-transition);
+}
+
+.config-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+.config-btn-primary {
+    background: linear-gradient(135deg, var(--config-primary) 0%, var(--config-primary-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+}
+
+.config-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.4);
+}
+
+.config-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ============================================
+   MENSAJES DE FEEDBACK
+   ============================================ */
+
+.config-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.config-message svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.config-message-success {
+    background: var(--config-success-light);
+    color: var(--config-success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.config-message-success svg {
+    stroke: var(--config-success);
+}
+
+.config-message-error {
+    background: var(--config-error-light);
+    color: var(--config-error);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.config-message-error svg {
+    stroke: var(--config-error);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media screen and (max-width: 900px) {
+    .config-usuario-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .config-usuario-menu {
+        position: static;
+    }
+
+    .config-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .config-nav-item {
+        flex-direction: column;
+        gap: 0.375rem;
+        padding: 0.75rem 1rem;
+        min-width: max-content;
+        text-align: center;
+    }
+
+    .config-nav-item.activo::before {
+        display: none;
+    }
+
+    .config-nav-arrow {
+        display: none;
+    }
+
+    .config-nav-label {
+        font-size: 0.8rem;
+    }
+
+    .config-menu-footer {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    #main_configuracionUsuario {
+        padding: 1rem 0.75rem;
+    }
+
+    .config-header {
+        padding: 1.25rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .config-usuario-titulo {
+        font-size: 1.25rem;
+    }
+
+    .config-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .config-seccion {
+        padding: 1.5rem;
+    }
+
+    .config-theme-selector {
+        flex-direction: column;
+    }
+
+    .config-form-actions {
+        flex-direction: column;
+    }
+
+    .config-btn {
+        width: 100%;
+    }
+
+    .config-pref-item {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .config-pref-item:not(.config-pref-item-column) .config-pref-icon {
+        margin: 0 auto;
+    }
+
+    .config-pref-item:not(.config-pref-item-column) .config-switch {
+        margin: 0.75rem auto 0;
+    }
+}
+
+/* ============================================
+   FIN CONFIGURACIÓN DE USUARIO
+   ============================================ */
 
 
 /* INICIO PAGINA HISTORIAL MEDICO */

@@ -13,118 +13,428 @@
 
     <main id="main_configuracionUsuario">
         <section class="config-usuario-container">
-            <h1 class="config-usuario-titulo">Configuración de Usuario</h1>
+            <!-- Header con icono y título -->
+            <div class="config-header">
+                <div class="config-header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <div class="config-header-text">
+                    <h1 class="config-usuario-titulo">Configuración de Usuario</h1>
+                    <p class="config-usuario-subtitulo">Gestiona tu información personal y preferencias</p>
+                </div>
+            </div>
 
             <div class="config-usuario-panel">
+                <!-- Menú lateral con iconos -->
                 <aside class="config-usuario-menu">
-                    <button type="button" onclick="mostrarSeccion('seccion-datos', this)" class="btn-config activo">Datos</button>
-                    <button type="button" onclick="mostrarSeccion('seccion-contrasena', this)" class="btn-config">Contraseña</button>
-                    <button type="button" onclick="mostrarSeccion('seccion-preferencias', this)" class="btn-config">Preferencias</button>
+                    <nav class="config-nav">
+                        <button type="button" onclick="mostrarSeccion('seccion-datos', this)" class="config-nav-item activo">
+                            <span class="config-nav-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <span class="config-nav-label">Datos personales</span>
+                            <span class="config-nav-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </button>
+                        <button type="button" onclick="mostrarSeccion('seccion-contrasena', this)" class="config-nav-item">
+                            <span class="config-nav-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </span>
+                            <span class="config-nav-label">Seguridad</span>
+                            <span class="config-nav-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </button>
+                        <button type="button" onclick="mostrarSeccion('seccion-preferencias', this)" class="config-nav-item">
+                            <span class="config-nav-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </span>
+                            <span class="config-nav-label">Preferencias</span>
+                            <span class="config-nav-badge">Beta</span>
+                            <span class="config-nav-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </nav>
+
+                    <!-- Info de cuenta en el menú -->
+                    <div class="config-menu-footer">
+                        <div class="config-account-info">
+                            <div class="config-avatar">
+                                <span th:text="${cliente?.nombre?.substring(0,1)?.toUpperCase() ?: 'U'}">U</span>
+                            </div>
+                            <div class="config-account-details">
+                                <span class="config-account-name" th:text="${cliente?.nombre ?: 'Usuario'}">Usuario</span>
+                                <span class="config-account-role">Paciente</span>
+                            </div>
+                        </div>
+                    </div>
                 </aside>
 
+                <!-- Área de contenido -->
                 <section class="config-usuario-formulario">
 
-                    <!-- DATOS -->
+                    <!-- DATOS PERSONALES -->
                     <form id="seccion-datos" class="config-seccion activa"
                           th:action="@{/usuarios/configUsuario/datos}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <label>Nombre:
-                            <input type="text" name="nombre" th:value="${cliente?.nombre}">
-                        </label>
-                        <label>Apellidos:
-                            <input type="text" name="apellidos" th:value="${cliente?.apellidos}">
-                        </label>
-                        <label>Correo electrónico:
-                            <input type="email" name="correoElectronico" th:value="${cliente?.correoElectronico}">
-                        </label>
-                        <label>Teléfono:
-                            <input type="tel" name="telefono" th:value="${cliente?.telefono}">
-                        </label>
-                        <button type="submit" class="btn-config">Guardar cambios</button>
 
-                        <p th:if="${msgDatosOk}" th:text="${msgDatosOk}"></p>
-                        <p th:if="${msgDatosErr}" th:text="${msgDatosErr}"></p>
+                        <div class="config-section-header">
+                            <h2>Datos personales</h2>
+                            <p>Actualiza tu información de contacto y datos básicos.</p>
+                        </div>
+
+                        <div class="config-form-grid">
+                            <div class="config-field">
+                                <label for="campo-nombre">
+                                    <span class="config-field-label">Nombre</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="campo-nombre" name="nombre" th:value="${cliente?.nombre}" placeholder="Tu nombre">
+                                </div>
+                            </div>
+
+                            <div class="config-field">
+                                <label for="campo-apellidos">
+                                    <span class="config-field-label">Apellidos</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="campo-apellidos" name="apellidos" th:value="${cliente?.apellidos}" placeholder="Tus apellidos">
+                                </div>
+                            </div>
+
+                            <div class="config-field config-field-full">
+                                <label for="campo-email">
+                                    <span class="config-field-label">Correo electrónico</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                        </svg>
+                                    </span>
+                                    <input type="email" id="campo-email" name="correoElectronico" th:value="${cliente?.correoElectronico}" placeholder="correo@ejemplo.com">
+                                </div>
+                            </div>
+
+                            <div class="config-field config-field-full">
+                                <label for="campo-telefono">
+                                    <span class="config-field-label">Teléfono</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="tel" id="campo-telefono" name="telefono" th:value="${cliente?.telefono}" placeholder="+34 600 000 000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-form-actions">
+                            <button type="submit" class="config-btn config-btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                Guardar cambios
+                            </button>
+                        </div>
+
+                        <!-- Mensajes de feedback -->
+                        <div class="config-message config-message-success" th:if="${msgDatosOk}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span th:text="${msgDatosOk}">Datos actualizados correctamente.</span>
+                        </div>
+                        <div class="config-message config-message-error" th:if="${msgDatosErr}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" x2="12" y1="8" y2="12"/>
+                                <line x1="12" x2="12.01" y1="16" y2="16"/>
+                            </svg>
+                            <span th:text="${msgDatosErr}">Error al actualizar los datos.</span>
+                        </div>
                     </form>
 
-                    <!-- CONTRASEÑA -->
+                    <!-- SEGURIDAD / CONTRASEÑA -->
                     <form id="seccion-contrasena" class="config-seccion"
                           th:action="@{/usuarios/configUsuario/password}" method="post" autocomplete="off">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <label>Contraseña actual:
-                            <input type="password" name="actual">
-                        </label>
-                        <label>Nueva contraseña:
-                            <input type="password" name="nueva">
-                        </label>
-                        <label>Confirmar nueva:
-                            <input type="password" name="confirmacion">
-                        </label>
-                        <button type="submit" class="btn-config">Actualizar contraseña</button>
 
-                        <p th:if="${msgPassOk}" th:text="${msgPassOk}"></p>
-                        <p th:if="${msgPassErr}" th:text="${msgPassErr}"></p>
+                        <div class="config-section-header">
+                            <h2>Seguridad</h2>
+                            <p>Mantén tu cuenta segura actualizando tu contraseña regularmente.</p>
+                        </div>
+
+                        <!-- Indicador de seguridad -->
+                        <div class="config-security-card">
+                            <div class="config-security-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                            </div>
+                            <div class="config-security-text">
+                                <h4>Protege tu cuenta</h4>
+                                <p>Usa una contraseña única de al menos 8 caracteres con letras, números y símbolos.</p>
+                            </div>
+                        </div>
+
+                        <div class="config-form-stack">
+                            <div class="config-field">
+                                <label for="campo-pass-actual">
+                                    <span class="config-field-label">Contraseña actual</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                        </svg>
+                                    </span>
+                                    <input type="password" id="campo-pass-actual" name="actual" placeholder="••••••••">
+                                    <button type="button" class="config-toggle-password" onclick="togglePassword('campo-pass-actual', this)">
+                                        <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" x2="23" y1="1" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="config-field">
+                                <label for="campo-pass-nueva">
+                                    <span class="config-field-label">Nueva contraseña</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                                        </svg>
+                                    </span>
+                                    <input type="password" id="campo-pass-nueva" name="nueva" placeholder="••••••••" oninput="checkPasswordStrength(this.value)">
+                                    <button type="button" class="config-toggle-password" onclick="togglePassword('campo-pass-nueva', this)">
+                                        <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" x2="23" y1="1" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <!-- Indicador de fortaleza -->
+                                <div class="config-password-strength" id="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" id="strength-fill"></div>
+                                    </div>
+                                    <span class="strength-text" id="strength-text">Introduce una contraseña</span>
+                                </div>
+                            </div>
+
+                            <div class="config-field">
+                                <label for="campo-pass-confirmar">
+                                    <span class="config-field-label">Confirmar nueva contraseña</span>
+                                </label>
+                                <div class="config-input-wrapper">
+                                    <span class="config-input-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                    </span>
+                                    <input type="password" id="campo-pass-confirmar" name="confirmacion" placeholder="••••••••">
+                                    <button type="button" class="config-toggle-password" onclick="togglePassword('campo-pass-confirmar', this)">
+                                        <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="icon-eye-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" x2="23" y1="1" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-form-actions">
+                            <button type="submit" class="config-btn config-btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                                Actualizar contraseña
+                            </button>
+                        </div>
+
+                        <div class="config-message config-message-success" th:if="${msgPassOk}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span th:text="${msgPassOk}">Contraseña actualizada correctamente.</span>
+                        </div>
+                        <div class="config-message config-message-error" th:if="${msgPassErr}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" x2="12" y1="8" y2="12"/>
+                                <line x1="12" x2="12.01" y1="16" y2="16"/>
+                            </svg>
+                            <span th:text="${msgPassErr}">Error al actualizar la contraseña.</span>
+                        </div>
                     </form>
 
                     <!-- PREFERENCIAS -->
-                    <!-- PREFERENCIAS (nuevo diseño) -->
                     <form id="seccion-preferencias" class="config-seccion"
                           th:action="@{/usuarios/configUsuario/preferencias}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-                        <div class="pref-card">
-                            <div class="pref-head">
+                        <div class="config-section-header">
+                            <div class="config-section-header-row">
                                 <div>
-                                    <h3>Preferencias</h3>
-                                    <p>Personaliza cómo quieres usar la aplicación.</p>
+                                    <h2>Preferencias</h2>
+                                    <p>Personaliza tu experiencia en la aplicación.</p>
                                 </div>
-                                <span class="pref-badge">Beta</span>
+                                <span class="config-badge-beta">Beta</span>
                             </div>
+                        </div>
 
+                        <div class="config-prefs-list">
                             <!-- Notificaciones -->
-                            <div class="pref-row">
-                                <div class="pref-row-left">
-                                    <h4>Recibir notificaciones</h4>
-                                    <p>Te avisaremos de cambios importantes y recordatorios.</p>
+                            <div class="config-pref-item">
+                                <div class="config-pref-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                                    </svg>
                                 </div>
-                                <label class="switch">
+                                <div class="config-pref-content">
+                                    <h4>Recibir notificaciones</h4>
+                                    <p>Te avisaremos de cambios importantes, citas y recordatorios.</p>
+                                </div>
+                                <label class="config-switch">
                                     <input type="checkbox" name="notificaciones" value="true" th:checked="${prefs?.notificaciones}">
-                                    <span class="slider"></span>
+                                    <span class="config-switch-slider"></span>
                                 </label>
                             </div>
 
-                            <hr class="pref-divider"/>
-
                             <!-- Tema -->
-                            <div class="pref-block">
-                                <h4>Tema de la interfaz</h4>
-                                <p class="pref-sub">Ajusta el aspecto visual. “Auto” sigue el tema del sistema.</p>
-
-                                <div class="segmented">
-                                    <input type="radio" id="tema-auto"  name="tema" value="auto"  th:checked="${(prefs?.tema ?: 'auto') == 'auto'}">
-                                    <label for="tema-auto">Auto</label>
-
-                                    <input type="radio" id="tema-light" name="tema" value="light" th:checked="${(prefs?.tema ?: 'auto') == 'light'}">
-                                    <label for="tema-light">Claro</label>
-
-                                    <input type="radio" id="tema-dark"  name="tema" value="dark"  th:checked="${(prefs?.tema ?: 'auto') == 'dark'}">
-                                    <label for="tema-dark">Oscuro</label>
+                            <div class="config-pref-item config-pref-item-column">
+                                <div class="config-pref-item-header">
+                                    <div class="config-pref-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="4"/>
+                                            <path d="M12 2v2"/>
+                                            <path d="M12 20v2"/>
+                                            <path d="m4.93 4.93 1.41 1.41"/>
+                                            <path d="m17.66 17.66 1.41 1.41"/>
+                                            <path d="M2 12h2"/>
+                                            <path d="M20 12h2"/>
+                                            <path d="m6.34 17.66-1.41 1.41"/>
+                                            <path d="m19.07 4.93-1.41 1.41"/>
+                                        </svg>
+                                    </div>
+                                    <div class="config-pref-content">
+                                        <h4>Tema de la interfaz</h4>
+                                        <p>Ajusta el aspecto visual. "Auto" sigue el tema de tu sistema.</p>
+                                    </div>
                                 </div>
 
-                                <!-- Previsualización rápida -->
-                                <div class="theme-preview">
-                                    <div class="chip chip--auto">Auto</div>
-                                    <div class="chip chip--light">Claro</div>
-                                    <div class="chip chip--dark">Oscuro</div>
+                                <div class="config-theme-selector">
+                                    <label class="config-theme-option">
+                                        <input type="radio" name="tema" value="auto" th:checked="${(prefs?.tema ?: 'auto') == 'auto'}">
+                                        <span class="config-theme-card">
+                                            <span class="config-theme-preview config-theme-preview-auto">
+                                                <span class="preview-half-light"></span>
+                                                <span class="preview-half-dark"></span>
+                                            </span>
+                                            <span class="config-theme-label">Auto</span>
+                                        </span>
+                                    </label>
+                                    <label class="config-theme-option">
+                                        <input type="radio" name="tema" value="light" th:checked="${(prefs?.tema ?: 'auto') == 'light'}">
+                                        <span class="config-theme-card">
+                                            <span class="config-theme-preview config-theme-preview-light"></span>
+                                            <span class="config-theme-label">Claro</span>
+                                        </span>
+                                    </label>
+                                    <label class="config-theme-option">
+                                        <input type="radio" name="tema" value="dark" th:checked="${(prefs?.tema ?: 'auto') == 'dark'}">
+                                        <span class="config-theme-card">
+                                            <span class="config-theme-preview config-theme-preview-dark"></span>
+                                            <span class="config-theme-label">Oscuro</span>
+                                        </span>
+                                    </label>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="pref-actions">
-                                <button type="submit" class="btn-config btn-guardar-config">Guardar preferencias</button>
-                            </div>
+                        <div class="config-form-actions">
+                            <button type="submit" class="config-btn config-btn-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                Guardar preferencias
+                            </button>
+                        </div>
 
-                            <!-- mensajes flash -->
-                            <p class="config-mensaje" th:if="${msgPrefsOk}" th:text="${msgPrefsOk}"></p>
-                            <p class="config-error"   th:if="${msgPrefsErr}" th:text="${msgPrefsErr}"></p>
+                        <div class="config-message config-message-success" th:if="${msgPrefsOk}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                            <span th:text="${msgPrefsOk}">Preferencias guardadas correctamente.</span>
+                        </div>
+                        <div class="config-message config-message-error" th:if="${msgPrefsErr}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" x2="12" y1="8" y2="12"/>
+                                <line x1="12" x2="12.01" y1="16" y2="16"/>
+                            </svg>
+                            <span th:text="${msgPrefsErr}">Error al guardar las preferencias.</span>
                         </div>
                     </form>
                 </section>
@@ -135,62 +445,7 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 </section>
 
-<script>
-    function mostrarSeccion(id, btn){
-        document.querySelectorAll('.config-seccion').forEach(s => s.classList.remove('activa'));
-        document.getElementById(id).classList.add('activa');
-        document.querySelectorAll('.btn-config').forEach(b => b.classList.remove('activo'));
-        if (btn) btn.classList.add('activo');
-    }
-    function toggleTema() {
-        const input = document.getElementById('tema');
-        const orden = ['auto', 'dark', 'light'];
-        const idx = orden.indexOf(input.value || 'auto');
-        input.value = orden[(idx + 1) % orden.length];
-        document.documentElement.setAttribute('data-theme', input.value);
-    }
-    (() => {
-        const KEY = 'theme';
-
-        function applyTheme(mode) {
-            if (mode === 'auto') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.body.classList.toggle('dark-theme', prefersDark);
-            } else {
-                document.body.classList.toggle('dark-theme', mode === 'dark');
-            }
-        }
-
-        function init() {
-            const saved = localStorage.getItem(KEY) || 'auto';
-            applyTheme(saved);
-
-            // Sincroniza radios
-            const r = document.querySelector(`input[name="tema"][value="${saved}"]`);
-            if (r) r.checked = true;
-
-            // Reacciona a cambios del sistema si está en "auto"
-            const mql = window.matchMedia('(prefers-color-scheme: dark)');
-            const onSystemChange = () => {
-                if ((localStorage.getItem(KEY) || 'auto') === 'auto') applyTheme('auto');
-            };
-            mql.addEventListener ? mql.addEventListener('change', onSystemChange)
-                : mql.addListener(onSystemChange);
-
-            // Cambios desde el control segmentado
-            document.querySelectorAll('input[name="tema"]').forEach(el => {
-                el.addEventListener('change', (e) => {
-                    const v = e.target.value;       // 'auto' | 'light' | 'dark'
-                    localStorage.setItem(KEY, v);
-                    applyTheme(v);
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
-    })();
-</script>
-<script th:src="@{/js/evolucionUsuario.js}"></script>
 <script th:src="@{/js/darkTheme.js}"></script>
+<script th:src="@{/js/configUsuario.js}"></script>
 </body>
 </html>

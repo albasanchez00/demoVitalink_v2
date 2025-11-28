@@ -15,10 +15,18 @@
     <div th:replace="fragments/header :: header"></div>
 
     <main id="main_registroSintomas">
+        <!-- Encabezado con icono -->
         <section class="section_header">
-            <h1>Registro de Síntomas</h1>
+            <div class="header-titulo">
+                <svg class="icono-header" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <h1>Registro de Síntomas</h1>
+            </div>
+            <p class="subtitulo">Lleva un control detallado de tus síntomas para un mejor seguimiento médico</p>
         </section>
 
+        <!-- Modal -->
         <div id="modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
             <div class="modal-contenido">
                 <button type="button" class="btn-cerrar-x" id="btn-cerrar" aria-label="Cerrar">✕</button>
@@ -54,18 +62,79 @@
             </div>
         </div>
 
+        <!-- Panel de Filtros Mejorado -->
+        <section class="filtros-panel">
+            <div class="filtros-header">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    Filtrar síntomas
+                </h3>
+                <div class="btn-filt-header">
+                    <a id="btnVolver" class="btn btn-primario btn-nuevo" th:href="@{/usuarios/panelUsuario}">⬅ Volver al panel</a>
 
-        <section class="filtros">
-            <form class="form-inline" onsubmit="return false;">
-                <input id="filtro-tipo" type="text" placeholder="Tipo (ej. DOLOR_CABEZA)">
-                <button id="btn-aplicar" type="button" class="btn">Aplicar</button>
-                <button id="btn-abrir" type="button" class="btn btn-primario">Añadir síntoma</button>
+                    <button id="btn-abrir" type="button" class="btn btn-primario btn-nuevo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Añadir síntoma
+                    </button>
+                </div>
+            </div>
+
+            <form class="filtros-grid" onsubmit="return false;">
+                <div class="filtro-grupo">
+                    <label for="filtro-tipo">Tipo de síntoma</label>
+                    <select id="filtro-tipo">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                </div>
+
+                <div class="filtro-grupo">
+                    <label for="filtro-zona">Zona corporal</label>
+                    <select id="filtro-zona">
+                        <option value="">Todas las zonas</option>
+                    </select>
+                </div>
+
+                <div class="filtro-grupo">
+                    <label for="filtro-desde">Desde</label>
+                    <input type="date" id="filtro-desde">
+                </div>
+
+                <div class="filtro-grupo">
+                    <label for="filtro-hasta">Hasta</label>
+                    <input type="date" id="filtro-hasta">
+                </div>
+
+                <div class="filtros-acciones">
+                    <button id="btn-aplicar" type="button" class="btn btn-primario">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        Buscar
+                    </button>
+                    <button id="btn-limpiar" type="button" class="btn btn-outline">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                        Limpiar
+                    </button>
+                </div>
             </form>
+
+            <!-- Contador de resultados -->
+            <div class="filtros-info">
+                <span id="contador-resultados">Cargando...</span>
+            </div>
         </section>
 
-        <!-- Tabla -->
+        <!-- Tabla Mejorada -->
         <section class="tabla-responsive">
-            <table class="tabla-tratamientos">
+            <table class="tabla-sintomas">
                 <thead>
                 <tr>
                     <th>Fecha</th>
@@ -77,13 +146,22 @@
                 </thead>
                 <tbody id="tbody-sintomas"></tbody>
             </table>
+
+            <!-- Estado vacío -->
+            <div id="estado-vacio" class="estado-vacio oculto">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                    <path d="M9 12h6M12 9v6M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p>No se encontraron síntomas</p>
+                <span>Prueba ajustando los filtros o añade un nuevo síntoma</span>
+            </div>
         </section>
     </main>
 
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
 </section>
-<!-- Script mínimo -->
+
 <script th:src="@{/js/sintomas.js}"></script>
 </body>
 </html>
