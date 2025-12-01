@@ -52,12 +52,15 @@ public class SintomasServiceImpl implements SintomasService {
     @Override
     public Optional<Sintomas> actualizar(int id_sintoma, Sintomas datos) {
         return sintomasRepository.findById(id_sintoma).map(s -> {
-            // Actualiza SOLO los campos que te interese permitir cambiar
-            if (datos.getTipo() != null) s.setTipo(datos.getTipo());
-            if (datos.getDescripcion() != null) s.setDescripcion(datos.getDescripcion());
-            if (datos.getFechaRegistro() != null) s.setFechaRegistro(datos.getFechaRegistro());
-            if (datos.getUsuario() != null) s.setUsuario(datos.getUsuario()); // opcional cambiar usuario
-            return s; // JPA hará flush al final de la transacción
+            // Actualiza todos los campos editables (permite null)
+            s.setTipo(datos.getTipo());
+            s.setZona(datos.getZona());  // Permite poner null
+            s.setDescripcion(datos.getDescripcion());
+            if (datos.getFechaRegistro() != null) {
+                s.setFechaRegistro(datos.getFechaRegistro());
+            }
+            // No tocamos usuario para evitar reasignaciones accidentales
+            return s;
         });
     }
 

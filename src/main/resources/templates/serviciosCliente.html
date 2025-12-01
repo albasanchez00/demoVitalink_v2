@@ -9,98 +9,207 @@
     <script src="/js/darkTheme.js" defer></script>
 </head>
 <body>
-    <section>
-        <div th:replace="fragments/header :: header"></div>
+<section class="contenedor">
+    <div th:replace="fragments/header :: header"></div>
 
-        <main class="main_Servicios">
-            <section class="section_servicioCliente">
-                <section class="video-section">
-                    <h1>Descubre VitaLink - Tu Plataforma Médica Digital</h1>
-                    <p>Gestiona tus citas, historiales médicos y tratamientos de manera sencilla e intuitiva.</p>
-                    <div class="video-container">
-                        <div class="video-card">
-                            <video autoplay loop muted>
-                                <source src="./media/video/20250311_1308_AI Assistant in Action_simple_compose_01jp2hpt61esr985yajmp4r57j.mp4" type="video/mp4">
-                                Tu navegador no soporta el video.
-                            </video>
-                        </div>
-                
-                        <div class="video-card">
-                            <video autoplay loop muted>
-                                <source src="./media/video/video-showcasing-a-old-age-person.mp4" type="video/mp4">
-                                Tu navegador no soporta el video.
-                            </video>
-                        </div>
+    <main class="main_Servicios">
+        <!-- Hero Section -->
+        <section class="servicios-hero">
+            <div class="servicios-hero-content">
+                    <span class="servicios-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        Plataforma Médica Digital
+                    </span>
+                <h1>Descubre VitaLink</h1>
+                <p class="servicios-hero-subtitle">Gestiona tus citas, historiales médicos y tratamientos de manera sencilla e intuitiva.</p>
+            </div>
+
+            <div class="servicios-video-grid">
+                <div class="servicios-video-card">
+                    <div class="video-wrapper">
+                        <video autoplay loop muted playsinline>
+                            <source src="./media/video/20250311_1308_AI Assistant in Action_simple_compose_01jp2hpt61esr985yajmp4r57j.mp4" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
                     </div>
-                </section>
+                    <div class="video-label">
+                        <span class="video-icon">🤖</span>
+                        Asistente Inteligente
+                    </div>
+                </div>
 
-                <!--  Section Registro Sintomas  -->
-                <section class="resumen_Servicio_Iz">
-                    <div class="content_Servicio_Iz">
+                <div class="servicios-video-card">
+                    <div class="video-wrapper">
+                        <video autoplay loop muted playsinline>
+                            <source src="./media/video/video-showcasing-a-old-age-person.mp4" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span class="video-icon">👴</span>
+                        Para Todas las Edades
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Servicios Grid -->
+        <section class="servicios-section">
+            <div class="servicios-container">
+
+                <!-- Servicio 1: Registro Síntomas -->
+                <article class="servicio-card">
+                    <div class="servicio-content">
+                        <div class="servicio-icon-badge">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
                         <h2>Registro y Seguimiento de Síntomas</h2>
-                        <p>Anota cómo te sientes diariamente.</p>
-                        <p>Genera reportes visuales para compartir con tu doctor.</p>
-                        <button>Descubre más</button>
+                        <p>Anota cómo te sientes diariamente y lleva un control detallado de tu salud.</p>
+                        <p>Genera reportes visuales para compartir con tu doctor en cada consulta.</p>
+                        <a href="#" class="btn-servicio">
+                            Descubre más
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
                     </div>
-                    <div class="img_servicio_Iz">
-                        <img src="./media/img/registro-analisis-sintomas-pacientes.jpeg" alt="registro y analisis sintomas">
+                    <div class="servicio-image">
+                        <img src="./media/img/registro-analisis-sintomas-pacientes.jpeg" alt="Registro y análisis de síntomas" loading="lazy">
                     </div>
-                </section>
+                </article>
 
-                <!--  Section Gestor de Medicamentos  -->
-                <section class="resumen_Servicio_De">
-                    <div class="img_servicio_De">
-                        <img src="./media/img/gesttion-de-medicamentos-pacientes.jpeg" alt="gestor de medicamentos">
-                    </div>
-                    <div class="content_Servicio_De">
+                <!-- Servicio 2: Gestor Medicamentos -->
+                <article class="servicio-card servicio-card--reverse">
+                    <div class="servicio-content">
+                        <div class="servicio-icon-badge">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                            </svg>
+                        </div>
                         <h2>Gestor de Medicamentos y Tratamientos</h2>
-                        <p>Anota cómo te sientes diariamente.</p>
-                        <p>Registra tus tratamientos y consulta cómo han evolucionado con el tiempo.</p>
-                        <button>Descubre más</button>
+                        <p>Registra todos tus medicamentos con horarios y dosis precisas.</p>
+                        <p>Consulta cómo han evolucionado tus tratamientos con el tiempo.</p>
+                        <a href="#" class="btn-servicio">
+                            Descubre más
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
                     </div>
-                </section>
+                    <div class="servicio-image">
+                        <img src="./media/img/gesttion-de-medicamentos-pacientes.jpeg" alt="Gestor de medicamentos" loading="lazy">
+                    </div>
+                </article>
 
-                <!--  Section  Accesibilidad y Comodidad  -->
-                <section class="resumen_Servicio_Iz">
-                    <div class="content_Servicio_Iz">
-                        <h2> Accesibilidad y Comodidad</h2>
-                        <p>Disponible en versión web y móvil.</p>
-                        <p>Diseñada para ser intuitiva y fácil de usar.</p>
-                        <button>Descubre más</button>
+                <!-- Servicio 3: Accesibilidad -->
+                <article class="servicio-card">
+                    <div class="servicio-content">
+                        <div class="servicio-icon-badge">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <h2>Accesibilidad y Comodidad</h2>
+                        <p>Disponible en versión web y móvil para que accedas desde cualquier lugar.</p>
+                        <p>Diseñada para ser intuitiva y fácil de usar por personas de todas las edades.</p>
+                        <a href="#" class="btn-servicio">
+                            Descubre más
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
                     </div>
-                    <div class="img_servicio_Iz">
-                        <img src="./media/img/interfaz-amigable-intuituva.jpeg" alt="accesibilidad y comodidad">
+                    <div class="servicio-image">
+                        <img src="./media/img/interfaz-amigable-intuituva.jpeg" alt="Accesibilidad y comodidad" loading="lazy">
                     </div>
-                </section>
-                
-                <!--  Section Seguridad y Privacidad  -->
-                <section class="resumen_Servicio_De">
-                    <div class="img_servicio_De">
-                        <img src="./media/img/seguridad-informacion-pacientes.jpeg" alt="seguridad y privacidad">
-                    </div>
-                    <div class="content_Servicio_De">
+                </article>
+
+                <!-- Servicio 4: Seguridad -->
+                <article class="servicio-card servicio-card--reverse">
+                    <div class="servicio-content">
+                        <div class="servicio-icon-badge">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
                         <h2>Seguridad y Privacidad</h2>
-                        <p>Protegemos tu información con altos estándares de seguridad (cumplimos con normativas como HIPAA y GDPR).</p>
-                        <button>Descubre más</button>
+                        <p>Protegemos tu información con los más altos estándares de seguridad.</p>
+                        <p>Cumplimos con normativas internacionales como HIPAA y GDPR.</p>
+                        <a href="#" class="btn-servicio">
+                            Descubre más
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </a>
                     </div>
-                </section>
-                
-                <!--  Section Asistente Virtual  -->
-                <section class="resumen_Servicio_Iz">
-                    <div class="content_Servicio_Iz">
-                        <h2>Asistente Virtual con Inteligencia Artificial (Próximamente)</h2>
-                        <p>Obtén respuestas rápidas a dudas comunes sobre tu tratamiento.</p>
-                        <p>Accede a información confiable sin necesidad de esperar una consulta.</p>
-                        <button>Descubre más</button>
+                    <div class="servicio-image">
+                        <img src="./media/img/seguridad-informacion-pacientes.jpeg" alt="Seguridad y privacidad" loading="lazy">
                     </div>
-                    <div class="img_servicio_Iz">
-                        <img src="./media/img/modelo-asistente-inteligencia-artificial-pacientes.jpeg" alt="asistente inteligencia artificial">
-                    </div>
-                </section>
-            </section>
-        </main>
+                </article>
 
-        <div th:replace="fragments/footer :: footer"></div>
-    </section>
+                <!-- Servicio 5: Asistente IA -->
+                <article class="servicio-card servicio-card--featured">
+                    <div class="servicio-coming-soon">Próximamente</div>
+                    <div class="servicio-content">
+                        <div class="servicio-icon-badge servicio-icon-badge--ai">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                        </div>
+                        <h2>Asistente Virtual con Inteligencia Artificial</h2>
+                        <p>Obtén respuestas rápidas a dudas comunes sobre tu tratamiento las 24 horas.</p>
+                        <p>Accede a información confiable sin necesidad de esperar una consulta.</p>
+                        <a href="#" class="btn-servicio btn-servicio--disabled">
+                            Próximamente
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="servicio-image">
+                        <img src="./media/img/modelo-asistente-inteligencia-artificial-pacientes.jpeg" alt="Asistente de inteligencia artificial" loading="lazy">
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="servicios-cta">
+            <div class="servicios-cta-content">
+                <h2>¿Listo para mejorar tu salud?</h2>
+                <p>Únete a miles de pacientes que ya confían en VitaLink</p>
+                <div class="servicios-cta-buttons">
+                    <a href="/registro" class="btn-cta-primary">
+                        Comenzar Gratis
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </a>
+                    <a href="/demo" class="btn-cta-secondary">Solicitar Demo</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</section>
 </body>
 </html>

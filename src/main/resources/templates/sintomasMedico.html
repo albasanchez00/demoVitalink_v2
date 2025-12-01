@@ -12,14 +12,28 @@
     <section class="contenedor">
         <div th:replace="~{fragments/header :: header}"></div>
 
-        <header class="text_center">
-            <h2>Gestión de Síntomas — Médico</h2>
-            <p>Consulta, filtra y registra síntomas para un paciente.</p>
-        </header>
-
         <main class="sintomas_medicos">
             <!-- Contenedor principal del módulo -->
             <div class="sm-wrap">
+                <!-- Page Header -->
+                <header class="sm-page-header">
+                    <div class="sm-page-header__content">
+                        <div class="sm-page-header__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div class="sm-page-header__text">
+                            <h1>Gestión de Síntomas</h1>
+                            <p>Consulta, filtra y registra síntomas para tus pacientes</p>
+                        </div>
+                    </div>
+                    <nav class="sm-page-header__breadcrumb">
+                        <a th:href="@{/usuarios/panelUsuario}">Panel Médico</a>
+                        <span>›</span>
+                        <span>Síntomas</span>
+                    </nav>
+                </header>
                 <!-- Tarjeta: Filtros -->
                 <section class="sm-card">
                     <div class="sm-card__head">
@@ -164,6 +178,26 @@
                         <div id="pagin-info" class="sm-pagination__info">Página 0 de 0</div>
                     </div>
                 </section>
+            </div>
+            <!-- Modal Ver/Editar Síntoma -->
+            <div id="modal-sintoma" class="sm-modal-overlay" aria-hidden="true">
+                <div class="sm-modal" role="dialog" aria-labelledby="modal-title">
+                    <header class="sm-modal__header">
+                        <h4 id="modal-title" class="sm-modal__title">
+                            <span id="modal-icon">📋</span>
+                            <span id="modal-title-text">Detalle del Síntoma</span>
+                        </h4>
+                        <button type="button" class="sm-modal__close" aria-label="Cerrar" id="modal-close">&times;</button>
+                    </header>
+
+                    <div class="sm-modal__body" id="modal-body">
+                        <!-- Contenido dinámico -->
+                    </div>
+
+                    <footer class="sm-modal__footer" id="modal-footer">
+                        <button type="button" class="btn" id="modal-btn-cancel">Cerrar</button>
+                    </footer>
+                </div>
             </div>
         </main>
 

@@ -2,8 +2,12 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Administrador de citas">
+    <meta name="author" content="Vitalink - Alba Sánchez Olmedo">
+    <meta name="theme-color" content="#ffffff">
     <title>Admin · Citas</title>
-    <link rel="stylesheet" href="/css/style2.css">
+    <link rel="stylesheet" th:href="@{/css/style2.css}">
     <link rel="shortcut icon" th:href="@{/media/favicon_IA_Medica.ico}" type="image/x-icon">
 </head>
 <body>
@@ -12,7 +16,7 @@
 <section id="admin-citas" class="section-admin">
     <h2 class="text_center">Gestión de Citas</h2>
 
-    <div class="card-filt filtros filtros-trat filtros-compact">
+    <div class="card-filt filtros">
         <div class="row">
             <input id="q" type="search" placeholder="Buscar por título o descripción…">
             <select id="estado">
@@ -22,21 +26,20 @@
                 <option value="ATENDIDA">Atendida</option>
                 <option value="CANCELADA">Cancelada</option>
             </select>
-            <input id="desde" type="date">
-            <input id="hasta" type="date">
-
+            <input id="desde" type="date" title="Desde">
+            <input id="hasta" type="date" title="Hasta">
+        </div>
+        <div class="row">
             <div class="usuario-autocomplete">
                 <input id="pacienteInput" type="search" placeholder="Paciente…">
                 <input id="idPaciente" type="hidden">
                 <ul id="pacienteSugg" class="sugg"></ul>
             </div>
-
             <div class="usuario-autocomplete">
                 <input id="medicoInput" type="search" placeholder="Médico…">
                 <input id="idMedico" type="hidden">
                 <ul id="medicoSugg" class="sugg"></ul>
             </div>
-
             <button id="btnBuscar" type="button" class="btn_primario">Buscar</button>
             <button id="btnLimpiar" type="button" class="btn_secundario">Limpiar</button>
         </div>
@@ -114,6 +117,6 @@
         </div>
     </div>
 </div>
-<script src="/js/admin-citas.js"></script>
+<script th:src="@{/js/admin-citas.js}"></script>
 </body>
 </html>

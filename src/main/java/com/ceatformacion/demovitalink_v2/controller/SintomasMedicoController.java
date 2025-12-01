@@ -87,6 +87,18 @@ public class SintomasMedicoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Actualizar síntoma existente
+    @PutMapping("/detalle/{idSintoma}")
+    public ResponseEntity<SintomasDTO> actualizar(
+            @PathVariable int idSintoma,
+            @RequestBody Sintomas body
+    ) {
+        return service.actualizar(idSintoma, body)
+                .map(SintomasDTO::from)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // Eliminar por id
     @DeleteMapping("/detalle/{idSintoma}")
     public ResponseEntity<Void> eliminar(@PathVariable int idSintoma) {
