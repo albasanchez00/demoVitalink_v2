@@ -3738,7 +3738,8 @@ body.dark-theme .btn-modal.secondary {
    =========================== */
 /* ====== Admin Estadísticas UI ====== */
 .section-dashboard { padding: 1rem 0 2rem; }
-.dash__head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+.dash__head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; padding: 10px; }
+.dash__head h2 {text-align: center; width: 100%;}
 .dash__filters { display:flex; flex-wrap:wrap; gap:.5rem; background:#fff; padding:.75rem; border-radius:.75rem; box-shadow:0 2px 10px rgba(0,0,0,.06); }
 .dash__filters input, .dash__filters select, .dash__filters button { height:32px; padding:0 .5rem; font-size:.9rem; }
 

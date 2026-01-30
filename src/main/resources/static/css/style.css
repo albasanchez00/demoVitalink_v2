@@ -2876,6 +2876,8 @@ body.dark-theme .alert.info {
     color: var(--color_blanco);
 }
 
+
+.help-content ul li a{color: #0A2540;}
 /* ===== RESPONSIVE DOCUMENTACIÓN ===== */
 @media screen and (max-width: 1024px) {
     .docs-sidebar {

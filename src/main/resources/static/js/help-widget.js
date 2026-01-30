@@ -120,11 +120,11 @@ class HelpWidget {
                 <p>Sistema integral de gestión de salud.</p>
                 <p><strong>Navegación rápida:</strong></p>
                 <ul>
-                    <li><a href="/docs">📚 Documentación completa</a></li>
-                    <li><a href="/citas">📅 Mis citas</a></li>
-                    <li><a href="/sintomas">🩺 Mis síntomas</a></li>
-                    <li><a href="/tratamientos">💊 Mis tratamientos</a></li>
-                    <li><a href="/chat">💬 Mensajes</a></li>
+                    <li><a href="/docs" style="color: #0A2540;">📚 Documentación completa</a></li>
+                    <li><a href="/citas" style="color: #0A2540;">📅 Mis citas</a></li>
+                    <li><a href="/sintomas" style="color: #0A2540;">🩺 Mis síntomas</a></li>
+                    <li><a href="/tratamientos" style="color: #0A2540;">💊 Mis tratamientos</a></li>
+                    <li><a href="/chat" style="color: #0A2540;">💬 Mensajes</a></li>
                 </ul>
             `;
         }
