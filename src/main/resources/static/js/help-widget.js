@@ -128,7 +128,6 @@ class HelpWidget {
                 </ul>
             `;
         }
-
         content.innerHTML = helpText;
     }
 
